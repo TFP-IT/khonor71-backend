@@ -1,5 +1,43 @@
 <x-web-layout>
 
+    <!-- News Ticker Section -->
+    <div class="news-ticker container">
+        <div class="label">Breaking News — Today</div>
+        <marquee behavior="scroll" direction="left" scrollamount="7" onmouseover="this.stop();" onmouseout="this.start();">
+            » Former IGP apologizes for July uprising killings — Chowdhury Abdullah Al Mamun admits his role after DOS
+            final selection. | RMG exports to Canada stagnant — declined slightly from $1.43B in 2023 to $1.41B in 2024.
+            | India allows religious minority migrants from Bangladesh (arrived by Dec 31, 2024) to stay without
+            passport.
+        </marquee>
+    </div>
+
+
+    <br>
+    <!-- CSS for  breaking  news -->
+    <style>
+        .news-ticker {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        .news-ticker .label {
+            background: #d9534f;
+            color: #fff;
+            padding: 8px 15px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .news-ticker marquee {
+            color: #d9534f;
+            font-weight: bold;
+            padding: 8px 15px;
+        }
+    </style>
+
     @if ($homePageTopNews->slice(3)->isNotEmpty())
         @include('themes.news.components.home.top-category-news')
     @endif
@@ -66,18 +104,22 @@
                     @include ('themes.news.components.slider.opinion-slider', ['opinions' => $opinions])
                 @endif
             </div>
-            
+
             <div>
                 @if ($sectionTwoNews['leftNews']->isNotEmpty())
-                    <div class="flex justify-between gap-2 items-center mb-3 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700">
+                    <div
+                        class="flex justify-between gap-2 items-center mb-3 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700">
                         <h1 class="text-brand-primary text-lg font-semibold uppercase">
                             {{ $sectionTwoNews['leftNews'][0]->category->category_name }}
                         </h1>
-                        <a href="{{ __url($sectionTwoNews['leftNews'][0]->category->slug) }}" class="capitalize text-neutral-400 hover:text-cyan-700 hover:underline transition_3">
+                        <a href="{{ __url($sectionTwoNews['leftNews'][0]->category->slug) }}"
+                            class="capitalize text-neutral-400 hover:text-cyan-700 hover:underline transition_3">
                             {{ localize('view_more') }}
                         </a>
                     </div>
-                    @include('themes.news.components.common.list-news',['sectionTwoNews' => $sectionTwoNews['leftNews']])
+                    @include('themes.news.components.common.list-news', [
+                        'sectionTwoNews' => $sectionTwoNews['leftNews'],
+                    ])
                 @endif
             </div>
         </section>
@@ -100,47 +142,32 @@
             <section class="container">
                 <div
                     class="flex justify-between gap-2 items-center mb-4 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700">
-                    <a href="{{ __url('videos') }}" 
-                        class="text-brand-primary text-lg font-semibold uppercase">
+                    <a href="{{ __url('videos') }}" class="text-brand-primary text-lg font-semibold uppercase">
                         {{ localize('video_news') }}
                     </a>
-                    
+
                     <!-- Slider Next/Preview Button -->
                     <div class="flex items-center gap-2">
-                        <button
-                            type="button"
-                            class="swiper_button_prev video-swiper-button-prev rtl:order-2">
-                            <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="40"
-                            viewBox="0 0 20 20"
-                            fill="none">
-                            <path
-                                d="M13.1,13.9L9.2,10l3.9-3.8L11.9,5l-5,5l5,5L13.1,13.9z"
-                                fill="#ffffff"/>
+                        <button type="button" class="swiper_button_prev video-swiper-button-prev rtl:order-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
+                                fill="none">
+                                <path d="M13.1,13.9L9.2,10l3.9-3.8L11.9,5l-5,5l5,5L13.1,13.9z" fill="#ffffff" />
                             </svg>
                         </button>
-                        <button
-                            type="button"
-                            class="swiper_button_next video-swiper-button-next">
-                            <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="40"
-                            height="40"
-                            viewBox="0 0 20 20"
-                            fill="none">
-                            <path
-                                d="M6.7168 13.55L10.5501 9.71667L6.7168 5.88334L7.88346 4.71667L12.8835 9.71667L7.88346 14.7167L6.7168 13.55Z"
-                                fill="#ffffff"/>
+                        <button type="button" class="swiper_button_next video-swiper-button-next">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
+                                fill="none">
+                                <path
+                                    d="M6.7168 13.55L10.5501 9.71667L6.7168 5.88334L7.88346 4.71667L12.8835 9.71667L7.88346 14.7167L6.7168 13.55Z"
+                                    fill="#ffffff" />
                             </svg>
                         </button>
                     </div>
                 </div>
                 <!-- Slider section -->
-                
+
                 @include('themes.news.components.home.video-news')
-                
+
             </section>
         </section>
     @endif
@@ -160,22 +187,30 @@
     <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
         <!-- Tech News Slider Section -->
         @if ($sectionTwoNews['rightNews']->isNotEmpty())
-            @include('themes.news.components.common.tech-news-card',['newsCards' => $sectionTwoNews['rightNews']])
+            @include('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionTwoNews['rightNews'],
+            ])
         @endif
 
         <!-- Food News Slider Section -->
         @if ($sectionFourNews->isNotEmpty())
-            @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionFourNews->take(5)])
+            @include ('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionFourNews->take(5),
+            ])
         @endif
 
         <!-- Binodon News Slider Section -->
         @if ($sectionFiveNews['firstNews']->isNotEmpty())
-            @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionFiveNews['firstNews']])
+            @include ('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionFiveNews['firstNews'],
+            ])
         @endif
 
         <!-- Lifestyle News Slider Section -->
         @if ($sectionFiveNews['secondNews']->isNotEmpty())
-            @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionFiveNews['secondNews']])
+            @include ('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionFiveNews['secondNews'],
+            ])
         @endif
     </section>
 
@@ -186,12 +221,16 @@
     <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
         <!-- Tech News Slider Section -->
         @if ($sectionFiveNews['thirdNews']->isNotEmpty())
-            @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionFiveNews['thirdNews']])
+            @include ('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionFiveNews['thirdNews'],
+            ])
         @endif
 
-         <!-- Food News Slider Section -->
+        <!-- Food News Slider Section -->
         @if ($sectionFiveNews['fourthNews']->isNotEmpty())
-            @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionFiveNews['fourthNews']])
+            @include ('themes.news.components.common.tech-news-card', [
+                'newsCards' => $sectionFiveNews['fourthNews'],
+            ])
         @endif
 
         <!-- Binodon News Slider Section -->
@@ -221,7 +260,7 @@
             @endif
         </figure>
     </section>
-    
+
     <!-- common section -->
     @foreach ($chunkedNewsGroups as $newsGroupChunk)
         <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
