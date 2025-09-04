@@ -324,4 +324,5 @@
   'user_name' => 'User name',
   'log_date' => 'Log date',
   'find' => 'Find',
+  'news_stories' => 'News stories',
 );
