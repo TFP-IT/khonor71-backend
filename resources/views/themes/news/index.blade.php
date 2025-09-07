@@ -1,46 +1,168 @@
 <x-web-layout>
 
-    <!-- News Ticker Section -->
-    <div class="news-ticker container">
-        <div class="label">Breaking News — Today</div>
-        <marquee behavior="scroll" direction="left" scrollamount="7" onmouseover="this.stop();" onmouseout="this.start();">
-            » Former IGP apologizes for July uprising killings — Chowdhury Abdullah Al Mamun admits his role after DOS
-            final selection. | RMG exports to Canada stagnant — declined slightly from $1.43B in 2023 to $1.41B in 2024.
-            | India allows religious minority migrants from Bangladesh (arrived by Dec 31, 2024) to stay without
-            passport.
-        </marquee>
-    </div>
-
-
-    <br>
-    <!-- CSS for  breaking  news -->
-    <style>
-        .news-ticker {
-            display: flex;
-            align-items: center;
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            overflow: hidden;
-        }
-
-        .news-ticker .label {
-            background: #d9534f;
-            color: #fff;
-            padding: 8px 15px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .news-ticker marquee {
-            color: #d9534f;
-            font-weight: bold;
-            padding: 8px 15px;
-        }
-    </style>
 
     @if ($homePageTopNews->slice(3)->isNotEmpty())
         @include('themes.news.components.home.top-category-news')
     @endif
+
+    <br>
+    <br>
+
+    <!-- News Ticker Section -->
+    <div class="container">
+        <div class="news-ticker">
+            <div class="ticker-label">
+                <span class="breaking-badge">BREAKING</span>
+            </div>
+            <div class="ticker-content-container">
+                <div class="ticker-content">
+                    <div class="ticker-item">» Former IGP apologizes for July uprising killings — Chowdhury Abdullah Al
+                        Mamun admits his role after DOS final selection.</div>
+                    <div class="ticker-item">» RMG exports to Canada stagnant — declined slightly from $1.43B in 2023 to
+                        $1.41B in 2024.</div>
+                    <div class="ticker-item">» India allows religious minority migrants from Bangladesh (arrived by Dec
+                        31, 2024) to stay without passport.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .news-ticker-container {
+            padding: 15px;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .news-ticker {
+            display: flex;
+            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25),
+                0 4px 10px rgba(0, 0, 0, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transform: perspective(500px) rotateX(1deg);
+            border: 1px solid #404040;
+        }
+
+        .ticker-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #ff3b30, #d70015);
+            padding: 12px 20px;
+            position: relative;
+            min-width: 120px;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .ticker-label:after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid #d70015;
+        }
+
+        .breaking-badge {
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .ticker-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .ticker-content-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: ticker-scroll 45s linear infinite;
+            white-space: nowrap;
+        }
+
+        .ticker-content:hover {
+            animation-play-state: paused;
+        }
+
+        .ticker-item {
+            padding: 14px 20px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 15px;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .ticker-item:after {
+            content: "•";
+            color: #ff3b30;
+            margin: 0 20px;
+            font-size: 18px;
+            vertical-align: middle;
+        }
+
+        .ticker-item:last-child:after {
+            display: none;
+        }
+
+        @keyframes ticker-scroll {
+            0% {
+                transform: translateX(0%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .news-ticker {
+                flex-direction: column;
+            }
+
+            .ticker-label {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 8px 15px;
+            }
+
+            .ticker-label:after {
+                display: none;
+            }
+
+            .breaking-badge {
+                margin-right: 10px;
+            }
+
+            .ticker-date {
+                margin-top: 0;
+            }
+
+            .ticker-item {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
 
     <section class="container my-6">
         @if ($homePageTopNews->count() > 3)
@@ -58,6 +180,7 @@
             @endif
         </figure>
     </section>
+
 
     <!-- STORIES NEWS SECTION START -->
     @if ($homeStories->isNotEmpty())

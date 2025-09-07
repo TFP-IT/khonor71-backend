@@ -89,11 +89,7 @@
     <!-- Top Section -->
     @include('themes.news.layouts.header.top-section')
 
-    {{-- Menu section --}}
-    @include('themes.news.layouts.header.top-menu')
-    @include('themes.news.layouts.header.side-menu')
-    @include ('themes.news.layouts.header.mobile-menu')
-
+    {{--
     <!-- top banner section -->
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo -->
@@ -114,6 +110,51 @@
             @endif
         </figure>
     </section>
+--}}
+
+    <br>
+    <section class="container hidden xl:flex justify-between items-center my-2">
+        <!-- Brand Logo -->
+        <a class="hidden dark:block w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+            <img src="{{ app_setting()->footer_logo }}" alt="" />
+        </a>
+        <a class="dark:hidden w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+            <img src="{{ app_setting()->logo }}" alt="" />
+        </a>
+        <!-- News Slots Section -->
+        <div class="flex space-x-4">
+            <div class="w-64 h-10 flex items-center">
+                <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-09-03%2Fzqfnlthm%2Fileana_official_1643276329_2760324378094844843_698712132.jpg?rect=29%2C0%2C1080%2C1080&w=110&auto=format%2Ccompress&fmt=avif"
+                    alt="News 1" class="mr-2 w-16 h-16 object-cover">
+                <div>
+                    <p class="text-red-500">১. উদ্ভাবনের পথে কৃষকের গল্প</p>
+                    <p class="text-gray-600">আধুনিক পদ্ধতি, উন্নত ফসল</p>
+                </div>
+            </div>
+            <div class="w-64 h-10 flex items-center">
+                <img src="https://media.prothomalo.com/prothomalo-english%2F2025-09-04%2F9d7l8c4n%2FWater-Scarcity-in-Northern-Districts.avif?rect=147%2C0%2C534%2C534&w=110&auto=format%2Ccompress&fmt=avif"
+                    alt="News 2" class="mr-2 w-16 h-16 object-cover">
+                <div>
+                    <p class="text-red-500">২. আপনার গ্রামে অঞ্জনীবন</p>
+                    <p class="text-gray-600">জনজীবন</p>
+                </div>
+            </div>
+            <div class="w-64 h-10 flex items-center">
+                <img src="https://media.prothomalo.com/prothomalo-english%2F2025-09-04%2F9d7l8c4n%2FWater-Scarcity-in-Northern-Districts.avif?rect=147%2C0%2C534%2C534&w=110&auto=format%2Ccompress&fmt=avif"
+                    alt="News 3" class="mr-2 w-16 h-16 object-cover">
+                <div>
+                    <p class="text-red-500">৩. নিশা কি বললো এই মুহূর্তে</p>
+                    <p class="text-gray-600">মন্ত্রণা</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br>
+
+    {{-- Menu section --}}
+    @include('themes.news.layouts.header.top-menu')
+    @include('themes.news.layouts.header.side-menu')
+    @include ('themes.news.layouts.header.mobile-menu')
 
 
     {{ $slot }}
@@ -122,7 +163,7 @@
     @include('themes.news.layouts.footer')
 
     <!-- Cookies section -->
-	@include('themes.news.components.common.cookies')
+    @include('themes.news.components.common.cookies')
 
     <!-- Global Modal -->
     <div id="globalModal"
