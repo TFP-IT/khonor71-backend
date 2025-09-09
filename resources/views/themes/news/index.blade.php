@@ -1,13 +1,5 @@
 <x-web-layout>
-
-
-    @if ($homePageTopNews->slice(3)->isNotEmpty())
-        @include('themes.news.components.home.top-category-news')
-    @endif
-
     <br>
-    <br>
-
     <!-- News Ticker Section -->
     <div class="container">
         <div class="news-ticker">
@@ -163,6 +155,17 @@
             }
         }
     </style>
+
+    <br>
+
+    @if ($homePageTopNews->slice(3)->isNotEmpty())
+        @include('themes.news.components.home.top-category-news')
+    @endif
+
+    <br>
+
+
+
 
     <section class="container my-6">
         @if ($homePageTopNews->count() > 3)

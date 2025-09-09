@@ -93,15 +93,15 @@
     <!-- top banner section -->
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo -->
-        <a class="hidden dark:block w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+        <a class="hidden dark:block w-52 h-10 flex_center " href="{{ __url('/') }}">
             <img src="{{ app_setting()->footer_logo }}" alt="" />
         </a>
-        <a class="dark:hidden w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+        <a class="dark:hidden w-52 h-10 flex_center " href="{{ __url('/') }}">
             <img src="{{ app_setting()->logo }}" alt="" />
         </a>
         <!-- Ad Banner Section -->
 
-        <figure class="w-[660px] h-20 object-cover overflow-hidden">
+        <figure class="w-[660px] h-20 object-cover ">
             @if ($ad = get_advertisements(1, 1))
                 {!! $ad->embed_code !!}
             @else
@@ -115,10 +115,10 @@
     <br>
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo -->
-        <a class="hidden dark:block w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+        <a class="hidden dark:block w-52 h-10 flex_center" href="{{ __url('/') }}">
             <img src="{{ app_setting()->footer_logo }}" alt="" />
         </a>
-        <a class="dark:hidden w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+        <a class="dark:hidden w-52 h-10 flex_center" href="{{ __url('/') }}">
             <img src="{{ app_setting()->logo }}" alt="" />
         </a>
         <!-- News Slots Section -->

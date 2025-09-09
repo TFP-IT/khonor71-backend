@@ -87,7 +87,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 		<a class="hidden dark:block w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
 			<img src="{{ app_setting()->footer_logo }}" alt="" />
 		</a>
-		<a class="dark:hidden w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
+		<a class="dark:hidden w-52 h-10 flex_center" href="{{ __url('/') }}">
 			<img src="{{ app_setting()->logo }}" alt="" />
 		</a>
 		<!-- Ad Banner Section -->

@@ -1917,8 +1917,7 @@
   'hit' => 'Hit',
   'post_by' => 'Post by',
   'post_date' => 'Post date',
-
-    'web_story_details' => 'Web story details',
+  'web_story_details' => 'Web story details',
   'web_stories' => 'Web stories',
   'video_details' => 'Video details',
   'recent_post' => 'Recent post',
@@ -1949,4 +1948,12 @@
   'new_advertise' => 'New advertise',
   'add_advertise' => 'Add advertise',
   'update_advertise' => 'Update advertise',
+  'add_new_post' => 'Add new post',
+  'validation_error' => 'Validation error',
+  'post_create_successfully' => 'Post create successfully',
+  'unpublish' => 'Unpublish',
+  'post_update_status_successfully' => 'Post update status successfully',
+  'no_more_news_available' => 'No more news available',
+  'save_change' => 'Save change',
+  'tags' => 'Tags',
 );
