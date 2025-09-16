@@ -254,6 +254,13 @@ html {
 
     /* User profile tab */
 
+    .news_tab {
+        @apply text-base text-left px-4 py-2 lg:w-full text-nowrap bg-neutral-50 dark:bg-neutral-900 capitalize hover:bg-neutral-200  text-gray-800 dark:text-white hover:text-red-500 dark:hover:text-red-500 dark:hover:bg-neutral-800 transition-all duration-500 ease-in-out;
+    }
+    .news_tab_active {
+        @apply text-red-600 dark:text-red-500 bg-neutral-200 dark:bg-neutral-800;
+    }
+
     .profile_tab {
         @apply text-base text-left px-4 py-2 lg:w-full text-nowrap bg-neutral-50 dark:bg-neutral-900 capitalize hover:bg-neutral-200  text-gray-800 dark:text-white hover:text-red-500 dark:hover:text-red-500 dark:hover:bg-neutral-800 transition-all duration-500 ease-in-out;
     }

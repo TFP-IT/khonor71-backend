@@ -28,6 +28,12 @@
                 <button type="button" data-tab="delete_account" class="tab_item profile_tab">
                     {{ localize('delete_account') }}
                 </button>
+                <button type="button" data-tab="news_list" class="tab_item profile_tab">
+                    {{ localize('news_list') }}
+                </button>
+                <button type="button" data-tab="news_upload" class="tab_item profile_tab">
+                    {{ localize('news_upload') }}
+                </button>
             </div>
 
             {{-- right Tab content --}}
@@ -53,6 +59,10 @@
 
                 {{-- delete account --}}
                 @include('themes.classic.components.home.setting.delete-account')
+
+                {{-- @include('themes.classic.components.home.setting.news-list') --}}
+
+                {{-- @include('themes.classic.components.home.setting.news-upload') --}}
             </div>
         </div>
 
