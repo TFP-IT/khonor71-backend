@@ -1,0 +1,11 @@
+{
+    "name": "ProbashiJanala",
+    "alias": "probashijanala",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ProbashiJanala\\Providers\\ProbashiJanalaServiceProvider"
+    ],
+    "files": []
+}

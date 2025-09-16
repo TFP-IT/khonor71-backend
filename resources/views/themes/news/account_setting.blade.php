@@ -60,9 +60,9 @@
                 {{-- delete account --}}
                 @include('themes.classic.components.home.setting.delete-account')
 
-                {{-- @include('themes.classic.components.home.setting.news-list') --}}
+                 <!-- @include('themes.classic.components.home.setting.news-list')  -->
 
-                {{-- @include('themes.classic.components.home.setting.news-upload') --}}
+                 <!-- @include('themes.classic.components.home.setting.news-upload')  -->
             </div>
         </div>
 

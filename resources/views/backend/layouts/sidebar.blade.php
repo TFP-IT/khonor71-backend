@@ -37,6 +37,29 @@
                     </li>
                 @endcan
 
+                @can('read_probashi_news')
+                    <li class="{{ request()->is('admin/probashijanala*') ? 'mm-active' : 'XXXX' }}">
+                        <a class="has-arrow material-ripple" href="#">
+                            <i class="fa fa-newspaper"></i>
+                            <span> {{ ucwords(localize('probashi_news')) }}</span>
+                        </a>
+                        <ul class="nav-second-level {{ request()->is('admin/probashijanala*') ? 'mm-show' : '' }}">
+                            @can('create_probashi_news')
+                                <li class="{{ request()->is('admin/probashijanala/create') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('probashijanala.create') }}">{{ ucwords(localize('add_probashi_news')) }}</a>
+                                </li>
+                            @endcan
+                            @can('read_probashi_news_list')
+                                <li class="{{ request()->is('admin/probashijanala/probashijanala-list') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('probashijanala.index') }}">{{ ucwords(localize('probashi_news_list')) }}</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+
                 @canany(['create_news', 'read_news'])
                     <li class="{{ request()->is('admin/news*') ? 'mm-active' : '' }}">
                         <a class="has-arrow material-ripple" href="#">
