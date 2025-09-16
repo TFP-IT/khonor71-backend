@@ -2024,4 +2024,11 @@
   'save_settings' => 'Save settings',
   'sitemap_link' => 'Sitemap link',
   'instagram' => 'Instagram',
+  'breaking_post_create_successfully' => 'Breaking post create successfully',
+  'breaking_post_data_found_successfully' => 'Breaking post data found successfully',
+  'breaking_post_update_successfully' => 'Breaking post update successfully',
+  'setup_top_breaking' => 'Setup top breaking',
+  'entire_title' => 'Entire title',
+  'background_color' => 'Background color',
+  'data_updated_successfully' => 'Data updated successfully',
 );
