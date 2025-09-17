@@ -2044,4 +2044,8 @@
   'web_user' => 'Web user',
   'select_web_user' => 'Select web user',
   'update_probashi_news' => 'Update probashi news',
+  'url_already_exists_alert' => 'Url already exists alert',
+  'my_probashi_news' => 'My probashi news',
+  'back_to_list' => 'Back to list',
+  'probashi_janala' => 'Probashi janala',
 );

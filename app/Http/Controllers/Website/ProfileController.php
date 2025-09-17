@@ -9,16 +9,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Modules\Localize\Entities\Language;
 
 class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    
     public function index()
     {
+        $languages = Language::all();
         $user = auth()->guard('webuser')->user();
-        return ThemeHelper::view('account_setting', compact('user'));
+        return ThemeHelper::view('account_setting', compact('user', 'languages'));
     }
 
     /**

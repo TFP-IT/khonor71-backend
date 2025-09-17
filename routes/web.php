@@ -20,6 +20,7 @@ use Modules\RssFeeds\Http\Controllers\RssFeedsController;
 use App\Http\Controllers\Website\ForgotPasswordController;
 use App\Http\Controllers\Website\NewsCommentReplyController;
 use App\Http\Controllers\Website\HomeController as WebsiteHomeController;
+use App\Http\Controllers\Website\ProbashiNewsController;
 
 Route::get(PanelPrefixEnum::ADMIN->value . '/update/guides', [UpdateGuides::class, 'index'])->name('update.guides')->middleware(['auth', 'isAdmin']);
 Route::get('latest/update', [UpdateGuides::class, 'runUpdatedCommand'])->middleware(['auth', 'isAdmin']);
@@ -108,6 +109,10 @@ Route::get('{lang}/account/settings', [ProfileController::class, 'index'])->name
 ->middleware('auth:webuser');
 Route::get('/account/settings', [ProfileController::class, 'index'])->name('account.setting')
 ->middleware('auth:webuser');
+Route::get('/account/probashi-news', [ProbashiNewsController::class, 'index'])->name('account.probashi.news')
+->middleware('auth:webuser');
+Route::get('/account/probashi-news/create', [ProbashiNewsController::class, 'create'])->name('account.probashi.news.create')
+->middleware('auth:webuser');
 Route::put('/account/settings/update', [ProfileController::class, 'update'])->name('account.setting.update')
 ->middleware('auth:webuser');
 Route::delete('/account/delete', [ProfileController::class, 'destroy'])
@@ -184,3 +189,13 @@ Route::prefix('webuser')->name('webuser.')->group(function () {
     Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
+
+Route::group(['middleware' => 'auth:webuser', 'prefix' => 'probashi-news', 'as' => 'web.probashi-news.'], function () {
+    Route::post('/', [ProbashiNewsController::class, 'store'])->name('store');
+    Route::get('/', [ProbashiNewsController::class, 'edit'])->name('edit');
+    Route::delete('/', [ProbashiNewsController::class, 'destroy'])->name('destroy');
+    // Route::get('/', [ProbashiNewsController::class, 'index'])->name('index');
+});
+// Add this route for DataTable AJAX calls
+// Route::get('probashi-news-data', [ProbashiNewsController::class, 'getData'])->name('web.probashi-news.data');
+// Route::get('/my-probashi-news', [ProbashiNewsController::class, 'index'])->name('my.probashi.news');
