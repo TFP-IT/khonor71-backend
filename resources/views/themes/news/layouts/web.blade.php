@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 @php
-    $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
+$direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 @endphp
 <html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
@@ -18,22 +18,29 @@
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
-        <link href="{{ $font->source_url }}" rel="stylesheet">
+    <link href="{{ $font->source_url }}" rel="stylesheet">
     @endforeach
 
     {{-- Set CSS Variables --}}
     <style>
         :root {
-            @if ($principalFont)
-                --font-principal: {!! $principalFont->font_family !!};
-            @endif
+            @if ($principalFont) --font-principal: {
+                ! ! $principalFont->font_family ! !
+            }
 
-            @if ($alternateFont)
-                --font-alternate: {!! $alternateFont->font_family !!};
-            @endif
+            ;
 
-            @if ($supplementaryFont)
-                --font-supplementary: {!! $supplementaryFont->font_family !!};
+            @endif @if ($alternateFont) --font-alternate: {
+                ! ! $alternateFont->font_family ! !
+            }
+
+            ;
+
+            @endif @if ($supplementaryFont) --font-supplementary: {
+                ! ! $supplementaryFont->font_family ! !
+            }
+
+            ;
             @endif
         }
 
@@ -56,6 +63,7 @@
         .line-height-25 {
             line-height: 2.5rem !important;
         }
+
         .news-ticker-container {
             padding: 15px;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -199,17 +207,17 @@
 
     <!-- Google Analytics (GA4) -->
     @if (app()->environment('production') && isset($metaInfo->google_analytics) && $metaInfo->google_analytics)
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $metaInfo->google_analytics }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $metaInfo->google_analytics }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
 
-            gtag('config', '{{ $metaInfo->google_analytics }}');
-        </script>
+        gtag('config', '{{ $metaInfo->google_analytics }}');
+    </script>
     @endif
 
 </head>
@@ -228,57 +236,83 @@
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo -->
         <a class="hidden dark:block w-52 h-10 flex_center " href="{{ __url('/') }}">
-            <img src="{{ app_setting()->footer_logo }}" alt="" />
-        </a>
-        <a class="dark:hidden w-52 h-10 flex_center " href="{{ __url('/') }}">
-            <img src="{{ app_setting()->logo }}" alt="" />
-        </a>
-        <!-- Ad Banner Section -->
+    <img src="{{ app_setting()->footer_logo }}" alt="" />
+    </a>
+    <a class="dark:hidden w-52 h-10 flex_center " href="{{ __url('/') }}">
+        <img src="{{ app_setting()->logo }}" alt="" />
+    </a>
+    <!-- Ad Banner Section -->
 
-        <figure class="w-[660px] h-20 object-cover ">
-            @if ($ad = get_advertisements(1, 1))
-                {!! $ad->embed_code !!}
-            @else
-                <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
-                    alt="" />
-            @endif
-        </figure>
+    <figure class="w-[660px] h-20 object-cover ">
+        @if ($ad = get_advertisements(1, 1))
+        {!! $ad->embed_code !!}
+        @else
+        <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
+            alt="" />
+        @endif
+    </figure>
     </section>
---}}
+    --}}
 
     <br>
     <section class="container hidden xl:flex justify-between items-center my-2">
-        <!-- Brand Logo -->
-        <a class="hidden dark:block w-52 h-10 flex_center" href="{{ __url('/') }}">
-            <img src="{{ app_setting()->footer_logo }}" alt="" />
-        </a>
-        <a class="dark:hidden w-52 h-10 flex_center" href="{{ __url('/') }}">
-            <img src="{{ app_setting()->logo }}" alt="" />
-        </a>
-        <!-- News Slots Section -->
-        <div class="flex space-x-4">
-            <div class="w-64 h-10 flex items-center">
-                <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-09-03%2Fzqfnlthm%2Fileana_official_1643276329_2760324378094844843_698712132.jpg?rect=29%2C0%2C1080%2C1080&w=110&auto=format%2Ccompress&fmt=avif"
-                    alt="News 1" class="mr-2 w-16 h-16 object-cover">
-                <div>
-                    <p class="text-red-500">১. উদ্ভাবনের পথে কৃষকের গল্প</p>
-                    <p class="text-gray-600">আধুনিক পদ্ধতি, উন্নত ফসল</p>
+        <!-- Brand Logo - Takes half width -->
+        <div class="w-1/2 flex justify-start">
+            <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
+                <img src="{{ app_setting()->footer_logo }}" alt="" class="h-10 w-auto" />
+            </a>
+            <a class="dark:hidden flex_center" href="{{ __url('/') }}">
+                <img src="{{ app_setting()->logo }}" alt="" class="h-10 w-auto" />
+            </a>
+        </div>
+
+        <!-- News Slots Section - Takes half width -->
+        <div class="w-1/2 flex">
+            <!-- First Segment - Probash Janala -->
+            <a href="{{ __url('account/probashi-news') }}" class="flex-1">
+                <div class="h-10 flex items-center justify-center px-2">
+                    <img src="{{ asset('assets/probash-janala.png') }}"
+                        alt="Probash janala"
+                        class="w-16 h-auto object-contain mr-2">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-red-500 text-sm truncate">প্রবাস জানালা</p>
+                        <p class="text-gray-600 text-xs truncate">আপনার প্রিয় সংবাদ মাধ্যম</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Second Segment - TV Frame -->
+            <div class="flex-1">
+                <div class="h-10 flex items-center justify-center px-2">
+                    <img src="{{ asset('assets/probash-tv.png') }}"
+                        alt="TV Frame"
+                        class="h-24 w-auto object-contain">
                 </div>
             </div>
-            <div class="w-64 h-10 flex items-center">
-                <img src="https://media.prothomalo.com/prothomalo-english%2F2025-09-04%2F9d7l8c4n%2FWater-Scarcity-in-Northern-Districts.avif?rect=147%2C0%2C534%2C534&w=110&auto=format%2Ccompress&fmt=avif"
-                    alt="News 2" class="mr-2 w-16 h-16 object-cover">
-                <div>
-                    <p class="text-red-500">২. আপনার গ্রামে অঞ্জনীবন</p>
-                    <p class="text-gray-600">জনজীবন</p>
-                </div>
-            </div>
-            <div class="w-64 h-10 flex items-center">
-                <img src="https://media.prothomalo.com/prothomalo-english%2F2025-09-04%2F9d7l8c4n%2FWater-Scarcity-in-Northern-Districts.avif?rect=147%2C0%2C534%2C534&w=110&auto=format%2Ccompress&fmt=avif"
-                    alt="News 3" class="mr-2 w-16 h-16 object-cover">
-                <div>
-                    <p class="text-red-500">৩. নিশা কি বললো এই মুহূর্তে</p>
-                    <p class="text-gray-600">মন্ত্রণা</p>
+
+            <!-- Third Segment - News -->
+            <div class="flex-1">
+                <div class="h-10 flex items-center justify-center px-2">
+                    @php
+                    $news = get_probashi_news(1)->first();
+                    @endphp
+                    @if ($news)
+                    <img src="{{ $news->thumbnail_image ? asset('storage/'.$news->thumbnail_image) : asset('assets/default-news-image.png') }}"
+                        alt="{{ $news->image_alt ?? 'News Image' }}"
+                        class="w-16 h-auto object-contain mr-2">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-red-500 text-sm truncate">{{ Str::limit($news->title, 25) }}</p>
+                        <p class="text-gray-600 text-xs truncate">{{ $news->publish_date->format('M d, Y') }}</p>
+                    </div>
+                    @else
+                    <img src="{{ asset('assets/default-news-image.png') }}"
+                        alt="No News"
+                        class="w-16 h-auto object-contain mr-2">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-red-500 text-sm truncate">No News Available</p>
+                        <p class="text-gray-600 text-xs truncate">Check back later</p>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

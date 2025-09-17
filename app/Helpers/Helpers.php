@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ActivationStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Enums\DateFormatEnum;
@@ -13,6 +14,7 @@ use Modules\Accounts\Entities\AccVoucher;
 use Modules\Setting\Entities\Application;
 use Modules\UserManagement\Entities\PerMenu;
 use Modules\Advertisement\Entities\Advertisement;
+use Modules\ProbashiJanala\Entities\ProbashiNews;
 
 /**
  * generate asset url
@@ -1130,6 +1132,21 @@ if (!function_exists('manageVideoUrl')) {
             'type' => $renderType,
             'thumb' => $thumb,
         ];
+    }
+}
+
+
+if (!function_exists('get_probashi_news')) {
+    function get_probashi_news($limit = 3)
+    {
+        $languageId = get_language_id();
+
+        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date')
+            ->where('language_id', $languageId)
+            ->where('status', ActivationStatusEnum::ACTIVE->value)
+            ->orderBy('publish_date', 'desc')
+            ->take($limit)
+            ->get();
     }
 }
 
