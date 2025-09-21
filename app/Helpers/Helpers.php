@@ -1141,10 +1141,10 @@ if (!function_exists('get_probashi_news')) {
     {
         $languageId = get_language_id();
 
-        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date')
+        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date', 'video')
             ->where('language_id', $languageId)
             ->where('status', ActivationStatusEnum::ACTIVE->value)
-            ->orderBy('publish_date', 'desc')
+            ->orderBy('id', 'desc')
             ->take($limit)
             ->get();
     }

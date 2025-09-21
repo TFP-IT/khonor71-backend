@@ -198,6 +198,53 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 font-size: 14px;
             }
         }
+
+        /* TV Frame Video Styles */
+        .tv-frame-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tv-frame-video {
+            position: absolute;
+            top: 58%;
+            left: 45%;
+            transform: translate(-50%, -50%);
+            width: 75%;
+            /* Adjust based on your TV frame's screen area */
+            height: 60%;
+            /* Adjust based on your TV frame's screen area */
+            object-fit: cover;
+            border-radius: 2px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .tv-frame-container {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .tv-frame-container:hover {
+            /* smooth hover effect */
+            transform: scale(1.05);
+        }
+
+        /* Ensure video doesn't show controls on mobile */
+        .tv-frame-video::-webkit-media-controls {
+            display: none !important;
+        }
+
+        .tv-frame-video::-webkit-media-controls-panel {
+            display: none !important;
+        }
+
+        .tv-frame-video::-webkit-media-controls-play-button {
+            display: none !important;
+        }
+
+        .tv-frame-video::-webkit-media-controls-start-playback-button {
+            display: none !important;
+        }
     </style>
 
     <!-- Tailwind css -->
@@ -281,12 +328,56 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 </div>
             </a>
 
-            <!-- Second Segment - TV Frame -->
+            <!-- Second Segment - TV Frame with Video Playlist -->
             <div class="flex-1">
                 <div class="h-10 flex items-center justify-center px-2">
-                    <img src="{{ asset('assets/probash-tv.png') }}"
-                        alt="TV Frame"
-                        class="h-24 w-auto object-contain">
+                    <!-- TV Frame Container -->
+                    <div class="tv-frame-container">
+                        <!-- TV Frame Background -->
+                        <img src="{{ asset('assets/probash-tv.png') }}"
+                            alt="TV Frame"
+                            class="h-24 w-40 object-contain relative z-10">
+
+                        <!-- Video Playlist - Centered within TV frame -->
+                        @php
+                        $newsVideos = get_probashi_news(5);
+
+                        $videoList = [];
+                        foreach($newsVideos as $news) {
+                        if(!empty($news->video)) {
+                        $videoList[] = $news->video;
+                        }
+                        }
+                        @endphp
+
+                        @if(!empty($videoList))
+                        <video
+                            id="tvFrameVideo"
+                            class="tv-frame-video"
+                            autoplay
+                            muted
+                            playsinline
+                            preload="metadata"
+                            loop
+                            data-playlist="{{ json_encode($videoList) }}">
+                            <source src="{{ asset('storage/'.$videoList[0]) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        @else
+                        <!-- Fallback video if no news videos available -->
+                        <video
+                            id="tvFrameVideo"
+                            class="tv-frame-video"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="metadata">
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -297,8 +388,10 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     $news = get_probashi_news(1)->first();
                     @endphp
                     @if ($news)
-                    <img src="{{ $news->thumbnail_image ? asset('storage/'.$news->thumbnail_image) : asset('assets/default-news-image.png') }}"
-                        alt="{{ $news->image_alt ?? 'News Image' }}"
+                
+
+                        <img src="{{ asset('assets/ami-sangbadik.png') }}"
+                        alt="Probash janala"
                         class="w-16 h-auto object-contain mr-2">
                     <div class="flex-1 min-w-0">
                         <p class="text-red-500 text-sm truncate">{{ Str::limit($news->title, 25) }}</p>
@@ -402,6 +495,48 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
     <script src="{{ asset('website/js/copy-url.js') }}"></script>
     <script src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('tvFrameVideo');
+
+            if (video && video.dataset.playlist) {
+                const playlist = JSON.parse(video.dataset.playlist);
+                let currentVideoIndex = 0;
+
+                // Function to play next video
+                function playNextVideo() {
+                    currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+                    video.src = playlist[currentVideoIndex];
+                    video.load();
+                    video.play().catch(e => console.log('Autoplay prevented:', e));
+                }
+
+                // Event listener for when video ends
+                video.addEventListener('ended', playNextVideo);
+
+                // Handle autoplay restrictions
+                video.addEventListener('loadeddata', function() {
+                    video.play().catch(e => {
+                        console.log('Autoplay prevented:', e);
+                        // If autoplay fails, try again after user interaction
+                        document.addEventListener('click', function() {
+                            video.play().catch(e => console.log('Play failed:', e));
+                        }, {
+                            once: true
+                        });
+                    });
+                });
+
+                // Optional: Add error handling for failed video loads
+                video.addEventListener('error', function() {
+                    console.log('Video failed to load, trying next video');
+                    playNextVideo();
+                });
+            }
+        });
+    </script>
 
     @stack('plugins-js')
     @stack('custom-js')

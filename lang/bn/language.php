@@ -2048,4 +2048,5 @@
   'my_probashi_news' => 'My probashi news',
   'back_to_list' => 'Back to list',
   'probashi_janala' => 'Probashi janala',
+  'news_uploaded_successfully' => 'News uploaded successfully',
 );
