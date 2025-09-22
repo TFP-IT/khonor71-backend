@@ -302,114 +302,114 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     --}}
 
     <br>
-    <section class="container hidden xl:flex justify-between items-center my-2">
-        <!-- Brand Logo - Takes half width -->
-        <div class="w-1/2 flex justify-start">
-            <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->footer_logo }}" alt="" class="h-10 w-auto" />
+<section class="container hidden xl:flex justify-between items-center">
+    <!-- Brand Logo - Takes 1/3 width -->
+    <div class="w-1/3 flex justify-start">
+        <div class="flex items-center space-x-2">
+            <a class="hidden dark:block flex items-center" href="{{ __url('/') }}">
+                <img src="{{ app_setting()->footer_logo }}" alt="Footer Logo" class="h-10 w-auto drop-shadow-lg" />
             </a>
-            <a class="dark:hidden flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->logo }}" alt="" class="h-10 w-auto" />
+            <a class="dark:hidden flex items-center" href="{{ __url('/') }}">
+                <img src="{{ app_setting()->logo }}" alt="Main Logo" class="h-12 w-auto drop-shadow-lg" />
             </a>
         </div>
+    </div>
 
-        <!-- News Slots Section - Takes half width -->
-        <div class="w-1/2 flex">
-            <!-- First Segment - Probash Janala -->
-            <a href="{{ __url('account/probashi-news') }}" class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
-                    <img src="{{ asset('assets/probash-janala.png') }}"
-                        alt="Probash janala"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">প্রবাস জানালা</p>
-                        <p class="text-gray-600 text-xs truncate">আপনার প্রিয় সংবাদ মাধ্যম</p>
-                    </div>
+
+    <!-- News Slots Section - Takes 2/3 width -->
+    <div class="w-2/3 flex" style="gap: 30px;">
+
+        <!-- First Segment - Probash Janala -->
+        <a href="{{ __url('account/probashi-news') }}" class="flex-1 group transform transition duration-300 hover:-translate-y-1">
+            <div class="h-14 flex items-center space-x-2 px-3 bg-gradient-to-r from-red-100 to-red-200 rounded-2xl border border-red-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <img src="{{ asset('assets/n.jpeg') }}"
+                    alt="Probash janala"
+                    class="w-14 h-12 object-contain flex-shrink-0 drop-shadow-md">
+                <div class="flex-1 min-w-0">
+                   <marquee class="text-red-700 font-medium text-sm leading-tight">আপনার প্রিয় সংবাদ মাধ্যম</marquee>
                 </div>
-            </a>
+            </div>
+        </a>
 
-            <!-- Second Segment - TV Frame with Video Playlist -->
-            <div class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
-                    <!-- TV Frame Container -->
-                    <div class="tv-frame-container">
-                        <!-- TV Frame Background -->
-                        <img src="{{ asset('assets/probash-tv.png') }}"
-                            alt="TV Frame"
-                            class="h-24 w-40 object-contain relative z-10">
-
-                        <!-- Video Playlist - Centered within TV frame -->
+        <!-- Second Segment - TV Frame with Video Playlist -->
+        <div class="flex-1 transform transition duration-300 hover:-translate-y-1">
+            <div class="h-14 flex items-center space-x-3 px-3 bg-gradient-to-r from-blue-100 to-blue-200 rounded-2xl border border-blue-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <!-- Compact TV Frame Container -->
+                <div class="relative flex-shrink-0 mr-2">
+                    <div class="w-14 h-10 bg-black rounded-md overflow-hidden border border-gray-800 shadow-inner">
                         @php
                         $newsVideos = get_probashi_news(5);
-
                         $videoList = [];
                         foreach($newsVideos as $news) {
-                        if(!empty($news->video)) {
-                        $videoList[] = $news->video;
-                        }
+                            if(!empty($news->video)) {
+                                $videoList[] = $news->video;
+                            }
                         }
                         @endphp
 
                         @if(!empty($videoList))
                         <video
                             id="tvFrameVideo"
-                            class="tv-frame-video"
-                            autoplay
-                            muted
-                            playsinline
-                            preload="metadata"
-                            loop
+                            class="w-full h-full object-cover"
+                            autoplay muted playsinline preload="metadata" loop
                             data-playlist="{{ json_encode($videoList) }}">
                             <source src="{{ asset('storage/'.$videoList[0]) }}" type="video/mp4">
-                            Your browser does not support the video tag.
                         </video>
                         @else
-                        <!-- Fallback video if no news videos available -->
                         <video
                             id="tvFrameVideo"
-                            class="tv-frame-video"
-                            autoplay
-                            muted
-                            loop
-                            playsinline
-                            preload="metadata">
+                            class="w-full h-full object-cover"
+                            autoplay muted loop playsinline preload="metadata">
                             <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
                         </video>
                         @endif
                     </div>
+                    <!-- Live indicator -->
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white animate-ping"></div>
                 </div>
-            </div>
 
-            <!-- Third Segment - News -->
-            <div class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
-                    @php
-                    $news = get_probashi_news(1)->first();
-                    @endphp
-                    @if ($news)
-                
-
-                        <img src="{{ asset('assets/ami-sangbadik.png') }}"
-                        alt="Probash janala"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">{{ Str::limit($news->title, 25) }}</p>
-                        <p class="text-gray-600 text-xs truncate">{{ $news->publish_date->format('M d, Y') }}</p>
-                    </div>
-                    @else
-                    <img src="{{ asset('assets/default-news-image.png') }}"
-                        alt="No News"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">No News Available</p>
-                        <p class="text-gray-600 text-xs truncate">Check back later</p>
-                    </div>
-                    @endif
+                <div class="flex-1 min-w-0">
+                    <p class="text-blue-700 font-semibold text-sm truncate leading-tight">প্রবাস টিভি</p>
+                    <p class="text-gray-600 text-xs truncate leading-tight">24/7 সরাসরি সম্প্রচার</p>
                 </div>
             </div>
         </div>
-    </section>
+
+        <!-- Third Segment - Latest News -->
+        <div class="flex-1 transform transition duration-300 hover:-translate-y-1">
+            <div class="h-14 flex items-center space-x-3 px-3 bg-gradient-to-r from-green-100 to-green-200 rounded-2xl border border-green-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                @php
+                $news = get_probashi_news(1)->first();
+                @endphp
+                @if ($news)
+                <img src="{{ asset('assets/ami-sangbadik.png') }}"
+                    alt="News"
+                    class="w-9 h-9 object-contain flex-shrink-0 drop-shadow-md">
+                <div class="flex-1 min-w-0 ml-2 mr-2">
+                    <a href="http://10.10.10.139:8080/%E0%A6%AE%E0%A6%BE%E0%A6%9B%E0%A7%87%E0%A6%B0%E0%A6%98%E0%A7%87%E0%A6%B0%E0%A7%87%E0%A6%B0%E0%A6%AE%E0%A6%BE%E0%A6%9A%E0%A6%BE%E0%A7%9F%E0%A6%9D%E0%A7%81%E0%A6%B2%E0%A6%9B%E0%A7%87%E0%A6%A4%E0%A6%B0%E0%A6%AE%E0%A7%81%E0%A6%9C"><marquee class="text-green-700 font-semibold text-sm truncate leading-tight">{{ Str::limit($news->title, 24) }}</marquee></a>
+                    <p class="text-gray-600 text-xs truncate leading-tight">{{ $news->publish_date->format('M d, Y') }}</p>
+                </div>
+                <img src="{{ asset('assets/n.jpeg') }}"
+                    alt="News"
+                    class="w-9 h-9 object-contain flex-shrink-0 drop-shadow-md">
+                @else
+                <img src="{{ asset('assets/default-news-image.png') }}"
+                    alt="No News"
+                    class="w-9 h-9 object-contain flex-shrink-0 opacity-70">
+                <div class="flex-1 min-w-0">
+                    <p class="text-gray-500 font-medium text-sm truncate leading-tight">No News Available</p>
+                    <p class="text-gray-400 text-xs truncate leading-tight">Check back later</p>
+                </div>
+                <img src="{{ asset('assets/n.jpeg') }}"
+                    alt="No News"
+                    class="w-9 h-9 object-contain flex-shrink-0 opacity-70">
+                @endif
+            </div>
+        </div>
+    </div>
+</section>
+
+
     <br>
 
     {{-- Menu section --}}

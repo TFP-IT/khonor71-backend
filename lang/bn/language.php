@@ -2049,4 +2049,11 @@
   'back_to_list' => 'Back to list',
   'probashi_janala' => 'Probashi janala',
   'news_uploaded_successfully' => 'News uploaded successfully',
+  'rss_and_sitemap_link' => 'Rss and sitemap link',
+  'rss_link' => 'Rss link',
+  'rss_link_share_note' => 'Rss link share note',
+  'google_news_publisher' => 'Google news publisher',
+  'rss_feed' => 'Rss feed',
+  'google_news_publisher_rss_note' => 'Google news publisher rss note',
+  'help_guide' => 'Help guide',
 );
