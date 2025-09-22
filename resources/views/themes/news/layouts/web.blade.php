@@ -203,8 +203,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         .news-container {
             flex: 0 0 66.666%;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 0.5fr 1fr 1fr 1fr;
+            /* gap: 20px; */
             padding-left: 0px;
             /* Remove align-items: center; to allow consistent heights */
             height: 120px;
@@ -213,14 +213,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         /* Section Base Styles - Set consistent height */
         .news-section {
-            background: rgba(255, 255, 255, 0.95);
+            /* background: rgba(255, 255, 255, 0.95); */
             border-radius: 16px;
             padding: 16px;
-            transform: perspective(1000px) rotateY(-2deg);
+            /* transform: perspective(1000px) rotateY(-2deg);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow:
                 0 10px 25px rgba(0, 0, 0, 0.1),
-                0 4px 10px rgba(0, 0, 0, 0.05);
+                0 4px 10px rgba(0, 0, 0, 0.05); */
             position: relative;
             overflow: hidden;
             height: 120px;
@@ -236,7 +236,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            /* background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent); */
             transition: left 0.5s ease;
         }
 
@@ -245,10 +245,10 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .news-section:hover {
-            transform: perspective(1000px) rotateY(0deg) translateY(-8px);
-            box-shadow:
+            /* transform: perspective(1000px) rotateY(0deg) translateY(-8px); */
+            /* box-shadow:
                 0 20px 40px rgba(0, 0, 0, 0.15),
-                0 8px 20px rgba(0, 0, 0, 0.1);
+                0 8px 20px rgba(0, 0, 0, 0.1); */
         }
 
         /* Probash Janala Section - Maintain existing styling */
@@ -280,7 +280,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         .news-title {
             font-size: 12px;
             font-weight: bold;
-            color: #333;
             margin-bottom: 8px;
             line-height: 1.3;
             flex: 0 0 auto;
@@ -315,7 +314,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         /* TV Section - Fixed height layout */
         .tv-section {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            /* background: linear-gradient(135deg, #4ecdc4, #44a08d); */
             color: white;
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -350,9 +349,9 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .tv-frame-bg {
-            width: 90px;
+            width: 120px;
             /* Slightly reduced for better fit */
-            height: 64px;
+            height: 90px;
             /* Adjusted proportionally */
             object-fit: contain;
             position: relative;
@@ -364,8 +363,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             top: 58%;
             left: 45%;
             transform: translate(-50%, -50%);
-            width: 72%;
-            height: 42%;
+            width: 75%;
+            height: 52%;
             object-fit: cover;
             border-radius: 2px;
             z-index: 10;
@@ -398,7 +397,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             border-radius: 4px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            width: 80%;
+            width: 60%;
             margin: 0 auto;
             min-height: 0;
         }
@@ -411,7 +410,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         /* Ami Sangbadik Section - Fixed height layout */
         .sangbadik-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* background: linear-gradient(135deg, #667eea, #764ba2); */
             color: white;
             display: grid;
             grid-template-columns: auto 1fr;
@@ -580,7 +579,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             <div class="news-section">
                 <div class="news-article">
                     @if($latestNews)
-                    <div class="news-title">{{ Str::limit($latestNews->title, 60) }}</div>
+                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($latestNews->title, 100) }}</div>
                     <div class="news-image">
                         @if($latestNews->image)
                         <img src="{{ asset('storage/'.$latestNews->image) }}" alt="News Image">
@@ -651,7 +650,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     $tvNews = get_probashi_news(1)->skip(1)->first();
                     @endphp
                     @if($tvNews)
-                    <div class="tv-news-title">{{ Str::limit($tvNews->title, 40) }}</div>
+                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($tvNews->title, 40) }}</div>
                     <div class="tv-news-image">
                         @if($tvNews->image)
                         <img src="{{ asset('storage/'.$tvNews->image) }}" alt="TV News">
@@ -660,7 +659,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endif
                     </div>
                     @else
-                    <div class="tv-news-title">{{ mb_substr('চোখের সামনে সন্তান অচল হয়ে পড়লেও কিছু করার থাকে না মা–বাবার', 0, 25, 'UTF-8') }}</div>
+                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ mb_substr('চোখের সামনে সন্তান অচল হয়ে পড়লেও কিছু করার থাকে না মা–বাবার', 0, 25, 'UTF-8') }}</div>
                     <div class="tv-news-image">
                         <img src="https://static.dnschecker.org/content/DNSChecker%20QR%20code%20for%20QR%20code%20scanner.png" alt="TV News">
                     </div>
@@ -676,7 +675,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     $sangbadikNews = get_probashi_news(1)->skip(2)->first();
                     @endphp
                     @if($sangbadikNews)
-                    <div class="sangbadik-title">{{ Str::limit($sangbadikNews->title, 35) }}</div>
+                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($sangbadikNews->title, 35) }}</div>
                     <div class="sangbadik-image">
                         @if($sangbadikNews->image)
                         <img src="{{ asset('storage/'.$sangbadikNews->image) }}" alt="Sangbadik News">
@@ -685,7 +684,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endif
                     </div>
                     @else
-                    <div class="sangbadik-title">আমি সংবাদিক Latest Report</div>
+                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">আমি সংবাদিক Latest Report</div>
                     <div class="sangbadik-image">
                         <img src="https://placehold.co/600x400" alt="Sangbadik News">
                     </div>
