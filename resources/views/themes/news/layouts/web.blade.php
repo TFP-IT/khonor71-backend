@@ -199,10 +199,164 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             }
         }
 
-        /* TV Frame Video Styles */
+        /* News Container - Remove center alignment and set consistent height */
+        .news-container {
+            flex: 0 0 66.666%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            padding-left: 0px;
+            /* Remove align-items: center; to allow consistent heights */
+            height: 120px;
+            /* Set consistent container height */
+        }
+
+        /* Section Base Styles - Set consistent height */
+        .news-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 16px;
+            transform: perspective(1000px) rotateY(-2deg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.1),
+                0 4px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            height: 120px;
+            /* Fixed height for all sections */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .news-section:hover::before {
+            left: 100%;
+        }
+
+        .news-section:hover {
+            transform: perspective(1000px) rotateY(0deg) translateY(-8px);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.15),
+                0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Probash Janala Section - Maintain existing styling */
+        .probash-section {
+            color: white;
+            text-align: center;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 120px;
+            /* Match container height */
+        }
+
+        .probash-logo {
+            height: 80px;
+            /* Adjust to fit within section */
+            max-width: 100%;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* News Article Section - Fixed height layout */
+        .news-article {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Fill the section */
+        }
+
+        .news-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            flex: 0 0 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 32px;
+            /* Limit title height */
+        }
+
+        .news-image {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 0;
+            /* Allow flex shrinking */
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .news-section:hover .news-image img {
+            transform: scale(1.05);
+        }
+
+        /* TV Section - Fixed height layout */
+        .tv-section {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 12px;
+            height: 120px;
+            /* Fixed height */
+        }
+
+        /* TV Frame Styles */
+        .tv-frame {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+
         .tv-frame-container {
             position: relative;
             display: inline-block;
+            transition: transform 0.3s ease-in-out;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tv-frame-container:hover {
+            transform: scale(1.05);
+        }
+
+        .tv-frame-bg {
+            width: 90px;
+            /* Slightly reduced for better fit */
+            height: 64px;
+            /* Adjusted proportionally */
+            object-fit: contain;
+            position: relative;
+            z-index: 10;
         }
 
         .tv-frame-video {
@@ -210,40 +364,139 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             top: 58%;
             left: 45%;
             transform: translate(-50%, -50%);
-            width: 75%;
-            /* Adjust based on your TV frame's screen area */
-            height: 60%;
-            /* Adjust based on your TV frame's screen area */
+            width: 72%;
+            height: 42%;
             object-fit: cover;
             border-radius: 2px;
             z-index: 10;
             transition: all 0.3s ease;
         }
 
-        .tv-frame-container {
-            transition: transform 0.3s ease-in-out;
+        .tv-news {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
 
-        .tv-frame-container:hover {
-            /* smooth hover effect */
-            transform: scale(1.05);
+        .tv-news-title {
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            flex: 0 0 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
-        /* Ensure video doesn't show controls on mobile */
-        .tv-frame-video::-webkit-media-controls {
-            display: none !important;
+        .tv-news-image {
+            flex: 1;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            margin: 0 auto;
+            min-height: 0;
         }
 
-        .tv-frame-video::-webkit-media-controls-panel {
-            display: none !important;
+        .tv-news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .tv-frame-video::-webkit-media-controls-play-button {
-            display: none !important;
+        /* Ami Sangbadik Section - Fixed height layout */
+        .sangbadik-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px;
+            align-items: stretch;
+            /* Change from center to stretch */
+            height: 120px;
+            /* Fixed height */
         }
 
-        .tv-frame-video::-webkit-media-controls-start-playback-button {
-            display: none !important;
+        .sangbadik-logo {
+            width: 64px;
+            /* Slightly reduced */
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            align-self: center;
+        }
+
+        .sangbadik-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .sangbadik-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+            flex: 0 0 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .sangbadik-image {
+            flex: 1;
+
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            height: 48px;
+            margin: 0 auto;
+            min-height: 0;
+        }
+
+        .sangbadik-image img {
+            width: 100%;
+            height: 80%;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .news-container {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                height: auto;
+                /* Allow natural height on smaller screens */
+            }
+
+            .news-section {
+                height: 120px;
+                /* Maintain consistent height */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding-left: 0;
+                height: auto;
+                /* Allow natural stacking */
+            }
+
+            .news-section {
+                height: 120px;
+                /* Maintain consistent height */
+            }
         }
     </style>
 
@@ -303,8 +556,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
     <br>
     <section class="container hidden xl:flex justify-between items-center my-2">
-        <!-- Brand Logo - Takes half width -->
-        <div class="w-1/2 flex justify-start">
+        <!-- Brand Logo - Takes 1/3 width -->
+        <div class="flex-none w-1/3 flex justify-start">
             <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
                 <img src="{{ app_setting()->footer_logo }}" alt="" class="h-10 w-auto" />
             </a>
@@ -313,35 +566,49 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             </a>
         </div>
 
-        <!-- News Slots Section - Takes half width -->
-        <div class="w-1/2 flex">
-            <!-- First Segment - Probash Janala -->
-            <a href="{{ __url('account/probashi-news') }}" class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
-                    <img src="{{ asset('assets/probash-janala.png') }}"
-                        alt="Probash janala"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">প্রবাস জানালা</p>
-                        <p class="text-gray-600 text-xs truncate">আপনার প্রিয় সংবাদ মাধ্যম</p>
-                    </div>
-                </div>
-            </a>
+        <!-- News Sections Container - Takes 2/3 width -->
+        <div class="news-container">
+            <!-- 1. Probash Janala Logo Section -->
+            <div class="probash-section">
+                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
+            </div>
 
-            <!-- Second Segment - TV Frame with Video Playlist -->
-            <div class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
+            <!-- 2. News Article Section -->
+            @php
+            $latestNews = get_probashi_news(1)->first();
+            @endphp
+            <div class="news-section">
+                <div class="news-article">
+                    @if($latestNews)
+                    <div class="news-title">{{ Str::limit($latestNews->title, 60) }}</div>
+                    <div class="news-image">
+                        @if($latestNews->image)
+                        <img src="{{ asset('storage/'.$latestNews->image) }}" alt="News Image">
+                        @else
+                        <img src="https://placehold.co/600x400" alt="Default News">
+                        @endif
+                    </div>
+                    @else
+                    <div class="news-title">No News Available</div>
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400" alt="No News">
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- 3. TV Section with News -->
+            <div class="news-section tv-section">
+                <div class="tv-frame">
                     <!-- TV Frame Container -->
                     <div class="tv-frame-container">
                         <!-- TV Frame Background -->
                         <img src="{{ asset('assets/probash-tv.png') }}"
                             alt="TV Frame"
-                            class="h-24 w-40 object-contain relative z-10">
-
+                            class="tv-frame-bg">
                         <!-- Video Playlist - Centered within TV frame -->
                         @php
                         $newsVideos = get_probashi_news(5);
-
                         $videoList = [];
                         foreach($newsVideos as $news) {
                         if(!empty($news->video)) {
@@ -379,31 +646,48 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endif
                     </div>
                 </div>
-            </div>
-
-            <!-- Third Segment - News -->
-            <div class="flex-1">
-                <div class="h-10 flex items-center justify-center px-2">
+                <div class="tv-news">
                     @php
-                    $news = get_probashi_news(1)->first();
+                    $tvNews = get_probashi_news(1)->skip(1)->first();
                     @endphp
-                    @if ($news)
-                
-
-                        <img src="{{ asset('assets/ami-sangbadik.png') }}"
-                        alt="Probash janala"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">{{ Str::limit($news->title, 25) }}</p>
-                        <p class="text-gray-600 text-xs truncate">{{ $news->publish_date->format('M d, Y') }}</p>
+                    @if($tvNews)
+                    <div class="tv-news-title">{{ Str::limit($tvNews->title, 40) }}</div>
+                    <div class="tv-news-image">
+                        @if($tvNews->image)
+                        <img src="{{ asset('storage/'.$tvNews->image) }}" alt="TV News">
+                        @else
+                        <img src="{{ asset('assets/default-news-image.png') }}" alt="Default TV News">
+                        @endif
                     </div>
                     @else
-                    <img src="{{ asset('assets/default-news-image.png') }}"
-                        alt="No News"
-                        class="w-16 h-auto object-contain mr-2">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-red-500 text-sm truncate">No News Available</p>
-                        <p class="text-gray-600 text-xs truncate">Check back later</p>
+                    <div class="tv-news-title">{{ mb_substr('চোখের সামনে সন্তান অচল হয়ে পড়লেও কিছু করার থাকে না মা–বাবার', 0, 25, 'UTF-8') }}</div>
+                    <div class="tv-news-image">
+                        <img src="https://static.dnschecker.org/content/DNSChecker%20QR%20code%20for%20QR%20code%20scanner.png" alt="TV News">
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- 4. Ami Sangbadik Section -->
+            <div class="news-section sangbadik-section">
+                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+                <div class="sangbadik-content">
+                    @php
+                    $sangbadikNews = get_probashi_news(1)->skip(2)->first();
+                    @endphp
+                    @if($sangbadikNews)
+                    <div class="sangbadik-title">{{ Str::limit($sangbadikNews->title, 35) }}</div>
+                    <div class="sangbadik-image">
+                        @if($sangbadikNews->image)
+                        <img src="{{ asset('storage/'.$sangbadikNews->image) }}" alt="Sangbadik News">
+                        @else
+                        <img src="{{ asset('assets/default-news-image.png') }}" alt="Default Report">
+                        @endif
+                    </div>
+                    @else
+                    <div class="sangbadik-title">আমি সংবাদিক Latest Report</div>
+                    <div class="sangbadik-image">
+                        <img src="https://placehold.co/600x400" alt="Sangbadik News">
                     </div>
                     @endif
                 </div>
