@@ -203,12 +203,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         .news-container {
             flex: 0 0 66.666%;
             display: grid;
-            grid-template-columns: 0.5fr 1fr 1fr 1fr;
+            grid-template-columns: 0.5fr 0.75fr 1fr 1fr;
             /* gap: 20px; */
             padding-left: 0px;
             /* Remove align-items: center; to allow consistent heights */
             height: 120px;
             /* Set consistent container height */
+            border: 2px solid #B91C1C;
+            border-radius: 16px;
         }
 
         /* Section Base Styles - Set consistent height */
@@ -226,7 +228,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             height: 120px;
             /* Fixed height for all sections */
             display: flex;
-            flex-direction: column;
+            flex-direction: column;     
         }
 
         .news-section::before {
@@ -256,7 +258,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             color: white;
             text-align: center;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
             height: 120px;
             /* Match container height */
@@ -314,14 +316,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         /* TV Section - Fixed height layout */
         .tv-section {
-            /* background: linear-gradient(135deg, #4ecdc4, #44a08d); */
+
             color: white;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: 2fr 1fr;
+            gap: 4px;
             padding: 12px;
             height: 120px;
-            /* Fixed height */
+
         }
 
         /* TV Frame Styles */
@@ -336,12 +338,13 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         .tv-frame-container {
             position: relative;
-            display: inline-block;
-            transition: transform 0.3s ease-in-out;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100%;
+            overflow: visible;
+            /* Allow top/bottom overflow */
+            transition: transform 0.3s ease-in-out;
         }
 
         .tv-frame-container:hover {
@@ -349,22 +352,23 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .tv-frame-bg {
-            width: 120px;
-            /* Slightly reduced for better fit */
-            height: 90px;
-            /* Adjusted proportionally */
-            object-fit: contain;
+            width: 80%;
+            /* Full width */
+            height: auto;
+            /* Let height adjust automatically */
+            object-fit: cover;
+            /* Ensure the image scales properly */
             position: relative;
             z-index: 10;
         }
 
         .tv-frame-video {
             position: absolute;
-            top: 58%;
-            left: 45%;
+            top: 60%;
+            left: 46%;
             transform: translate(-50%, -50%);
-            width: 75%;
-            height: 52%;
+            width: 60%;
+            height: 65%;
             object-fit: cover;
             border-radius: 2px;
             z-index: 10;
@@ -397,7 +401,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             border-radius: 4px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            width: 60%;
+            width: 80%;
             margin: 0 auto;
             min-height: 0;
         }
@@ -422,7 +426,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .sangbadik-logo {
-            width: 64px;
+            width: 48px;
             /* Slightly reduced */
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
@@ -452,7 +456,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         .sangbadik-image {
             flex: 1;
-
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             width: 100%;
@@ -463,7 +466,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         .sangbadik-image img {
             width: 100%;
-            height: 80%;
+            height: 72px;
             border-radius: 4px;
             object-fit: cover;
         }
@@ -553,7 +556,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     </section>
     --}}
 
-    <br>
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo - Takes 1/3 width -->
         <div class="flex-none w-1/3 flex justify-start">
@@ -693,7 +695,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             </div>
         </div>
     </section>
-    <br>
+
 
     {{-- Menu section --}}
     @include('themes.news.layouts.header.top-menu')
