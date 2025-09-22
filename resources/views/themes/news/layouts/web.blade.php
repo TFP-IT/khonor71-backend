@@ -209,14 +209,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             /* Remove align-items: center; to allow consistent heights */
             height: 120px;
             /* Set consistent container height */
-            border: 2px solid #B91C1C;
-            border-radius: 16px;
+            /* border: 2px solid #B91C1C; */
+            /* border-radius: 16px; */
         }
 
         /* Section Base Styles - Set consistent height */
         .news-section {
             /* background: rgba(255, 255, 255, 0.95); */
-            border-radius: 16px;
+            /* border-radius: 16px; */
             padding: 16px;
             /* transform: perspective(1000px) rotateY(-2deg);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -229,6 +229,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             /* Fixed height for all sections */
             display: flex;
             flex-direction: column;     
+        }
+
+        .probash-category-section {
+            /* border left top bottom not right  */
+            border: 2px solid #B91C1C;
+            border-right: none;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
         }
 
         .news-section::before {
@@ -265,7 +273,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .probash-logo {
-            height: 80px;
+            height: 90%;
             /* Adjust to fit within section */
             max-width: 100%;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
@@ -308,6 +316,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s ease;
+            object-position: top;
         }
 
         .news-section:hover .news-image img {
@@ -316,14 +325,15 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         /* TV Section - Fixed height layout */
         .tv-section {
-
             color: white;
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 4px;
             padding: 12px;
             height: 120px;
-
+            border: 2px solid #B91C1C;
+            border-right: none;
+            border-left: none;
         }
 
         /* TV Frame Styles */
@@ -423,6 +433,11 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             /* Change from center to stretch */
             height: 120px;
             /* Fixed height */
+
+            border: 2px solid #B91C1C;
+            border-left: none;
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
         }
 
         .sangbadik-logo {
@@ -469,6 +484,12 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             height: 72px;
             border-radius: 4px;
             object-fit: cover;
+            object-position: top;
+            transition: transform 0.3s ease;
+        }
+
+        .sangbadik-image img:hover {
+            transform: scale(1.05);
         }
 
         /* Responsive Design */
@@ -578,7 +599,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             @php
             $latestNews = get_probashi_news(1)->first();
             @endphp
-            <div class="news-section">
+            <div class="news-section probash-category-section">
                 <div class="news-article">
                     @if($latestNews)
                     <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($latestNews->title, 100) }}</div>
@@ -586,7 +607,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @if($latestNews->image)
                         <img src="{{ asset('storage/'.$latestNews->image) }}" alt="News Image">
                         @else
-                        <img src="https://placehold.co/600x400" alt="Default News">
+                        <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-09-21%2Fa18d81qv%2FPak-Saudi.png?rect=0%2C35%2C536%2C357&w=622&auto=format%2Ccompress&fmt=avif" alt="Default News">
                         @endif
                     </div>
                     @else
@@ -661,7 +682,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endif
                     </div>
                     @else
-                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ mb_substr('চোখের সামনে সন্তান অচল হয়ে পড়লেও কিছু করার থাকে না মা–বাবার', 0, 25, 'UTF-8') }}</div>
+                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit('পাক–সৌদি প্রতিরক্ষা চুক্তি নিয়ে আমাদের উচ্ছ্বসিত হবার কিছু আছে কি', 40) }}</div>
                     <div class="tv-news-image">
                         <img src="https://static.dnschecker.org/content/DNSChecker%20QR%20code%20for%20QR%20code%20scanner.png" alt="TV News">
                     </div>
@@ -688,7 +709,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     @else
                     <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">আমি সংবাদিক Latest Report</div>
                     <div class="sangbadik-image">
-                        <img src="https://placehold.co/600x400" alt="Sangbadik News">
+                        <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-06-20%2Fhtu0rcby%2FPAK%E2%80%93MISSILE.avif?rect=0%2C0%2C585%2C390&w=622&auto=format%2Ccompress&fmt=avif" alt="Sangbadik News">
                     </div>
                     @endif
                 </div>
