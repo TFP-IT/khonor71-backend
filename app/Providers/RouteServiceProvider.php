@@ -18,7 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = PanelPrefixEnum::ADMIN->value.'/dashboard';
+    public const HOME = 'admin/dashboard';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
