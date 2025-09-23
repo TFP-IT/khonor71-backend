@@ -441,7 +441,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         .sangbadik-logo {
-            width: 48px;
+            width: 60px;
             /* Slightly reduced */
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
@@ -581,10 +581,10 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         <!-- Brand Logo - Takes 1/3 width -->
         <div class="flex-none w-1/3 flex justify-start">
             <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->footer_logo }}" alt="" class="h-10 w-auto" />
+                <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto" style="height: 7rem;" />
             </a>
             <a class="dark:hidden flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->logo }}" alt="" class="h-10 w-auto" />
+                <img src="{{ app_setting()->logo }}" alt="" class="w-auto" style="height: 7rem;" />
             </a>
         </div>
 
@@ -707,7 +707,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endif
                     </div>
                     @else
-                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">আমি সংবাদিক Latest Report</div>
+                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit("যুক্তরাষ্ট্রের বামপন্থী আন্দোলন অ্যান্টিফাকে সন্ত্রাসী সংগঠন ঘোষণা ট্রাম্পের", 40) }}</div>
                     <div class="sangbadik-image">
                         <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-06-20%2Fhtu0rcby%2FPAK%E2%80%93MISSILE.avif?rect=0%2C0%2C585%2C390&w=622&auto=format%2Ccompress&fmt=avif" alt="Sangbadik News">
                     </div>
