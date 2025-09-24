@@ -25,6 +25,7 @@ class ProbashiNews extends Model
         'total_view',
         'title',
         'details',
+        'encode_title',
         'thumbnail_image',
         'image_alt',
         'image_title',

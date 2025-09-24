@@ -286,6 +286,31 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             transform: scale(1.05);
         }
 
+        /* News Rotator */
+        .news-rotator {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .news-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-item.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* TV Section */
         .tv-section {
             color: white;
@@ -497,14 +522,17 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 height: 120px;
             }
 
+            .news-title,
             .sangbadik-title {
                 font-size: 9px;
             }
 
+            .news-image,
             .sangbadik-image {
                 height: 40px;
             }
 
+            .news-image img,
             .sangbadik-image img {
                 height: 100%;
             }
@@ -562,23 +590,31 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
             <!-- 2. News Article Section -->
             @php
-            $latestNews = get_probashi_news(5)->first();
+            $categoryNewsItems = get_probash_category_news(5);
             @endphp
             <div class="news-section probash-category-section">
-                <div class="news-article">
-                    @if($latestNews)
-                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($latestNews->title, 100) }}</div>
-                    <div class="news-image">
-                        @if($latestNews->image)
-                        <img src="{{ asset('storage/'.$latestNews->image) }}" alt="News Image">
-                        @else
-                        <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-09-21%2Fa18d81qv%2FPak-Saudi.png?rect=0%2C35%2C536%2C357&w=622&auto=format%2Ccompress&fmt=avif" alt="Default News">
-                        @endif
+                <div class="news-rotator">
+                    @if($categoryNewsItems->isNotEmpty())
+                    @foreach($categoryNewsItems as $index => $news)
+                    <div class="news-item {{ $index === 0 ? 'active' : '' }}">
+                        <a href="{{ __url($news->encode_title) }}" class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            {{ Str::limit($news->title, 100) }}
+                        </a>
+                        <div class="news-image">
+                            @if($news->image)
+                            <a href="{{ __url($news->encode_title) }}"><img src="{{ asset('storage/images/thumb/'.$news->image) }}" alt="News Image"></a>
+                            @else
+                            <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default News">
+                            @endif
+                        </div>
                     </div>
+                    @endforeach
                     @else
-                    <div class="news-title">No News Available</div>
-                    <div class="news-image">
-                        <img src="https://placehold.co/600x400" alt="No News">
+                    <div class="news-item active">
+                        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            No News Available
+                        </div>
+                        
                     </div>
                     @endif
                 </div>
@@ -660,11 +696,15 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @foreach($sangbadikNewsItems as $index => $news)
                         <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}">
                             <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                                {{ Str::limit($news->title, 35) }}
+                                <a href="{{ __url($news->encode_title) }}">
+                                    {{ Str::limit($news->title, 35) }}
+                                </a>
                             </div>
                             <div class="sangbadik-image">
                                 @if($news->thumbnail_image)
-                                <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
+                                <a href="{{ __url($news->encode_title) }}">
+                                    <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
+                                </a>
                                 @else
                                 <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
                                 @endif
@@ -673,12 +713,10 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         @endforeach
                     </div>
                     @else
-                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                        {{ Str::limit("যুক্তরাষ্ট্রের বামপন্থী আন্দোলন অ্যান্টিফাকে সন্ত্রাসী সংগঠন ঘোষণা ট্রাম্পের", 40) }}
-                    </div>
-                    <div class="sangbadik-image">
-                        <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Sangbadik News">
-                    </div>
+                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            No News Available
+                        </div>
+                    
                     @endif
                 </div>
             </div>
@@ -734,28 +772,41 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         const ajaxPollVoteUrl = "{{ route('ajax.poll.vote') }}";
         const ajaxPollResultUrl = "{{ route('ajax.poll.result', ['poll' => '__POLL_ID__']) }}";
 
-        // Sangbadik News Rotator
+        // News Article and Sangbadik News Rotator
         document.addEventListener('DOMContentLoaded', function() {
-            const rotator = document.querySelector('.sangbadik-news-rotator');
-            if (rotator) {
-                const newsItems = rotator.querySelectorAll('.sangbadik-news-item');
+            // News Article Rotator
+            const newsRotator = document.querySelector('.news-rotator');
+            if (newsRotator) {
+                const newsItems = newsRotator.querySelectorAll('.news-item');
                 if (newsItems.length > 0) {
-                    let currentIndex = 0;
+                    let currentNewsIndex = 0;
 
                     function showNextNews() {
-                        // Remove active class from current item
-                        newsItems[currentIndex].classList.remove('active');
-                        // Move to next item, loop back to 0 if at the end
-                        currentIndex = (currentIndex + 1) % newsItems.length;
-                        // Add active class to next item
-                        newsItems[currentIndex].classList.add('active');
+                        newsItems[currentNewsIndex].classList.remove('active');
+                        currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
+                        newsItems[currentNewsIndex].classList.add('active');
                     }
 
-                    // Start the rotation every 5 seconds
                     setInterval(showNextNews, 5000);
-
-                    // Ensure the first item is visible on load
                     newsItems[0].classList.add('active');
+                }
+            }
+
+            // Sangbadik News Rotator
+            const sangbadikRotator = document.querySelector('.sangbadik-news-rotator');
+            if (sangbadikRotator) {
+                const sangbadikNewsItems = sangbadikRotator.querySelectorAll('.sangbadik-news-item');
+                if (sangbadikNewsItems.length > 0) {
+                    let currentSangbadikIndex = 0;
+
+                    function showNextSangbadikNews() {
+                        sangbadikNewsItems[currentSangbadikIndex].classList.remove('active');
+                        currentSangbadikIndex = (currentSangbadikIndex + 1) % sangbadikNewsItems.length;
+                        sangbadikNewsItems[currentSangbadikIndex].classList.add('active');
+                    }
+
+                    setInterval(showNextSangbadikNews, 5000);
+                    sangbadikNewsItems[0].classList.add('active');
                 }
             }
         });

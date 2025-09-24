@@ -63,6 +63,7 @@ public function create()
 
     public function store(Request $request)
     {
+
         $request->validate([
             'language_id' => 'required|exists:languages,id',
             'web_user_id' => 'required|exists:web_users,id',
