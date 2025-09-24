@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Enums\DateFormatEnum;
 use App\Enums\AssetsFolderEnum;
+use App\Models\NewsMst;
 use Modules\Theme\Entities\Theme;
 use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\Entities\AccCoa;
@@ -1150,3 +1151,22 @@ if (!function_exists('get_probashi_news')) {
     }
 }
 
+if (!function_exists('get_probash_category_news')) {
+    function get_probash_category_news($limit = 3)
+    {
+        $languageId = get_language_id();
+
+        // Fetch the latest featured news with post user and comments count
+        $featuresNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
+            ->select(['id', 'news_id', 'encode_title', 'title', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
+            ->withCount('comments')
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('category_id', 92) // Probashi Janala category ID
+            ->where('status', 1)
+            ->latest('created_at')
+            ->first();
+dd($featuresNews);
+        return $featuresNews;
+    }
+}
