@@ -19,6 +19,7 @@ use Modules\Setting\Entities\Setting;
 use Modules\RssFeeds\Entities\RssFeed;
 use Modules\Category\Entities\Category;
 use Modules\Archive\Entities\NewsArchive;
+use Modules\ProbashiJanala\Entities\ProbashiNews;
 use Modules\VideoNews\Entities\VideoNews;
 use willvincent\Feeds\Facades\FeedsFacade;
 
@@ -315,6 +316,75 @@ class HomeDataService
 
         // Get recent 12 posts excluding current one
         $recentPosts = VideoNews::where('id', '!=', $videoNews->id)
+            ->where('language_id', $languageId)
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->orderBy('id', 'desc')
+            ->take(12)
+            ->get();
+
+        $popularNews = $this->getPopularNews();
+        $topWeekNews = $this->getTopWeekNews();
+        $votingPoll = $this->getVotingPoll();
+
+        $currentNewsId = $videoNews->id;
+        $approvedCommentsCount = NewsComment::where('video_news_id', $currentNewsId)->where('is_approved', 1)->count();
+        $comments = NewsComment::with([
+                'user',
+                'replies.user'
+            ])
+            ->where('video_news_id', $currentNewsId)
+            ->where('is_approved', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return compact(
+            'videoNews',
+            'previousNews',
+            'nextNews',
+            'recentPosts',
+            'popularNews',
+            'topWeekNews',
+            'votingPoll',
+            'approvedCommentsCount',
+            'comments',
+            'currentNewsId'
+        );
+    }
+
+    public function getProbashiNewsDetails(string $slug)
+    {
+        $languageId = get_language_id();
+
+        $videoNews = ProbashiNews::where('encode_title', $slug)->first();
+
+        if (!$videoNews) {
+            return null;
+        }
+
+        // Increment total_view
+        $videoNews->increment('total_view');
+
+        $previousNews = ProbashiNews::select(['title', 'encode_title', 'thumbnail_image'])
+            ->where('id', '<', $videoNews->id)
+            ->where('language_id', $languageId)
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->orderBy('id', 'desc')
+            ->take(2)
+            ->get();
+
+        $nextNews = ProbashiNews::select(['title', 'encode_title', 'thumbnail_image'])
+            ->where('id', '>', $videoNews->id)
+            ->where('language_id', $languageId)
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->orderBy('id', 'asc')
+            ->take(2)
+            ->get();
+
+        // Get recent 12 posts excluding current one
+        $recentPosts = ProbashiNews::where('id', '!=', $videoNews->id)
             ->where('language_id', $languageId)
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->whereDate('publish_date', '<=', Carbon::today())

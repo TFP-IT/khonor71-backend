@@ -24,22 +24,13 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     {{-- Set CSS Variables --}}
     <style>
         :root {
-            @if ($principalFont) --font-principal: {
-                ! ! $principalFont->font_family ! !
-            }
-
+            @if ($principalFont) --font-principal: {!! $principalFont->font_family !!}
             ;
-
-            @endif @if ($alternateFont) --font-alternate: {
-                ! ! $alternateFont->font_family ! !
-            }
-
+            @endif
+            @if ($alternateFont) --font-alternate: {!! $alternateFont->font_family !!}
             ;
-
-            @endif @if ($supplementaryFont) --font-supplementary: {
-                ! ! $supplementaryFont->font_family ! !
-            }
-
+            @endif
+            @if ($supplementaryFont) --font-supplementary: {!! $supplementaryFont->font_family !!}
             ;
             @endif
         }
@@ -163,7 +154,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             0% {
                 transform: translateX(0%);
             }
-
             100% {
                 transform: translateX(-100%);
             }
@@ -204,35 +194,21 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             flex: 0 0 66.666%;
             display: grid;
             grid-template-columns: 0.5fr 0.75fr 1fr 1fr;
-            /* gap: 20px; */
             padding-left: 0px;
-            /* Remove align-items: center; to allow consistent heights */
             height: 120px;
-            /* Set consistent container height */
-            /* border: 2px solid #B91C1C; */
-            /* border-radius: 16px; */
         }
 
         /* Section Base Styles - Set consistent height */
         .news-section {
-            /* background: rgba(255, 255, 255, 0.95); */
-            /* border-radius: 16px; */
             padding: 16px;
-            /* transform: perspective(1000px) rotateY(-2deg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow:
-                0 10px 25px rgba(0, 0, 0, 0.1),
-                0 4px 10px rgba(0, 0, 0, 0.05); */
             position: relative;
             overflow: hidden;
             height: 120px;
-            /* Fixed height for all sections */
             display: flex;
-            flex-direction: column;     
+            flex-direction: column;
         }
 
         .probash-category-section {
-            /* border left top bottom not right  */
             border: 2px solid #B91C1C;
             border-right: none;
             border-top-left-radius: 16px;
@@ -246,7 +222,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             left: -100%;
             width: 100%;
             height: 100%;
-            /* background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent); */
             transition: left 0.5s ease;
         }
 
@@ -254,14 +229,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             left: 100%;
         }
 
-        .news-section:hover {
-            /* transform: perspective(1000px) rotateY(0deg) translateY(-8px); */
-            /* box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.15),
-                0 8px 20px rgba(0, 0, 0, 0.1); */
-        }
-
-        /* Probash Janala Section - Maintain existing styling */
+        /* Probash Janala Section */
         .probash-section {
             color: white;
             text-align: center;
@@ -269,22 +237,19 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             justify-content: center;
             align-items: center;
             height: 120px;
-            /* Match container height */
         }
 
         .probash-logo {
             height: 90%;
-            /* Adjust to fit within section */
             max-width: 100%;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        /* News Article Section - Fixed height layout */
+        /* News Article Section */
         .news-article {
             display: flex;
             flex-direction: column;
             height: 100%;
-            /* Fill the section */
         }
 
         .news-title {
@@ -299,7 +264,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             max-height: 32px;
-            /* Limit title height */
         }
 
         .news-image {
@@ -308,7 +272,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             min-height: 0;
-            /* Allow flex shrinking */
         }
 
         .news-image img {
@@ -323,7 +286,32 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             transform: scale(1.05);
         }
 
-        /* TV Section - Fixed height layout */
+        /* News Rotator */
+        .news-rotator {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .news-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-item.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* TV Section */
         .tv-section {
             color: white;
             display: grid;
@@ -336,7 +324,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             border-left: none;
         }
 
-        /* TV Frame Styles */
         .tv-frame {
             display: flex;
             flex-direction: column;
@@ -353,7 +340,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             justify-content: center;
             height: 100%;
             overflow: visible;
-            /* Allow top/bottom overflow */
             transition: transform 0.3s ease-in-out;
         }
 
@@ -363,11 +349,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         .tv-frame-bg {
             width: 80%;
-            /* Full width */
             height: auto;
-            /* Let height adjust automatically */
             object-fit: cover;
-            /* Ensure the image scales properly */
             position: relative;
             z-index: 10;
         }
@@ -422,18 +405,14 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             object-fit: cover;
         }
 
-        /* Ami Sangbadik Section - Fixed height layout */
+        /* Ami Sangbadik Section */
         .sangbadik-section {
-            /* background: linear-gradient(135deg, #667eea, #764ba2); */
             color: white;
             display: grid;
             grid-template-columns: auto 1fr;
             gap: 8px;
             align-items: stretch;
-            /* Change from center to stretch */
             height: 120px;
-            /* Fixed height */
-
             border: 2px solid #B91C1C;
             border-left: none;
             border-top-right-radius: 16px;
@@ -442,7 +421,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         .sangbadik-logo {
             width: 60px;
-            /* Slightly reduced */
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
             align-self: center;
@@ -453,6 +431,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             flex-direction: column;
             height: 100%;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
 
         .sangbadik-title {
@@ -492,18 +472,41 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             transform: scale(1.05);
         }
 
+        /* Sangbadik News Rotator */
+        .sangbadik-news-rotator {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .sangbadik-news-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sangbadik-news-item.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .news-container {
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: 1fr 1fr;
                 height: auto;
-                /* Allow natural height on smaller screens */
             }
 
             .news-section {
                 height: 120px;
-                /* Maintain consistent height */
             }
         }
 
@@ -513,12 +516,25 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 gap: 16px;
                 padding-left: 0;
                 height: auto;
-                /* Allow natural stacking */
             }
 
             .news-section {
                 height: 120px;
-                /* Maintain consistent height */
+            }
+
+            .news-title,
+            .sangbadik-title {
+                font-size: 9px;
+            }
+
+            .news-image,
+            .sangbadik-image {
+                height: 40px;
+            }
+
+            .news-image img,
+            .sangbadik-image img {
+                height: 100%;
             }
         }
     </style>
@@ -554,29 +570,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <!-- Top Section -->
     @include('themes.news.layouts.header.top-section')
 
-    {{--
-    <!-- top banner section -->
-    <section class="container hidden xl:flex justify-between items-center my-2">
-        <!-- Brand Logo -->
-        <a class="hidden dark:block w-52 h-10 flex_center " href="{{ __url('/') }}">
-    <img src="{{ app_setting()->footer_logo }}" alt="" />
-    </a>
-    <a class="dark:hidden w-52 h-10 flex_center " href="{{ __url('/') }}">
-        <img src="{{ app_setting()->logo }}" alt="" />
-    </a>
-    <!-- Ad Banner Section -->
-
-    <figure class="w-[660px] h-20 object-cover ">
-        @if ($ad = get_advertisements(1, 1))
-        {!! $ad->embed_code !!}
-        @else
-        <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
-            alt="" />
-        @endif
-    </figure>
-    </section>
-    --}}
-
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo - Takes 1/3 width -->
         <div class="flex-none w-1/3 flex justify-start">
@@ -597,23 +590,31 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
             <!-- 2. News Article Section -->
             @php
-            $latestNews = get_probashi_news(1)->first();
+            $categoryNewsItems = get_probash_category_news(5);
             @endphp
             <div class="news-section probash-category-section">
-                <div class="news-article">
-                    @if($latestNews)
-                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($latestNews->title, 100) }}</div>
-                    <div class="news-image">
-                        @if($latestNews->image)
-                        <img src="{{ asset('storage/'.$latestNews->image) }}" alt="News Image">
-                        @else
-                        <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-09-21%2Fa18d81qv%2FPak-Saudi.png?rect=0%2C35%2C536%2C357&w=622&auto=format%2Ccompress&fmt=avif" alt="Default News">
-                        @endif
+                <div class="news-rotator">
+                    @if($categoryNewsItems->isNotEmpty())
+                    @foreach($categoryNewsItems as $index => $news)
+                    <div class="news-item {{ $index === 0 ? 'active' : '' }}">
+                        <a href="{{ __url($news->encode_title) }}" class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            {{ Str::limit($news->title, 100) }}
+                        </a>
+                        <div class="news-image">
+                            @if($news->image)
+                            <a href="{{ __url($news->encode_title) }}"><img src="{{ asset('storage/images/thumb/'.$news->image) }}" alt="News Image"></a>
+                            @else
+                            <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default News">
+                            @endif
+                        </div>
                     </div>
+                    @endforeach
                     @else
-                    <div class="news-title">No News Available</div>
-                    <div class="news-image">
-                        <img src="https://placehold.co/600x400" alt="No News">
+                    <div class="news-item active">
+                        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            No News Available
+                        </div>
+                        
                     </div>
                     @endif
                 </div>
@@ -622,23 +623,17 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             <!-- 3. TV Section with News -->
             <div class="news-section tv-section">
                 <div class="tv-frame">
-                    <!-- TV Frame Container -->
                     <div class="tv-frame-container">
-                        <!-- TV Frame Background -->
-                        <img src="{{ asset('assets/probash-tv.png') }}"
-                            alt="TV Frame"
-                            class="tv-frame-bg">
-                        <!-- Video Playlist - Centered within TV frame -->
+                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="tv-frame-bg">
                         @php
                         $newsVideos = get_probashi_news(5);
                         $videoList = [];
                         foreach($newsVideos as $news) {
-                        if(!empty($news->video)) {
-                        $videoList[] = $news->video;
-                        }
+                            if(!empty($news->video)) {
+                                $videoList[] = $news->video;
+                            }
                         }
                         @endphp
-
                         @if(!empty($videoList))
                         <video
                             id="tvFrameVideo"
@@ -653,7 +648,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                             Your browser does not support the video tag.
                         </video>
                         @else
-                        <!-- Fallback video if no news videos available -->
                         <video
                             id="tvFrameVideo"
                             class="tv-frame-video"
@@ -670,7 +664,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 </div>
                 <div class="tv-news">
                     @php
-                    $tvNews = get_probashi_news(1)->skip(1)->first();
+                    $tvNews = get_probashi_news(5)->skip(1)->first();
                     @endphp
                     @if($tvNews)
                     <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($tvNews->title, 40) }}</div>
@@ -695,34 +689,44 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
                 <div class="sangbadik-content">
                     @php
-                    $sangbadikNews = get_probashi_news(1)->skip(2)->first();
+                        $sangbadikNewsItems = get_probashi_news(5);
                     @endphp
-                    @if($sangbadikNews)
-                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($sangbadikNews->title, 35) }}</div>
-                    <div class="sangbadik-image">
-                        @if($sangbadikNews->image)
-                        <img src="{{ asset('storage/'.$sangbadikNews->image) }}" alt="Sangbadik News">
-                        @else
-                        <img src="{{ asset('assets/default-news-image.png') }}" alt="Default Report">
-                        @endif
+                    @if($sangbadikNewsItems->isNotEmpty())
+                    <div class="sangbadik-news-rotator">
+                        @foreach($sangbadikNewsItems as $index => $news)
+                        <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}">
+                            <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                                <a href="{{ __url($news->encode_title) }}">
+                                    {{ Str::limit($news->title, 35) }}
+                                </a>
+                            </div>
+                            <div class="sangbadik-image">
+                                @if($news->thumbnail_image)
+                                <a href="{{ __url($news->encode_title) }}">
+                                    <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
+                                </a>
+                                @else
+                                <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                     @else
-                    <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit("যুক্তরাষ্ট্রের বামপন্থী আন্দোলন অ্যান্টিফাকে সন্ত্রাসী সংগঠন ঘোষণা ট্রাম্পের", 40) }}</div>
-                    <div class="sangbadik-image">
-                        <img src="https://media.prothomalo.com/prothomalo-bangla%2F2025-06-20%2Fhtu0rcby%2FPAK%E2%80%93MISSILE.avif?rect=0%2C0%2C585%2C390&w=622&auto=format%2Ccompress&fmt=avif" alt="Sangbadik News">
-                    </div>
+                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            No News Available
+                        </div>
+                    
                     @endif
                 </div>
             </div>
         </div>
     </section>
 
-
     {{-- Menu section --}}
     @include('themes.news.layouts.header.top-menu')
     @include('themes.news.layouts.header.side-menu')
-    @include ('themes.news.layouts.header.mobile-menu')
-
+    @include('themes.news.layouts.header.mobile-menu')
 
     {{ $slot }}
 
@@ -733,32 +737,24 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     @include('themes.news.components.common.cookies')
 
     <!-- Global Modal -->
-    <div id="globalModal"
-        class="fixed inset-0 flex items-center justify-center bg-black/75 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="globalModal" class="fixed inset-0 flex items-center justify-center bg-black/75 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="globalModalContent">
-            <!-- Close Button -->
-            <button id="globalModalClose"
-                class="p-2 text-white bg-red-600 hover:bg-red-800 rounded-full w-8 h-8 flex items-center justify-center absolute top-4 right-4 transition_3">
+            <button id="globalModalClose" class="p-2 text-white bg-red-600 hover:bg-red-800 rounded-full w-8 h-8 flex items-center justify-center absolute top-4 right-4 transition_3">
                 <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path
-                        d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
-                        fill="currentColor" />
+                    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" fill="currentColor" />
                 </svg>
             </button>
-
-            <!-- Dynamic Content Goes Here -->
             <div id="modalBody"></div>
         </div>
     </div>
+
     {{-- Btn scroll To Top --}}
-    <button id="scrollToTopBtn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
-        class="hidden bg-red-600 hover:bg-brand-primary rounded-full w-10 h-10 flex justify-center items-center fixed bottom-4 right-2 hover:-translate-y-1 z-50 transition-all duration-300 ease-in">
+    <button id="scrollToTopBtn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="hidden bg-red-600 hover:bg-brand-primary rounded-full w-10 h-10 flex justify-center items-center fixed bottom-4 right-2 hover:-translate-y-1 z-50 transition-all duration-300 ease-in">
         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-            <path fill="#fff"
-                d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z" />
+            <path fill="#fff" d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z" />
         </svg>
     </button>
-    {{-- scrollToTopBtn --}}
+
     <script>
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 
@@ -775,11 +771,49 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         const videoLoadMoreUrl = "{{ route('load.more.video.news') }}";
         const ajaxPollVoteUrl = "{{ route('ajax.poll.vote') }}";
         const ajaxPollResultUrl = "{{ route('ajax.poll.result', ['poll' => '__POLL_ID__']) }}";
+
+        // News Article and Sangbadik News Rotator
+        document.addEventListener('DOMContentLoaded', function() {
+            // News Article Rotator
+            const newsRotator = document.querySelector('.news-rotator');
+            if (newsRotator) {
+                const newsItems = newsRotator.querySelectorAll('.news-item');
+                if (newsItems.length > 0) {
+                    let currentNewsIndex = 0;
+
+                    function showNextNews() {
+                        newsItems[currentNewsIndex].classList.remove('active');
+                        currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
+                        newsItems[currentNewsIndex].classList.add('active');
+                    }
+
+                    setInterval(showNextNews, 5000);
+                    newsItems[0].classList.add('active');
+                }
+            }
+
+            // Sangbadik News Rotator
+            const sangbadikRotator = document.querySelector('.sangbadik-news-rotator');
+            if (sangbadikRotator) {
+                const sangbadikNewsItems = sangbadikRotator.querySelectorAll('.sangbadik-news-item');
+                if (sangbadikNewsItems.length > 0) {
+                    let currentSangbadikIndex = 0;
+
+                    function showNextSangbadikNews() {
+                        sangbadikNewsItems[currentSangbadikIndex].classList.remove('active');
+                        currentSangbadikIndex = (currentSangbadikIndex + 1) % sangbadikNewsItems.length;
+                        sangbadikNewsItems[currentSangbadikIndex].classList.add('active');
+                    }
+
+                    setInterval(showNextSangbadikNews, 5000);
+                    sangbadikNewsItems[0].classList.add('active');
+                }
+            }
+        });
     </script>
+
     <script src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
-
     <script src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
-
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/swiper/breaking-news.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/category-tab.js') }}"></script>
@@ -798,20 +832,16 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
-
     <script src="{{ asset('website/js/copy-url.js') }}"></script>
     <script src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('tvFrameVideo');
-
             if (video && video.dataset.playlist) {
                 const playlist = JSON.parse(video.dataset.playlist);
                 let currentVideoIndex = 0;
 
-                // Function to play next video
                 function playNextVideo() {
                     currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
                     video.src = playlist[currentVideoIndex];
@@ -819,23 +849,17 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     video.play().catch(e => console.log('Autoplay prevented:', e));
                 }
 
-                // Event listener for when video ends
                 video.addEventListener('ended', playNextVideo);
 
-                // Handle autoplay restrictions
                 video.addEventListener('loadeddata', function() {
                     video.play().catch(e => {
                         console.log('Autoplay prevented:', e);
-                        // If autoplay fails, try again after user interaction
                         document.addEventListener('click', function() {
                             video.play().catch(e => console.log('Play failed:', e));
-                        }, {
-                            once: true
-                        });
+                        }, { once: true });
                     });
                 });
 
-                // Optional: Add error handling for failed video loads
                 video.addEventListener('error', function() {
                     console.log('Video failed to load, trying next video');
                     playNextVideo();
@@ -848,5 +872,4 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     @stack('custom-js')
 
 </body>
-
 </html>

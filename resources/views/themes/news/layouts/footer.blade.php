@@ -9,7 +9,7 @@
         */ ?>
 
         <section
-            class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 xl:gap-0 border-y border-y-neutral-700 py-8 lg:divide-x lg:divide-neutral-700">
+            class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4 xl:gap-0 border-y border-y-neutral-700 py-8 lg:divide-x lg:divide-neutral-700">
             <!--  {/* Address Section */} -->
             <!-- <div class="text-white space-y-8 lg:pr-4 2xl:pr-6">
                 <div>
@@ -171,11 +171,32 @@
                     @endif
                 </div>
             </div> -->
-            <div class="text-white lg:px-4 2xl:px-6 flex flex-col items-center justify-center h-full space-y-6 gap-4">
+            <div class="text-white lg:px-4 2xl:px-6 flex flex-col items-center justify-center h-full gap-2">
                 <!-- Logo -->
                 <a class="w-44 md:w-64 h-11 flex justify-center items-center" href="{{ __url('/') }}">
-                    <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" class="max-h-full object-contain" />
+                    <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" class="max-w-full object-contain" />
                 </a>
+
+                <p class="text-center mt-12">
+                    {{ localize('subscribe_to_our_newsletter_to_get_our_newest_articles_instantly!') }}
+                </p>
+
+                <form id="subscribe-form" class="relative my-2 max-w-xl mx-auto">
+                    @csrf
+
+                    <div id="subscribe-message" class="text-sm pb-1 text-center"></div>
+
+                    <div class="relative">
+                        <input name="subscriber_email" id="subscriber_email"
+                            class="text-neutral-800 py-3 pl-3 pr-28 rounded-md w-full duration-300 ease-in placeholder:text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            type="email" placeholder="Email" required />
+
+                        <button type="submit" id="subscribe-btn"
+                            class="absolute top-1/2 -translate-y-1/2 right-0 rounded-r-md bg-red-500 text-white hover:bg-red-600 px-4 h-full border border-red-500 flex items-center justify-center gap-1 transition-all duration-300 ease-in">
+                            {{ localize('subscribe') }}
+                        </button>
+                    </div>
+                </form>
 
                 <!-- Social Links -->
                 <div class="flex flex-row items-center gap-3">
@@ -245,7 +266,7 @@
                     @endif
                 </ul>
             </div> -->
-
+<!-- right aligned content -->
             <div class="text-white space-y-8 lg:pl-4 2xl:pl-6">
                 <div>
                     <h2 class="text-xl font-bold mb-8 capitalize">About Us</h2>
@@ -321,32 +342,7 @@
                 </ul>
             </div>
 
-            <!-- {/* Get connected */} -->
-            <div class="text-white lg:pl-4 2xl:pl-6">
-                <h2 class="text-xl font-bold mb-8 capitalize">{{ localize('sign_up_for_our_newsletter') }}</h2>
-
-                <p class="">
-                    {{ localize('subscribe_to_our_newsletter_to_get_our_newest_articles_instantly!') }}
-                </p>
-
-                <form id="subscribe-form" class="relative my-6 max-w-xl mx-auto">
-                    @csrf
-
-                    <div id="subscribe-message" class="text-sm pb-1 text-center"></div>
-
-                    <div class="relative">
-                        <input name="subscriber_email" id="subscriber_email"
-                            class="text-neutral-800 py-3 pl-3 pr-28 rounded-md w-full duration-300 ease-in placeholder:text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            type="email" placeholder="Email" required />
-
-                        <button type="submit" id="subscribe-btn"
-                            class="absolute top-1/2 -translate-y-1/2 right-0 rounded-r-md bg-red-500 text-white hover:bg-red-600 px-4 h-full border border-red-500 flex items-center justify-center gap-1 transition-all duration-300 ease-in">
-                            {{ localize('subscribe') }}
-                        </button>
-                    </div>
-                </form>
-
-            </div>
+            
         </section>
 
         <section class="md:flex items-center justify-between pt-4 text-sm text-white">

@@ -351,4 +351,5 @@
   'keyword1' => 'Keyword1',
   'keyword2' => 'Keyword2',
   'meta_description' => 'Meta description',
+  'probashi_janala' => 'Probashi janala',
 );

@@ -2143,4 +2143,5 @@
   'page_title' => 'Page title',
   'page_url' => 'Page url',
   'cookie_duration_days' => 'Cookie duration days',
+  'unknown' => 'Unknown',
 );

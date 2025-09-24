@@ -25,6 +25,7 @@ use Artesaos\SEOTools\Facades\SEOTools;
 use Modules\Category\Entities\Category;
 use Illuminate\Support\Facades\Validator;
 use Modules\Archive\Entities\NewsArchive;
+use Modules\ProbashiJanala\Entities\ProbashiNews;
 use Modules\VideoNews\Entities\VideoNews;
 
 class HomeController extends Controller
@@ -99,6 +100,11 @@ class HomeController extends Controller
             return $this->VideoDetailsNews($param);
         }
 
+        $probashiNewsData = ProbashiNews::where('encode_title', $param)->first();
+        if ($probashiNewsData) {
+            return $this->ProbashiProbashiNewsDetails($param);
+        }
+
         $opinion = Opinion::where('encode_title', $param)->first();
         if ($opinion) {
             return $this->opinionDetails($param);
@@ -152,6 +158,11 @@ class HomeController extends Controller
             $videoNewsData = VideoNews::where('encode_title', $param)->first();
             if ($videoNewsData) {
                 return $this->VideoDetailsNews($param, $language);
+            }
+
+            $probashiNewsData = ProbashiNews::where('encode_title', $param)->first();
+            if ($probashiNewsData) {
+                return $this->ProbashiProbashiNewsDetails($param, $language);
             }
 
             $opinion = Opinion::where('encode_title', $param)->first();
@@ -526,6 +537,69 @@ class HomeController extends Controller
     public function VideoDetailsNews($slug, $language = '')
     {
         $data = $this->homeDataService->getVideoNewsDetails($slug);
+
+        if (!$data) {
+            return redirect('/');
+        }
+
+        $vedio = $data['videoNews'];
+
+        $title = $vedio->title;
+        $rawContent = $vedio->meta_description ?? $vedio->details;
+        $description = Str::limit(
+            preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($rawContent))),
+            150
+        );
+
+        $url = __url($vedio->encode_title);
+        $image = $vedio->thumbnail_image
+                    ? asset('storage/' . $vedio->thumbnail_image)
+                    : asset('/assets/thumbnail-image.jpg');
+        $published = $vedio->publish_date;
+        $updated = $vedio->updated_at;
+
+        // -- Basic Meta
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
+        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
+        SEOTools::setCanonical($url);
+
+        if (isset($opinion->meta_keyword)) {
+            SEOMeta::addKeyword(explode(',', $vedio->meta_keyword));
+        }
+
+        // -- OpenGraph (Facebook, etc.)
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::opengraph()->setUrl($url);
+        SEOTools::opengraph()->addImage($image);
+        SEOTools::opengraph()->setType('article');
+        SEOTools::opengraph()->addProperty('locale', 'en_US');
+        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
+        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
+
+        // -- Twitter Card
+        SEOTools::twitter()->setTitle($title);
+        SEOTools::twitter()->setDescription($description);
+        SEOTools::twitter()->setImage($image);
+        SEOTools::twitter()->setType('summary_large_image');
+
+        // -- JSON-LD Structured Data
+        SEOTools::jsonLd()->setTitle($title);
+        SEOTools::jsonLd()->setDescription($description);
+        SEOTools::jsonLd()->setType('article');
+        SEOTools::jsonLd()->setUrl($url);
+        SEOTools::jsonLd()->addImage($image);
+        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
+        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+
+        return ThemeHelper::view('video-details', $data);
+    }
+
+    public function ProbashiProbashiNewsDetails($slug, $language = '')
+    {
+        $data = $this->homeDataService->getProbashiNewsDetails($slug);
 
         if (!$data) {
             return redirect('/');
