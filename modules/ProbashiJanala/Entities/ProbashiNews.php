@@ -107,4 +107,9 @@ class ProbashiNews extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+
+    public function thumbnails()
+    {
+        return $this->hasMany(ProbashiNewsThumbnail::class);
+    }
 }

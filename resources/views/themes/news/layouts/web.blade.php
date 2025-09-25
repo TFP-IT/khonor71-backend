@@ -454,14 +454,15 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             width: 100%;
-            height: 48px;
+            /* height: 72px; */
             margin: 0 auto;
             min-height: 0;
+            border-radius: 4px;
         }
 
         .sangbadik-image img {
             width: 100%;
-            height: 72px;
+            /* height: 72px; */
             border-radius: 4px;
             object-fit: cover;
             object-position: top;
@@ -537,6 +538,23 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 height: 100%;
             }
         }
+
+        /* Additional CSS for thumbnail cycling */
+.thumbnail-rotator {
+    position: relative;
+    width: 100%;
+    height: 90px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.thumbnail-image {
+    transition: opacity 0.3s ease;
+}
+
+.thumbnail-image:hover {
+    transform: scale(1.05);
+}
     </style>
 
     <!-- Tailwind css -->
@@ -684,42 +702,55 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 </div>
             </div>
 
-            <!-- 4. Ami Sangbadik Section -->
-            <div class="news-section sangbadik-section">
-                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
-                <div class="sangbadik-content">
-                    @php
-                        $sangbadikNewsItems = get_probashi_news(5);
-                    @endphp
-                    @if($sangbadikNewsItems->isNotEmpty())
-                    <div class="sangbadik-news-rotator">
-                        @foreach($sangbadikNewsItems as $index => $news)
-                        <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}">
-                            <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                                <a href="{{ __url($news->encode_title) }}">
-                                    {{ Str::limit($news->title, 35) }}
-                                </a>
-                            </div>
-                            <div class="sangbadik-image">
-                                @if($news->thumbnail_image)
-                                <a href="{{ __url($news->encode_title) }}">
-                                    <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
-                                </a>
-                                @else
-                                <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
-                                @endif
-                            </div>
+<!-- 4. Ami Sangbadik Section -->
+<div class="news-section sangbadik-section">
+    <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+    <div class="sangbadik-content">
+        @php
+            $sangbadikNewsItems = get_probashi_news(5);
+        @endphp
+        @if($sangbadikNewsItems->isNotEmpty())
+        <div class="sangbadik-news-rotator">
+            @foreach($sangbadikNewsItems as $index => $news)
+            <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}" data-news-index="{{ $index }}">
+                @php
+                    /* <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                        <a href="{{ __url($news->encode_title) }}">
+                            {{ Str::limit($news->title, 35) }}
+                        </a>
+                    </div> */
+                @endphp
+                <div class="sangbadik-image">
+                    @if($news->thumbnails && $news->thumbnails->count() > 0)
+                        <!-- Thumbnail cycling container -->
+                        <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck('thumbnail_path'))'>
+                            <a href="{{ __url($news->encode_title) }}">
+                                @foreach($news->thumbnails as $thumbIndex => $thumbnail)
+                                <img src="{{ asset('storage/'.$thumbnail->thumbnail_path) }}" 
+                                     alt="Sangbadik News Thumbnail {{ $thumbIndex + 1 }}"
+                                     class="thumbnail-image {{ $thumbIndex === 0 ? 'active' : '' }}"
+                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 90px; border-radius: 4px; object-fit: cover; object-position: top; transition: opacity 0.3s ease; opacity: {{ $thumbIndex === 0 ? '1' : '0' }};">
+                                @endforeach
+                            </a>
                         </div>
-                        @endforeach
-                    </div>
+                    @elseif($news->thumbnail_image)
+                        <a href="{{ __url($news->encode_title) }}">
+                            <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
+                        </a>
                     @else
-                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                            No News Available
-                        </div>
-                    
+                        <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
                     @endif
                 </div>
             </div>
+            @endforeach
+        </div>
+        @else
+        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                No News Available
+            </div>
+        @endif
+    </div>
+</div>
         </div>
     </section>
 
@@ -774,6 +805,37 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
         // News Article and Sangbadik News Rotator
         document.addEventListener('DOMContentLoaded', function() {
+            // Thumbnail cycling functionality
+            function initThumbnailCycling() {
+                const thumbnailRotators = document.querySelectorAll('.thumbnail-rotator');
+                
+                thumbnailRotators.forEach(rotator => {
+                    const thumbnailImages = rotator.querySelectorAll('.thumbnail-image');
+                    
+                    if (thumbnailImages.length > 1) {
+                        let currentThumbnailIndex = 0;
+                        
+                        const cycleThumbnails = () => {
+                            // Hide current thumbnail
+                            thumbnailImages[currentThumbnailIndex].style.opacity = '0';
+                            thumbnailImages[currentThumbnailIndex].classList.remove('active');
+                            
+                            // Move to next thumbnail
+                            currentThumbnailIndex = (currentThumbnailIndex + 1) % thumbnailImages.length;
+                            
+                            // Show next thumbnail
+                            thumbnailImages[currentThumbnailIndex].style.opacity = '1';
+                            thumbnailImages[currentThumbnailIndex].classList.add('active');
+                        };
+                        
+                        // Start cycling every 1 second
+                        setInterval(cycleThumbnails, 1000);
+                    }
+                });
+            }
+            
+            // Initialize thumbnail cycling
+            initThumbnailCycling();
             // News Article Rotator
             const newsRotator = document.querySelector('.news-rotator');
             if (newsRotator) {
@@ -803,6 +865,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         sangbadikNewsItems[currentSangbadikIndex].classList.remove('active');
                         currentSangbadikIndex = (currentSangbadikIndex + 1) % sangbadikNewsItems.length;
                         sangbadikNewsItems[currentSangbadikIndex].classList.add('active');
+
+                        initThumbnailCycling();
                     }
 
                     setInterval(showNextSangbadikNews, 5000);
