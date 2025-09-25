@@ -52,7 +52,7 @@ class PhotoLibraryService
             $uploadDisk = 's3';
         }
 
-        // try {
+        try {
             DB::beginTransaction();
             $thumbImgPath  = null;
             $largeImgPath  = null;
@@ -112,16 +112,16 @@ class PhotoLibraryService
 
             return $photoLibrary;
 
-        // } catch (Exception $exception) {
+        } catch (Exception $exception) {
 
-        //     DB::rollBack();
+            DB::rollBack();
 
-        //     throw new HttpResponseException(response()->json([
-        //         'success' => false,
-        //         'message' => localize("photo_library_create_error"),
-        //         'title'   => localize("photo_library"),
-        //     ], 422));
-        // }
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'message' => localize("photo_library_create_error"),
+                'title'   => localize("photo_library"),
+            ], 422));
+        }
 
     }
 
