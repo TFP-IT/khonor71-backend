@@ -24,13 +24,22 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     {{-- Set CSS Variables --}}
     <style>
         :root {
-            @if ($principalFont) --font-principal: {!! $principalFont->font_family !!}
+            @if ($principalFont) --font-principal: {
+                ! ! $principalFont->font_family ! !
+            }
+
             ;
-            @endif
-            @if ($alternateFont) --font-alternate: {!! $alternateFont->font_family !!}
+
+            @endif @if ($alternateFont) --font-alternate: {
+                ! ! $alternateFont->font_family ! !
+            }
+
             ;
-            @endif
-            @if ($supplementaryFont) --font-supplementary: {!! $supplementaryFont->font_family !!}
+
+            @endif @if ($supplementaryFont) --font-supplementary: {
+                ! ! $supplementaryFont->font_family ! !
+            }
+
             ;
             @endif
         }
@@ -154,6 +163,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             0% {
                 transform: translateX(0%);
             }
+
             100% {
                 transform: translateX(-100%);
             }
@@ -393,16 +403,18 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             flex: 1;
             border-radius: 4px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
             width: 80%;
             margin: 0 auto;
             min-height: 0;
         }
 
         .tv-news-image img {
-            width: 100%;
-            height: 100%;
+            width: 80%;
+            height: 80%;
             object-fit: cover;
+            margin: 0 auto;
+
         }
 
         /* Ami Sangbadik Section */
@@ -540,21 +552,21 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
         }
 
         /* Additional CSS for thumbnail cycling */
-.thumbnail-rotator {
-    position: relative;
-    width: 100%;
-    height: 90px;
-    overflow: hidden;
-    border-radius: 4px;
-}
+        .thumbnail-rotator {
+            position: relative;
+            width: 100%;
+            height: 90px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
 
-.thumbnail-image {
-    transition: opacity 0.3s ease;
-}
+        .thumbnail-image {
+            transition: opacity 0.3s ease;
+        }
 
-.thumbnail-image:hover {
-    transform: scale(1.05);
-}
+        .thumbnail-image:hover {
+            transform: scale(1.05);
+        }
     </style>
 
     <!-- Tailwind css -->
@@ -632,7 +644,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
                             No News Available
                         </div>
-                        
+
                     </div>
                     @endif
                 </div>
@@ -647,9 +659,9 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         $newsVideos = get_probashi_news(5);
                         $videoList = [];
                         foreach($newsVideos as $news) {
-                            if(!empty($news->video)) {
-                                $videoList[] = $news->video;
-                            }
+                        if(!empty($news->video)) {
+                        $videoList[] = $news->video;
+                        }
                         }
                         @endphp
                         @if(!empty($videoList))
@@ -674,7 +686,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                             loop
                             playsinline
                             preload="metadata">
-                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                         @endif
@@ -682,75 +694,70 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 </div>
                 <div class="tv-news">
                     @php
-                    $tvNews = get_probashi_news(5)->skip(1)->first();
+                        $tvNews = get_probashi_news(5)->skip(1)->first();
                     @endphp
                     @if($tvNews)
-                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($tvNews->title, 40) }}</div>
-                    <div class="tv-news-image">
-                        @if($tvNews->image)
-                        <img src="{{ asset('storage/'.$tvNews->image) }}" alt="TV News">
-                        @else
-                        <img src="{{ asset('assets/default-news-image.png') }}" alt="Default TV News">
-                        @endif
-                    </div>
+                        <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($tvNews->title, 40) }}</div>
+                            <div class="tv-news-image">
+                                <img src="{{ asset('assets/qr.jpeg') }}" alt="Default TV News">
+                            </div>
                     @else
-                    <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit('পাক–সৌদি প্রতিরক্ষা চুক্তি নিয়ে আমাদের উচ্ছ্বসিত হবার কিছু আছে কি', 40) }}</div>
-                    <div class="tv-news-image">
-                        <img src="https://static.dnschecker.org/content/DNSChecker%20QR%20code%20for%20QR%20code%20scanner.png" alt="TV News">
+                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                        No News Available
                     </div>
                     @endif
                 </div>
             </div>
 
-<!-- 4. Ami Sangbadik Section -->
-<div class="news-section sangbadik-section">
-    <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
-    <div class="sangbadik-content">
-        @php
-            $sangbadikNewsItems = get_probashi_news(5);
-        @endphp
-        @if($sangbadikNewsItems->isNotEmpty())
-        <div class="sangbadik-news-rotator">
-            @foreach($sangbadikNewsItems as $index => $news)
-            <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}" data-news-index="{{ $index }}">
-                @php
-                    /* <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                        <a href="{{ __url($news->encode_title) }}">
-                            {{ Str::limit($news->title, 35) }}
-                        </a>
-                    </div> */
-                @endphp
-                <div class="sangbadik-image">
-                    @if($news->thumbnails && $news->thumbnails->count() > 0)
-                        <!-- Thumbnail cycling container -->
-                        <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck('thumbnail_path'))'>
-                            <a href="{{ __url($news->encode_title) }}">
-                                @foreach($news->thumbnails as $thumbIndex => $thumbnail)
-                                <img src="{{ asset('storage/'.$thumbnail->thumbnail_path) }}" 
-                                     alt="Sangbadik News Thumbnail {{ $thumbIndex + 1 }}"
-                                     class="thumbnail-image {{ $thumbIndex === 0 ? 'active' : '' }}"
-                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 90px; border-radius: 4px; object-fit: cover; object-position: top; transition: opacity 0.3s ease; opacity: {{ $thumbIndex === 0 ? '1' : '0' }};">
-                                @endforeach
-                            </a>
+            <!-- 4. Ami Sangbadik Section -->
+            <div class="news-section sangbadik-section">
+                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+                <div class="sangbadik-content">
+                    @php
+                    $sangbadikNewsItems = get_probashi_news(5);
+                    @endphp
+                    @if($sangbadikNewsItems->isNotEmpty())
+                    <div class="sangbadik-news-rotator">
+                        @foreach($sangbadikNewsItems as $index => $news)
+                        <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}" data-news-index="{{ $index }}">
+                            @php
+                            /* <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                                <a href="{{ __url($news->encode_title) }}">
+                                    {{ Str::limit($news->title, 35) }}
+                                </a>
+                            </div> */
+                            @endphp
+                            <div class="sangbadik-image">
+                                @if($news->thumbnails && $news->thumbnails->count() > 0)
+                                <!-- Thumbnail cycling container -->
+                                <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck(' thumbnail_path'))'>
+                                    <a href="{{ __url($news->encode_title) }}">
+                                        @foreach($news->thumbnails as $thumbIndex => $thumbnail)
+                                        <img src="{{ asset('storage/'.$thumbnail->thumbnail_path) }}"
+                                            alt="Sangbadik News Thumbnail {{ $thumbIndex + 1 }}"
+                                            class="thumbnail-image {{ $thumbIndex === 0 ? 'active' : '' }}"
+                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 90px; border-radius: 4px; object-fit: cover; object-position: top; transition: opacity 0.3s ease; opacity: {{ $thumbIndex === 0 ? '1' : '0' }};">
+                                        @endforeach
+                                    </a>
+                                </div>
+                                @elseif($news->thumbnail_image)
+                                <a href="{{ __url($news->encode_title) }}">
+                                    <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
+                                </a>
+                                @else
+                                <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
+                                @endif
+                            </div>
                         </div>
-                    @elseif($news->thumbnail_image)
-                        <a href="{{ __url($news->encode_title) }}">
-                            <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
-                        </a>
+                        @endforeach
+                    </div>
                     @else
-                        <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
+                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                        No News Available
+                    </div>
                     @endif
                 </div>
             </div>
-            @endforeach
-        </div>
-        @else
-        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                No News Available
-            </div>
-        @endif
-    </div>
-</div>
         </div>
     </section>
 
@@ -808,32 +815,32 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             // Thumbnail cycling functionality
             function initThumbnailCycling() {
                 const thumbnailRotators = document.querySelectorAll('.thumbnail-rotator');
-                
+
                 thumbnailRotators.forEach(rotator => {
                     const thumbnailImages = rotator.querySelectorAll('.thumbnail-image');
-                    
+
                     if (thumbnailImages.length > 1) {
                         let currentThumbnailIndex = 0;
-                        
+
                         const cycleThumbnails = () => {
                             // Hide current thumbnail
                             thumbnailImages[currentThumbnailIndex].style.opacity = '0';
                             thumbnailImages[currentThumbnailIndex].classList.remove('active');
-                            
+
                             // Move to next thumbnail
                             currentThumbnailIndex = (currentThumbnailIndex + 1) % thumbnailImages.length;
-                            
+
                             // Show next thumbnail
                             thumbnailImages[currentThumbnailIndex].style.opacity = '1';
                             thumbnailImages[currentThumbnailIndex].classList.add('active');
                         };
-                        
+
                         // Start cycling every 1 second
                         setInterval(cycleThumbnails, 1000);
                     }
                 });
             }
-            
+
             // Initialize thumbnail cycling
             initThumbnailCycling();
             // News Article Rotator
@@ -920,7 +927,9 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         console.log('Autoplay prevented:', e);
                         document.addEventListener('click', function() {
                             video.play().catch(e => console.log('Play failed:', e));
-                        }, { once: true });
+                        }, {
+                            once: true
+                        });
                     });
                 });
 
@@ -936,4 +945,5 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     @stack('custom-js')
 
 </body>
+
 </html>
