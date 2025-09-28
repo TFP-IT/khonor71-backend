@@ -379,67 +379,67 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             transition: all 0.3s ease;
         }
 
-/* TV News Section - Updated styles */
-.tv-news {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    padding: 8px 0px;
-}
+        /* TV News Section - Updated styles */
+        .tv-news {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 8px 0px;
+        }
 
-.tv-news-title {
-    font-size: 10px;
-    font-weight: bold;
-    line-height: 1.2;
-    margin-bottom: 4px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    flex: 0 0 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
+        .tv-news-title {
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            flex: 0 0 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
 
-.tv-news-image {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
-                0 2px 6px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    width: 80%;
-    margin: 0 auto;
-    min-height: 0;
-    background: rgba(0, 0, 0, 0.1);
-    padding: 4px;
-}
+        .tv-news-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+                        0 2px 6px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 80%;
+            margin: 0 auto;
+            min-height: 0;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 4px;
+        }
 
-.tv-news-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    margin: 0 auto;
-    transition: transform 0.3s ease;
-}
+        .tv-news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
 
-.tv-news-image:hover img {
-    transform: scale(1.05);
-}
+        .tv-news-image:hover img {
+            transform: scale(1.05);
+        }
 
-.tv-news-image a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
+        .tv-news-image a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
 
         /* Ami Sangbadik Section */
         .sangbadik-section {
