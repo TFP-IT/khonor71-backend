@@ -332,6 +332,22 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12 mt-3">
+                        <div class="form-group">
+                            <div class="checkbox checkbox-success checkbox-inline">
+                                <!-- Hidden input ensures a value of 0 is sent if checkbox is unchecked -->
+                                <input type="hidden" name="is_tv_news" value="0">
+
+                                <!-- Actual checkbox -->
+                                <input type="checkbox" name="is_tv_news" value="1" id="is_tv_news" 
+                                    @checked(old('is_tv_news') == 1)>
+
+                                <label for="is_tv_news">{{ localize('add_to_tv_news') }}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="row row ps-4 pe-4">
                         <div class="col-md-12 mt-3 text-start">
                             <button type="submit" class="btn btn-success">

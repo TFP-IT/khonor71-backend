@@ -2144,4 +2144,7 @@
   'page_url' => 'Page url',
   'cookie_duration_days' => 'Cookie duration days',
   'unknown' => 'Unknown',
+  'tv_news' => 'Tv news',
+  'add_to_tv_news' => 'Add to tv news',
+  'update_video_post' => 'Update video post',
 );

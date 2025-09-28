@@ -29,10 +29,12 @@ class VideoNews extends Model
         "image_title",
         "video",
         "video_url",
+        "thumbnail_video",
         "reference",
         "meta_keyword",
         "meta_description",
-        "status"
+        "status",
+        "is_tv_news",
     ];
 
     protected $casts = [

@@ -16,6 +16,7 @@ use Modules\Setting\Entities\Application;
 use Modules\UserManagement\Entities\PerMenu;
 use Modules\Advertisement\Entities\Advertisement;
 use Modules\ProbashiJanala\Entities\ProbashiNews;
+use Modules\VideoNews\Entities\VideoNews;
 
 /**
  * generate asset url
@@ -1174,3 +1175,27 @@ if (!function_exists('get_probash_category_news')) {
         return $featuresNews;
     }
 }
+
+if (!function_exists('get_tv_news')) {
+    function get_tv_news($limit = 3)
+    {
+        $languageId = get_language_id();
+
+        if (activeTheme() == 'news') {
+            $limit = 10;
+        } elseif (activeTheme() == 'gazette' || activeTheme() == 'magazine') {
+            $limit = 4;
+        }
+
+        $videoNews = VideoNews::select(['id', 'publish_date', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by', 'thumbnail_video'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->where('is_tv_news', 1)
+            ->latest('publish_date')
+            ->take($limit)
+            ->get();
+        return $videoNews;
+    }
+}
+

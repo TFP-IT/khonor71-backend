@@ -656,55 +656,54 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                     <div class="tv-frame-container">
                         <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="tv-frame-bg">
                         @php
-                        $newsVideos = get_probashi_news(5);
-                        $videoList = [];
-                        foreach($newsVideos as $news) {
-                        if(!empty($news->video)) {
-                        $videoList[] = $news->video;
-                        }
-                        }
-                        @endphp
-                        @if(!empty($videoList))
-                        <video
-                            id="tvFrameVideo"
-                            class="tv-frame-video"
-                            autoplay
-                            muted
-                            playsinline
-                            preload="metadata"
-                            loop
-                            data-playlist="{{ json_encode($videoList) }}">
-                            <source src="{{ asset('storage/'.$videoList[0]) }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        @else
-                        <video
-                            id="tvFrameVideo"
-                            class="tv-frame-video"
-                            autoplay
-                            muted
-                            loop
-                            playsinline
-                            preload="metadata">
-                            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        @endif
+                            $newsVideos = get_tv_news(5);
+                            $videoList = [];
+                            $newsDataList = [];
+
+                            foreach($newsVideos as $index => $news) {
+                                if(!empty($news->thumbnail_video)) {
+                                    $videoList[] = $news->thumbnail_video;
+                                    $newsDataList[] = [
+                                        'title' => Str::limit($news->title, 40),
+                                        'url' => __url($news->encode_title)
+                                    ];
+                                }
+                            }
+                            @endphp
+
+                            @if(!empty($videoList))
+                            <video
+                                id="tvFrameVideo"
+                                class="tv-frame-video"
+                                autoplay
+                                muted
+                                playsinline
+                                preload="metadata"
+                                data-playlist="{{ json_encode($videoList) }}"
+                                data-newsdata="{{ json_encode($newsDataList) }}">
+                                <source src="{{ asset('storage/'.$videoList[0]) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            @else
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="tv-frame-video">
+                            @endif
                     </div>
                 </div>
                 <div class="tv-news">
                     @php
-                        $tvNews = get_probashi_news(5)->skip(1)->first();
+                        $tvNews = get_tv_news(5)->first(); // Use first instead of skip(1)->first()
                     @endphp
                     @if($tvNews)
-                        <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">{{ Str::limit($tvNews->title, 40) }}</div>
-                            <div class="tv-news-image">
-                                <img src="{{ asset('assets/qr.jpeg') }}" alt="Default TV News">
-                            </div>
+                        <a href="{{ __url($tvNews->encode_title) }}" class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                            {{ Str::limit($tvNews->title, 40) }}
+                        </a>
+                        <div class="tv-news-image">
+                            <img src="{{ asset('assets/qr.jpeg') }}" alt="Default TV News">
+                        </div>
                     @else
-                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                        No News Available
-                    </div>
+                        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50">
+                            No News Available
+                        </div>
                     @endif
                 </div>
             </div>
@@ -909,30 +908,53 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('tvFrameVideo');
+    
             if (video && video.dataset.playlist) {
                 const playlist = JSON.parse(video.dataset.playlist);
+                const newsData = JSON.parse(video.dataset.newsdata || '[]');
+                const titleElement = document.querySelector('.tv-news-title');
+                
                 let currentVideoIndex = 0;
 
                 function playNextVideo() {
+                    // Move to next video
                     currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
-                    video.src = playlist[currentVideoIndex];
+                    
+                    // Update video source
+                    const videoPath = playlist[currentVideoIndex];
+                    const fullPath = videoPath.startsWith('http') ? videoPath : `/storage/${videoPath}`;
+                    video.src = fullPath;
+                    
+                    // Update title if available
+                    if (titleElement && newsData[currentVideoIndex]) {
+                        titleElement.textContent = newsData[currentVideoIndex].title;
+                        titleElement.setAttribute('href', newsData[currentVideoIndex].url);
+                    }
+                    
+                    // Load and play
                     video.load();
-                    video.play().catch(e => console.log('Autoplay prevented:', e));
+                    video.play().catch(e => {
+                        console.log('Autoplay prevented:', e);
+                        // Try next video if current fails
+                        playNextVideo();
+                    });
                 }
 
+                // Play next video when current ends
                 video.addEventListener('ended', playNextVideo);
 
+                // Handle initial load
                 video.addEventListener('loadeddata', function() {
                     video.play().catch(e => {
                         console.log('Autoplay prevented:', e);
+                        // Enable play on user interaction
                         document.addEventListener('click', function() {
-                            video.play().catch(e => console.log('Play failed:', e));
-                        }, {
-                            once: true
-                        });
+                            video.play().catch(err => console.log('Play failed:', err));
+                        }, { once: true });
                     });
                 });
 
+                // Handle errors by skipping to next video
                 video.addEventListener('error', function() {
                     console.log('Video failed to load, trying next video');
                     playNextVideo();
