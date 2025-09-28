@@ -691,18 +691,29 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                 </div>
                 <div class="tv-news">
                     @php
-                        $tvNews = get_tv_news(5)->first(); // Use first instead of skip(1)->first()
+                        $tvNews = get_tv_news(5)->first();
                     @endphp
                     @if($tvNews)
                         <a href="{{ __url($tvNews->encode_title) }}" class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
                             {{ Str::limit($tvNews->title, 40) }}
                         </a>
                         <div class="tv-news-image">
-                            <img src="{{ asset('assets/qr.jpeg') }}" alt="Default TV News">
+                            @if($tvNews->qr_code)
+                                <a href="{{ __url($tvNews->encode_title) }}">
+                                    <img src="{{ asset('storage/'.$tvNews->qr_code) }}" alt="TV News QR Code">
+                                </a>
+                            @else
+                                <a href="{{ __url($tvNews->encode_title) }}">
+                                    <img src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
+                                </a>
+                            @endif
                         </div>
                     @else
-                        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50">
+                        <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50">
                             No News Available
+                        </div>
+                        <div class="tv-news-image">
+                            <img src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
                         </div>
                     @endif
                 </div>

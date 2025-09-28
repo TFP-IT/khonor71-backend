@@ -1187,12 +1187,12 @@ if (!function_exists('get_tv_news')) {
             $limit = 4;
         }
 
-        $videoNews = VideoNews::select(['id', 'publish_date', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by', 'thumbnail_video'])
+        $videoNews = VideoNews::select(['id', 'publish_date', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by', 'thumbnail_video', 'qr_code'])
             ->where('language_id', $languageId)
             ->whereDate('publish_date', '<=', Carbon::today())
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->where('is_tv_news', 1)
-            ->latest('publish_date')
+            ->latest('created_at')
             ->take($limit)
             ->get();
         return $videoNews;

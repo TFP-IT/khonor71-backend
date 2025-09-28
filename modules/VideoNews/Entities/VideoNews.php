@@ -30,6 +30,7 @@ class VideoNews extends Model
         "video",
         "video_url",
         "thumbnail_video",
+        'qr_code',
         "reference",
         "meta_keyword",
         "meta_description",

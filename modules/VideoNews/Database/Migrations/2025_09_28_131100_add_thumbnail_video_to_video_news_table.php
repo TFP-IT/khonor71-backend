@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('video_news', function (Blueprint $table) {
             $table->string('thumbnail_video')->nullable()->after('video_url');
+            $table->string('qr_code')->nullable()->after('thumbnail_video');
             $table->boolean('is_tv_news')->default(false)->after('status');
         });
     }
@@ -28,6 +29,7 @@ return new class extends Migration
     {
         Schema::table('video_news', function (Blueprint $table) {
             $table->dropColumn('thumbnail_video');
+            $table->dropColumn('qr_code');
             $table->dropColumn('is_tv_news');
         });
     }
