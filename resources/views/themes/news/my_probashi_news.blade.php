@@ -75,10 +75,12 @@
                                 <th style="padding: 8px; border: 1px solid #dee2e6;">{{ localize('release_date') }}</th>
                                 <th style="padding: 8px; border: 1px solid #dee2e6;">{{ localize('post_date') }}</th>
                                 <th style="padding: 8px; border: 1px solid #dee2e6;">{{ localize('language') }}</th>
+                                <th style="padding: 8px; border: 1px solid #dee2e6;">{{ localize('status') }}</th>
                                 <th style="text-align: center; padding: 8px; border: 1px solid #dee2e6; width: 115px;">{{ localize('action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
+                            
                             @forelse($probashiNews as $index => $news)
                             <tr style="background: #fff;">
                                 <td style="text-align: center; padding: 8px; border: 1px solid #dee2e6;">{{ $probashiNews->firstItem() + $index }}</td>
@@ -119,6 +121,17 @@
                                 <td style="padding: 8px; border: 1px solid #dee2e6;">{{ \Carbon\Carbon::parse($news->publish_date)->format('Y-m-d') }}</td>
                                 <td style="padding: 8px; border: 1px solid #dee2e6;">{{ \Carbon\Carbon::parse($news->created_at)->format('Y-m-d') }}</td>
                                 <td style="padding: 8px; border: 1px solid #dee2e6;">{{ $news->language->langname ?? 'N/A' }}</td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                    @if($news->status === \App\Enums\ActivationStatusEnum::ACTIVE)
+                                        <span style="padding: 4px 8px; background: #d4edda; color: #155724; border-radius: 4px; font-size: 0.875rem;">
+                                            {{ localize('active') }}
+                                        </span>
+                                    @else
+                                        <span style="padding: 4px 8px; background: #f8d7da; color: #721c24; border-radius: 4px; font-size: 0.875rem;">
+                                            {{ localize('inactive') }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td style="text-align: center; padding: 8px; border: 1px solid #dee2e6;">
                                     <a href="{{ route('web.probashi-news.edit', ['probashiNews' => $news->id]) }}" 
                                        style="padding: 4px 8px; background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2); color: #28a745; border-radius: 4px; text-decoration: none; margin-right: 4px;" 

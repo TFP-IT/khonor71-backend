@@ -38,7 +38,7 @@ public function index(Request $request)
     if ($search) {
         $query->where(function($q) use ($search) {
             $q->where('title', 'like', '%' . $search . '%')
-              ->orWhere('description', 'like', '%' . $search . '%')
+              ->orWhere('details', 'like', '%' . $search . '%')
               ->orWhereHas('webUser', function($userQuery) use ($search) {
                   $userQuery->where('name', 'like', '%' . $search . '%');
               });
