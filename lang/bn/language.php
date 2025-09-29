@@ -2147,4 +2147,8 @@
   'tv_news' => 'Tv news',
   'add_to_tv_news' => 'Add to tv news',
   'update_video_post' => 'Update video post',
+  'first' => 'First',
+  'last' => 'Last',
+  'confirm_deletion' => 'Confirm deletion',
+  'are_you_sure_you_want_to_delete_this_item' => 'Are you sure you want to delete this item',
 );
