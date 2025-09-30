@@ -1,7 +1,7 @@
 <section class="container my-6 ">
     <div class="border-y dark:border-y-neutral-600 py-4">
         <a href="{{ __url('web-stories') }}" class="text-brand-primary text-lg font-semibold uppercase mb-4">
-            {{ localize('news_stories') }}
+            {{ localize('news_clipz') }}
         </a>
         <!--  News Stories (Slider section)  -->
 

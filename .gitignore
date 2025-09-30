@@ -28,4 +28,3 @@ vite.config.mjs
 /public/rss
 /public/sitemap
 v1/
-lang/

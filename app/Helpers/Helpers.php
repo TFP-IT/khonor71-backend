@@ -16,6 +16,7 @@ use Modules\Setting\Entities\Application;
 use Modules\UserManagement\Entities\PerMenu;
 use Modules\Advertisement\Entities\Advertisement;
 use Modules\ProbashiJanala\Entities\ProbashiNews;
+use Modules\VideoNews\Entities\VideoNews;
 
 /**
  * generate asset url
@@ -1142,7 +1143,11 @@ if (!function_exists('get_probashi_news')) {
     {
         $languageId = get_language_id();
 
-        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date', 'encode_title', 'video')
+        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date', 'encode_title')
+            ->with(['thumbnails' => function ($query) {
+                $query->select('id', 'probashi_news_id', 'thumbnail_path', 'frame_time')
+                      ->orderBy('frame_time', 'asc');
+            }])
             ->where('language_id', $languageId)
             ->where('status', ActivationStatusEnum::ACTIVE->value)
             ->orderBy('id', 'desc')
@@ -1170,3 +1175,27 @@ if (!function_exists('get_probash_category_news')) {
         return $featuresNews;
     }
 }
+
+if (!function_exists('get_tv_news')) {
+    function get_tv_news($limit = 3)
+    {
+        $languageId = get_language_id();
+
+        if (activeTheme() == 'news') {
+            $limit = 10;
+        } elseif (activeTheme() == 'gazette' || activeTheme() == 'magazine') {
+            $limit = 4;
+        }
+
+        $videoNews = VideoNews::select(['id', 'publish_date', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by', 'thumbnail_video', 'qr_code'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->where('is_tv_news', 1)
+            ->latest('created_at')
+            ->take($limit)
+            ->get();
+        return $videoNews;
+    }
+}
+
