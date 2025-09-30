@@ -2144,4 +2144,9 @@
   'page_url' => 'Page url',
   'cookie_duration_days' => 'Cookie duration days',
   'unknown' => 'Unknown',
+  'ads_type' => 'Ads type',
+  'script' => 'Script',
+  'ads' => 'Ads',
+  'script_ads_code' => 'Script ads code',
+  'ads_preview' => 'Ads preview',
 );
