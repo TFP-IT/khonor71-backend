@@ -72,7 +72,7 @@ public function store(Request $request)
         'title' => 'required|string|max:255',
         'details' => 'required|string',
         'image' => 'nullable|file|mimes:jpg,jpeg,png,gif,bmp,svg,webp,avif|max:5120',
-        'video' => 'nullable|file|mimetypes:video/mp4,video/x-msvideo,video/quicktime,video/x-matroska,video/webm,video/ogg,video/mpeg',
+        'video' => 'nullable|file|mimetypes:video/mp4,video/x-msvideo,video/quicktime,video/x-matroska,video/webm,video/ogg,video/mpeg|max:51200',
         'video_url' => 'nullable|url',
         'image_alt' => 'nullable|string|max:255',
         'image_title' => 'nullable|string|max:255',
