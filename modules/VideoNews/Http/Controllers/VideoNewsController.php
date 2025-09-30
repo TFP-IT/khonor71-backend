@@ -144,7 +144,7 @@ class VideoNewsController extends Controller
             \Log::info('QR code directory created: videonews/qr_codes');
 
             // Generate QR code
-            $qrCode = QrCode::format('png')->size(200)->generate($qr_code_link);
+            $qrCode = QrCode::encoding('UTF-8')->format('png')->size(200)->generate($qr_code_link);
             if (empty($qrCode)) {
                 throw new \Exception('QR code generation returned empty result');
             }
@@ -317,7 +317,7 @@ class VideoNewsController extends Controller
                 \Log::info('QR code directory created: videonews/qr_codes');
 
                 // Generate QR code
-                $qrCode = QrCode::format('png')->size(200)->generate($qr_code_link);
+                $qrCode = QrCode::encoding('UTF-8')->format('png')->size(200)->generate($qr_code_link);
                 if (empty($qrCode)) {
                     throw new \Exception('QR code generation returned empty result');
                 }
