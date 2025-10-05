@@ -1,7 +1,7 @@
 <!-- /.End of page wrapper -->
 <footer class="footer text-center">
     <div class="container">
-        <div class="fText">Developed by <a href="#">bdtask</a></div>
+        <div class="fText">Developed by <a href="https://www.versatilo.group">Versatilo Group</a></div>
     </div>
 </footer>
 <!-- /.End of footer -->
