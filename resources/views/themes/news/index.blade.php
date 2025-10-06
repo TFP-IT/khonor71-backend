@@ -32,13 +32,14 @@
 
 
     <section class="container my-6">
-        @if ($homePageTopNews->count() > 3)
+        @if ($homePageTopNews->count() > 4)
             @include('themes.news.components.common.card-category')
         @endif
     </section>
 
     <!-- banner section -->
-    <section class="container">
+    <!-- TODO Uncomment for adShow -->
+    <!-- <section class="container">
         <figure class="2xl:w-5/6 mx-auto">
             @if ($ad = get_advertisements(1, 3))
                 {!! $ad->embed_code !!}
@@ -46,7 +47,7 @@
                 <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}" alt="" />
             @endif
         </figure>
-    </section>
+    </section> -->
 
 
     <!-- STORIES NEWS SECTION START -->
@@ -72,7 +73,8 @@
     </section>
 
     <!-- banner section -->
-    <section class="container my-8">
+    <!-- TODO Uncomment for adShow -->
+    <!-- <section class="container my-8">
         <figure class="2xl:w-5/6 mx-auto">
             @if ($ad = get_advertisements(1, 4))
                 {!! $ad->embed_code !!}
@@ -80,7 +82,7 @@
                 <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}" alt="" />
             @endif
         </figure>
-    </section>
+    </section> -->
 
     <!-- Opinion Section Start -->
     <section class="container grid grid-cols-1 xl:grid-cols-6 2xl:grid-cols-4 gap-8 my-6">
@@ -163,7 +165,9 @@
     @endif
 
     <!-- banner section -->
-    <section class="container my-8">
+    <!-- TODO Uncomment for adShow -->
+
+    <!-- <section class="container my-8">
         <figure class="2xl:w-5/6 mx-auto">
             @if ($ad = get_advertisements(1, 5))
                 {!! $ad->embed_code !!}
@@ -171,7 +175,7 @@
                 <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}" alt="" />
             @endif
         </figure>
-    </section>
+    </section> -->
 
     <!-- TECH NEWS START -->
     <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
@@ -241,7 +245,8 @@
     </section>
 
     <!-- banner section -->
-    <section class="container">
+    <!-- TODO Uncomment for adShow -->
+    <!-- <section class="container">
         <figure class="2xl:w-5/6 mx-auto">
             @if ($ad = get_advertisements(1, 6))
                 {!! $ad->embed_code !!}
@@ -249,7 +254,7 @@
                 <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}" alt="" />
             @endif
         </figure>
-    </section>
+    </section> -->
 
     <!-- common section -->
     @foreach ($chunkedNewsGroups as $newsGroupChunk)

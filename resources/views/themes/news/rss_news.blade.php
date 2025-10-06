@@ -130,14 +130,16 @@
                     </div>
 
                     <!-- add section -->
-                    <figure class="mt-6 mb-6">
+                 <!-- TODO Uncomment for adShow -->
+
+                    <!-- <figure class="mt-6 mb-6">
                         @if ($ad = get_advertisements(2, 2))
                             {!! $ad->embed_code !!}
                         @else
                             <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}"
                                 alt="" />
                         @endif
-                    </figure>
+                    </figure> -->
                 @endforeach
             @endif
         </section>
@@ -150,14 +152,16 @@
                 @include('themes.news.components.common.popular-post')
 
                 <!-- Ads section -->
-                <figure class="">
+                 <!-- TODO Uncomment for adShow -->
+
+                <!-- <figure class="">
                     @if ($ad = get_advertisements(2, 1))
                         {!! $ad->embed_code !!}
                     @else
                         <img class="w-full h-full object-cover" src="{{ asset('assets/ads-electronic.png') }}"
                             alt="" />
                     @endif
-                </figure>
+                </figure> -->
 
                 <!-- Top Week -->
                 @include('themes.news.components.common.recommended-top-week-post')
@@ -168,14 +172,16 @@
                 @endif
 
                 <!-- Ads section -->
-                <figure class="">
+                <!-- TODO Uncomment for adShow -->
+
+                <!-- <figure class="">
                     @if ($ad = get_advertisements(2, 4))
                         {!! $ad->embed_code !!}
                     @else
                         <img class="w-full h-full object-cover" src="{{ asset('assets/ads-electronic-large.png') }}"
                             alt="" />
                     @endif
-                </figure>
+                </figure> -->
             </div>
         </section>
 

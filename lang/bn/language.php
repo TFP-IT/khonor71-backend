@@ -1752,7 +1752,7 @@
   'footer_background_img' => 'Footer background img',
   'live_update_news' => 'সর্বশেষ সংবাদ',
   'ago' => 'আগে',
-  'recommended_posts' => 'প্রস্তাবিত পোস্ট',
+  'recommended_posts' => 'জনপ্রিয় সংবাদ',
   'opinion' => 'মতামত',
   'view_more' => 'আরও দেখুন',
   'follow_us' => 'আমাদের অনুসরণ করুন',

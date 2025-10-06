@@ -51,14 +51,15 @@
         </div>
 
         <!-- add section -->
-        <figure class="mt-6 mb-6">
+        <!-- TODO Uncomment for adShow -->
+        <!-- <figure class="mt-6 mb-6">
             @if ($ad = get_advertisements(3, 3))
                 {!! $ad->embed_code !!}
             @else
                 <img class="w-full h-full object-cover" src="{{ asset('assets/banner-large.png') }}"
                     alt="" />
             @endif
-        </figure>
+        </figure> -->
 
     </section>
     

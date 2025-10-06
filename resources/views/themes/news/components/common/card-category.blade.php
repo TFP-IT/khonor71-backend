@@ -1,7 +1,8 @@
 <div
   class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0 lg:divide-x dark:divide-neutral-600 rtl:divide-x-reverse border-y dark:border-y-neutral-600 py-4">
   <!-- Card -->
-  @foreach ($homePageTopNews->slice(3, 3) as $topBottomNews)
+  <!-- TODO make it 3,3 for adShow -->
+  @foreach ($homePageTopNews->slice(3, 4) as $topBottomNews)
       
     <div class="overflow-hidden lg:px-3">
       <a href="{{ __url($topBottomNews->news->encode_title) }}" class="w-full h-52 group overflow-hidden block">
@@ -27,11 +28,13 @@
  @endforeach
 
   <!-- Card-4 Ad -->
-  <div class="overflow-hidden lg:px-3">
+  <!-- TODO Uncomment for adShow -->
+
+  <!-- <div class="overflow-hidden lg:px-3">
     @if ($ad = get_advertisements(1, 2))
       {!! $ad->embed_code !!}
     @else
       <img class="w-full h-full object-cover" src="{{ asset('assets/ads-electronic-2.png') }}" alt="" />
     @endif
-  </div>
+  </div> -->
 </div>
