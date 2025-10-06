@@ -10,7 +10,7 @@
     </button>
     {{-- Search section --}}
     <form action="{{ __url('search') }}" method="GET"
-        class="search_section hidden absolute top-[calc(100%+11px)] right-0 rtl:right-auto rtl:left-0 bg-white dark:bg-neutral-700 shadow-md w-[320px]">
+        class="search_section hidden absolute top-[calc(100%+11px)] right-0 rtl:right-auto rtl:left-0 bg-white dark:bg-neutral-700 shadow-md w-[320px] z-10">
         <input type="text" required name="q" id="q" placeholder="Search..." autocomplete="off"
             class="px-3 py-2 w-full bg-transparent dark:text-white">
         <button type="submit"

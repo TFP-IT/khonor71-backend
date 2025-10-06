@@ -910,11 +910,16 @@ if (!function_exists('convert_digits_to_locale')) {
      */
     function convert_digits_to_locale(string $string, string $locale): string
     {
-        if (!class_exists(\NumberFormatter::class)) {
-            return $string; // Fallback if Intl is not installed
+        if ($locale === 'bn') {
+            // Map Western digits to Bengali digits
+            $western = ['0','1','2','3','4','5','6','7','8','9'];
+            $bengali = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+            return str_replace($western, $bengali, $string);
         }
 
-        // Find all numbers in the string
+        // Fallback for other locales using NumberFormatter
+        if (!class_exists(\NumberFormatter::class)) return $string;
+
         return preg_replace_callback('/\d+/', function ($matches) use ($locale) {
             $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
             $formatter->setAttribute(\NumberFormatter::GROUPING_USED, false);

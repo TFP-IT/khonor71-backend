@@ -76,8 +76,14 @@ class WebLayout extends Component
             })
             ->orderBy('menu_position', 'ASC')
             ->get();
-
-        $formattedDate = Carbon::now()->format('l, d F Y');
+        if($languageId == 17){
+        $formattedDate = Carbon::now()
+            ->locale('bn')
+            ->translatedFormat('l, d F Y'); // Localized month/day names
+$formattedDate = convert_digits_to_locale($formattedDate, 'bn');
+        }else{
+            $formattedDate = Carbon::now()->format('l, d F Y');
+        }
 
         $languages = Language::where('status', 1)->get();
         $activeLanguage = Language::where('value', app()->getLocale())->first();
