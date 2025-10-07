@@ -100,7 +100,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         ->where('menu_id', 1)
         ->where('status', 1)
         ->orderBy('menu_position', 'asc')
-        ->limit(7)
+        ->limit(10)
         ->get()
         ->map(function ($menu) use ($today) {
             if ($menu->submenus->isEmpty()) {

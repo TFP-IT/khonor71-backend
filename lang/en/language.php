@@ -352,4 +352,5 @@
   'keyword2' => 'Keyword2',
   'meta_description' => 'Meta description',
   'probashi_janala' => 'Probashi janala',
+  'breaking' => 'Breaking',
 );

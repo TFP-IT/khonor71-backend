@@ -441,7 +441,7 @@
                 @endif
 
                 {{-- more menu --}}
-                <div class="item cursor-pointer py-2 relative">
+                <!-- <div class="item cursor-pointer py-2 relative">
                     <a class="sub-btn @if (!$themeSettings->text_color) text-white @endif flex justify-start items-center hover:transition_3 hover:text-red-600 active:text-red-600 side_nav_news"
                         @if (!mode() && $themeSettings->text_color) style="color: {{ $themeSettings->text_color }};" @endif>{{ Str::upper(localize('more')) }}
 
@@ -493,7 +493,7 @@
                             @endforeach
                         </ul>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <!-- Search button -->
