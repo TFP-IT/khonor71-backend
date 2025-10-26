@@ -935,8 +935,11 @@ if (!function_exists('views_format')) {
      * @param int $views
      * @return string
      */
-    function views_format(int $views): string
+    function views_format(int|string|null $views): string
     {
+        // Ensure we always have an integer
+        $views = (int) ($views ?? 0);
+
         if ($views >= 1000000) {
             return number_format($views / 1000000, 2) . 'M';
         } elseif ($views >= 1000) {
