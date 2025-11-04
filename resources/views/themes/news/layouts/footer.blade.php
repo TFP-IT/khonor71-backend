@@ -83,7 +83,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>যোগাযোগ:</strong> প্লট নং-১১, (৯ম তলা), রোড নং-১১৩/এ, গুলশান-২, ঢাকা।</span>
+                        <span><strong>যোগাযোগ:</strong> বাড়ী নং-০১, ২য় তলা, রোড নং-০৬, মধ্যবাড্ডা, বাড্ডা, ঢাকা</span>
                     </li>
 
                     <!-- মার্কেটিং মোবাইল -->
@@ -95,7 +95,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>মার্কেটিং মোবাইল:</strong> ০১৯১১৭৬৮৬৭১</span>
+                        <span><strong>মার্কেটিং মোবাইল:</strong> ০১৯০৭০৯৯২৫২</span>
                     </li>
 
                     <!-- নিউজ রুম মোবাইল -->
@@ -107,7 +107,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>নিউজ রুম মোবাইল:</strong> ০১৯১১৭৬৮৬৭১</span>
+                        <span><strong>নিউজ রুম মোবাইল:</strong> ০১৯০৭০৯৯২৫২</span>
                     </li>
 
                     <!-- নিউজ রুম ইমেইল -->
@@ -301,7 +301,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>Contact us:</strong> Plot-11, (9th Floor), Road – 113/A, Gulshan-2, Dhaka</span>
+                        <span><strong>Contact us:</strong> House No. 01, 2nd Floor, Road No. 06, Middle Badda, Badda, Dhaka</span>
                     </li>
 
                     <!-- মার্কেটিং মোবাইল -->
@@ -313,7 +313,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>Marketing Mobile:</strong> 01911768671</span>
+                        <span><strong>Marketing Mobile:</strong> 01907099252</span>
                     </li>
 
                     <!-- নিউজ রুম মোবাইল -->
@@ -325,7 +325,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>News Room Mobile:</strong> 01911768671</span>
+                        <span><strong>News Room Mobile:</strong> 01907099252</span>
                     </li>
 
                     <!-- নিউজ রুম ইমেইল -->
