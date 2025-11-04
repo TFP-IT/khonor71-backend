@@ -2174,4 +2174,11 @@
   'only_registered_users_can_vote' => 'Only registered users can vote',
   'total_votes' => 'Total votes',
   'no_results_found_for' => 'No results found for',
+  'help_guide' => 'Help guide',
+  'image_name' => 'Image name',
+  'image_url' => 'Image url',
+  'feed_name' => 'Feed name',
+  'feed_url' => 'Feed url',
+  'person_image' => 'Person image',
+  'add_new_opinion' => 'Add new opinion',
 );

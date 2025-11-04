@@ -1076,11 +1076,138 @@ if (!function_exists('news_time_ago')) {
         return convert_digits_to_locale("{$diff} {$agoWord}", $locale);
     }
     
+    function bengaliToReverseAvro($text)
+    {
+        // Map organized by character type for better accuracy
+        $vowels = [
+            'অ' => 'a',      // Inherent vowel 'o' sound but typically romanized as 'a'
+            'আ' => 'aa',     // Longer vowel sound
+            'ই' => 'i',
+            'ঈ' => 'ii',
+            'উ' => 'u',
+            'ঊ' => 'uu',
+            'ঋ' => 'ri',
+            'এ' => 'e',
+            'ঐ' => 'ai',
+            'ও' => 'o',
+            'ঔ' => 'ou',
+        ];
+        
+        $consonants = [
+            // Velar
+            'ক' => 'k',
+            'খ' => 'kh',
+            'গ' => 'g',
+            'ঘ' => 'gh',
+            'ঙ' => 'ng',
+            
+            // Palatal
+            'চ' => 'ch',
+            'ছ' => 'chh',
+            'জ' => 'j',
+            'ঝ' => 'jh',
+            'ঞ' => 'ny',
+            
+            // Retroflex
+            'ট' => 'tt',
+            'ঠ' => 'tth',
+            'ড' => 'dd',
+            'ঢ' => 'ddh',
+            'ণ' => 'nn',
+            
+            // Dental
+            'ত' => 't',
+            'থ' => 'th',
+            'দ' => 'd',
+            'ধ' => 'dh',
+            'ন' => 'n',
+            
+            // Labial
+            'প' => 'p',
+            'ফ' => 'ph',
+            'ব' => 'b',
+            'ভ' => 'bh',
+            'ম' => 'm',
+            
+            // Approximants & Fricatives
+            'য' => 'j',
+            'র' => 'r',
+            'ল' => 'l',
+            'শ' => 'sh',
+            'ষ' => 'ssh',
+            'স' => 's',
+            'হ' => 'h',
+            
+            // Additional
+            'ড়' => 'rr',
+            'ঢ়' => 'rrh',
+            'য়' => 'y',
+        ];
+        
+        // Vowel signs (Matras) - these combine with consonants
+        $matras = [
+            'া' => 'a',
+            'ি' => 'i',
+            'ী' => 'ii',
+            'ু' => 'u',
+            'ূ' => 'uu',
+            'ৃ' => 'ri',
+            'ে' => 'e',
+            'ৈ' => 'ai',
+            'ো' => 'o',
+            'ৌ' => 'ou',
+        ];
+        
+        $special = [
+            'ৎ' => 't',      // Khanda Ta
+            'ং' => 'ng',     // Anusvara
+            'ঃ' => 'h',      // Visarga
+            'ঁ' => 'n',      // Chandrabindu
+            '্' => '',        // Hoshonto/Virama (no sound)
+        ];
+        
+        $bengaliMap = array_merge($vowels, $consonants, $matras, $special);
+        
+        $result = '';
+        $length = mb_strlen($text, 'UTF-8');
+        
+        for ($i = 0; $i < $length; $i++) {
+            $char = mb_substr($text, $i, 1, 'UTF-8');
+            
+            if (isset($bengaliMap[$char])) {
+                $result .= $bengaliMap[$char];
+            } else {
+                // Keep non-Bengali characters as-is
+                $result .= $char;
+            }
+        }
+        
+        return $result;
+    }
+
     function generateSlug($title)
     {
-        $slug = preg_replace('/[[:punct:]]+/u', '', $title);
-        $slug = preg_replace('/\s+/u', '-', trim($slug));
-
+        $hasBengali = preg_match('/[\x{0980}-\x{09FF}]/u', $title);
+        
+        if ($hasBengali) {
+            $title = bengaliToReverseAvro($title);
+        }
+        
+        // Convert to lowercase
+        $slug = mb_strtolower($title, 'UTF-8');
+        
+        // Remove punctuation but keep hyphens
+        $slug = preg_replace('/[[:punct:]]+/u', '', $slug);
+        
+        // Trim and replace spaces/underscores with hyphens
+        $slug = preg_replace('/[\s_]+/u', '-', trim($slug));
+        
+        // Remove duplicate hyphens
+        $slug = preg_replace('/-+/', '-', $slug);
+        
+        // Remove leading/trailing hyphens
+        $slug = trim($slug, '-');
+        
         return $slug;
     }
 
