@@ -28,14 +28,14 @@
                     </li>
                 @endcan
 
-                @can('read_theme')
+                {{-- @can('read_theme')
                     <li class="{{ request()->is('admin/theme') ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.theme.index') }}">
                             <i class="fa fa-server"></i>
                             <span>{{ localize('theme') }}</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
 
                 @can('read_probashi_news')
                     <li class="{{ request()->is('admin/probashijanala*') ? 'mm-active' : 'XXXX' }}">
@@ -448,12 +448,12 @@
                         @endcan
                     </li>
                 @endcan
-                <li class="{{ request()->is('admin/update/guides') ? 'mm-active' : '' }}">
+                {{-- <li class="{{ request()->is('admin/update/guides') ? 'mm-active' : '' }}">
                     <a href="{{ route('update.guides') }}">
                         <i class="fa fa-warehouse"></i>
                         <span>Update Guides</span>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </nav>
     </div>

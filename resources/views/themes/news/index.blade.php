@@ -214,23 +214,23 @@
 
     <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
         <!-- Tech News Slider Section -->
-        @if ($sectionFiveNews['thirdNews']->isNotEmpty())
+        {{-- @if ($sectionFiveNews['thirdNews']->isNotEmpty())
             @include ('themes.news.components.common.tech-news-card', [
                 'newsCards' => $sectionFiveNews['thirdNews'],
             ])
-        @endif
+        @endif --}}
 
         <!-- Food News Slider Section -->
-        @if ($sectionFiveNews['fourthNews']->isNotEmpty())
+        {{-- @if ($sectionFiveNews['fourthNews']->isNotEmpty())
             @include ('themes.news.components.common.tech-news-card', [
                 'newsCards' => $sectionFiveNews['fourthNews'],
             ])
-        @endif
+        @endif --}}
 
         <!-- Binodon News Slider Section -->
-        @if ($sectionSixNews->isNotEmpty())
+        {{-- @if ($sectionSixNews->isNotEmpty())
             @include ('themes.news.components.common.tech-news-card', ['newsCards' => $sectionSixNews])
-        @endif
+        @endif --}}
 
         <!-- Lifestyle News Slider Section -->
         @php
@@ -239,9 +239,9 @@
             $chunkedNewsGroups = array_chunk($restNewsGroups, 4, true); // group every 4 items
         @endphp
 
-        @if ($firstNewsGroup && $firstNewsGroup->isNotEmpty())
+        {{-- @if ($firstNewsGroup && $firstNewsGroup->isNotEmpty())
             @include('themes.news.components.common.tech-news-card', ['newsCards' => $firstNewsGroup])
-        @endif
+        @endif --}}
     </section>
 
     <!-- banner section -->
@@ -265,6 +265,7 @@
                 @endif
             @endforeach
         </section>
+        @break
     @endforeach
 
     <!-- RSS Feed News -->
