@@ -1,2 +1,15 @@
 User-agent: *
-Disallow: /rss-details-
+Disallow:
+
+# Allow all crawlers full access
+User-agent: Googlebot
+Disallow:
+
+User-agent: bingbot
+Disallow:
+
+User-agent: Mediapartners-Google
+Disallow:
+
+# Sitemap location
+Sitemap: https://www.khobor71.com/sitemap.xml

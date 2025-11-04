@@ -21,6 +21,16 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <link href="{{ $font->source_url }}" rel="stylesheet">
     @endforeach
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2TEHY5NY81"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2TEHY5NY81');
+    </script>
+
     {{-- Set CSS Variables --}}
     <style>
         :root {
