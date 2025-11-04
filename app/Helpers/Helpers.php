@@ -1078,10 +1078,10 @@ if (!function_exists('news_time_ago')) {
     
     function bengaliToReverseAvro($text)
     {
-        // Map organized by character type for better accuracy
+        // independent vowels
         $vowels = [
-            'অ' => 'a',      // Inherent vowel 'o' sound but typically romanized as 'a'
-            'আ' => 'aa',     // Longer vowel sound
+            'অ' => 'a',
+            'আ' => 'aa',
             'ই' => 'i',
             'ঈ' => 'ii',
             'উ' => 'u',
@@ -1092,59 +1092,23 @@ if (!function_exists('news_time_ago')) {
             'ও' => 'o',
             'ঔ' => 'ou',
         ];
-        
+
+        // consonants (basic approximations)
         $consonants = [
-            // Velar
-            'ক' => 'k',
-            'খ' => 'kh',
-            'গ' => 'g',
-            'ঘ' => 'gh',
-            'ঙ' => 'ng',
-            
-            // Palatal
-            'চ' => 'ch',
-            'ছ' => 'chh',
-            'জ' => 'j',
-            'ঝ' => 'jh',
-            'ঞ' => 'ny',
-            
-            // Retroflex
-            'ট' => 'tt',
-            'ঠ' => 'tth',
-            'ড' => 'dd',
-            'ঢ' => 'ddh',
-            'ণ' => 'nn',
-            
-            // Dental
-            'ত' => 't',
-            'থ' => 'th',
-            'দ' => 'd',
-            'ধ' => 'dh',
-            'ন' => 'n',
-            
-            // Labial
-            'প' => 'p',
-            'ফ' => 'ph',
-            'ব' => 'b',
-            'ভ' => 'bh',
-            'ম' => 'm',
-            
-            // Approximants & Fricatives
-            'য' => 'j',
-            'র' => 'r',
-            'ল' => 'l',
-            'শ' => 'sh',
-            'ষ' => 'ssh',
-            'স' => 's',
-            'হ' => 'h',
-            
-            // Additional
-            'ড়' => 'rr',
-            'ঢ়' => 'rrh',
-            'য়' => 'y',
+            'ক' => 'k', 'খ' => 'kh', 'গ' => 'g', 'ঘ' => 'gh', 'ঙ' => 'ng',
+            'চ' => 'ch', 'ছ' => 'chh', 'জ' => 'j', 'ঝ' => 'jh', 'ঞ' => 'ny',
+            'ট' => 'tt', 'ঠ' => 'tth', 'ড' => 'dd', 'ঢ' => 'ddh', 'ণ' => 'nn',
+            'ত' => 't', 'থ' => 'th', 'দ' => 'd', 'ধ' => 'dh', 'ন' => 'n',
+            'প' => 'p', 'ফ' => 'ph', 'ব' => 'b', 'ভ' => 'bh', 'ম' => 'm',
+            'য' => 'j', 'র' => 'r', 'ল' => 'l', 'শ' => 'sh', 'ষ' => 'ssh', 'স' => 's', 'হ' => 'h',
+            // additional/nukta-like forms
+            'ড়' => 'rr', 'ঢ়' => 'rrh',
+            // both forms of ya-yaphala / y-variants
+            'য়' => 'y', 'য়' => 'y',
+            // the "nukta" modified consonants may appear as separate chars; keep them if present
         ];
-        
-        // Vowel signs (Matras) - these combine with consonants
+
+        // matras (vowel signs)
         $matras = [
             'া' => 'a',
             'ি' => 'i',
@@ -1157,59 +1121,120 @@ if (!function_exists('news_time_ago')) {
             'ো' => 'o',
             'ৌ' => 'ou',
         ];
-        
+
+        // specials and diacritics
         $special = [
-            'ৎ' => 't',      // Khanda Ta
-            'ং' => 'ng',     // Anusvara
-            'ঃ' => 'h',      // Visarga
-            'ঁ' => 'n',      // Chandrabindu
-            '্' => '',        // Hoshonto/Virama (no sound)
+            'ৎ' => 't',   // khanda ta
+            'ং' => 'ng',  // anusvara
+            'ঃ' => 'h',   // visarga
+            'ঁ' => 'n',   // chandrabindu (approx)
+            '্' => '__VIRAMA__', // placeholder; handled in logic (no sound)
         ];
-        
-        $bengaliMap = array_merge($vowels, $consonants, $matras, $special);
-        
+
+        // digits
+        $digits = [
+            '০' => '0', '১' => '1', '২' => '2', '৩' => '3', '৪' => '4',
+            '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
+        ];
+
+        // Merge maps for quick lookups where appropriate (we don't include virama in merge,
+        // because virama affects logic rather than producing output)
+        $bengaliMap = array_merge($vowels, $consonants, $matras, $special, $digits);
+
         $result = '';
-        $length = mb_strlen($text, 'UTF-8');
-        
-        for ($i = 0; $i < $length; $i++) {
+        $len = mb_strlen($text, 'UTF-8');
+
+        for ($i = 0; $i < $len; $i++) {
             $char = mb_substr($text, $i, 1, 'UTF-8');
-            
+
+            // Direct digit or independent vowel or standalone special (like anusvara) or standalone matra
+            if (isset($vowels[$char]) || isset($special[$char]) || isset($digits[$char])) {
+                // If special is virama placeholder, skip (it should never appear alone here)
+                if ($char === '্') {
+                    continue;
+                }
+                $result .= $bengaliMap[$char];
+                continue;
+            }
+
+            // If char is a consonant
+            if (isset($consonants[$char])) {
+                $cons = $consonants[$char];
+
+                // Lookahead safely
+                $next = ($i + 1 < $len) ? mb_substr($text, $i + 1, 1, 'UTF-8') : null;
+
+                // If next is virama (hoshonto) -> consonant cluster, no inherent vowel
+                if ($next === '্') {
+                    $result .= $cons;
+                    // skip the virama (increment i to skip it; loop will process the next consonant)
+                    $i++;
+                    // continue to next char (which should be consonant or may be something else)
+                    continue;
+                }
+
+                // If next is a matra -> attach mapped vowel and consume matra
+                if ($next !== null && isset($matras[$next])) {
+                    $result .= $cons . $matras[$next];
+                    $i++; // consume matra
+                    continue;
+                }
+
+                // If next is a diacritic like chandrabindu / anusvara / visarga -> treat vowel then combine
+                if ($next !== null && isset($special[$next]) && $next !== '্') {
+                    // inherent vowel + diacritic
+                    $result .= $cons . 'a' . $special[$next];
+                    $i++; // consume the diacritic
+                    continue;
+                }
+
+                // Otherwise, use the inherent vowel 'a'
+                $result .= $cons . 'a';
+                continue;
+            }
+
+            // If char is a matra appearing standalone (rare/wrong Unicode order) — attach to previous if possible
+            if (isset($matras[$char])) {
+                // If result is not empty and previous transliteration ends with a consonant without vowel,
+                // this is tricky — we will just append the matra letter (best-effort)
+                $result .= $matras[$char];
+                continue;
+            }
+
+            // Fallback: if we have a direct mapping in merged map, use that
             if (isset($bengaliMap[$char])) {
                 $result .= $bengaliMap[$char];
-            } else {
-                // Keep non-Bengali characters as-is
-                $result .= $char;
+                continue;
             }
+
+            // Keep ASCII / punctuation / spaces as-is (you may want to normalize later in slug)
+            $result .= $char;
         }
-        
+
         return $result;
     }
 
     function generateSlug($title)
     {
         $hasBengali = preg_match('/[\x{0980}-\x{09FF}]/u', $title);
-        
+
         if ($hasBengali) {
             $title = bengaliToReverseAvro($title);
         }
-        
+
         // Convert to lowercase
         $slug = mb_strtolower($title, 'UTF-8');
-        
-        // Remove punctuation but keep hyphens
-        $slug = preg_replace('/[[:punct:]]+/u', '', $slug);
-        
-        // Trim and replace spaces/underscores with hyphens
-        $slug = preg_replace('/[\s_]+/u', '-', trim($slug));
-        
-        // Remove duplicate hyphens
-        $slug = preg_replace('/-+/', '-', $slug);
-        
-        // Remove leading/trailing hyphens
-        $slug = trim($slug, '-');
-        
+
+        // Replace any non-alphanumeric (keep hyphen) with hyphen
+        // Keep ASCII letters, numbers, and hyphen
+        $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '-', $slug);
+
+        // Trim and replace multiple hyphens with single
+        $slug = preg_replace('/-+/', '-', trim($slug, '-'));
+
         return $slug;
     }
+
 
 }
 
