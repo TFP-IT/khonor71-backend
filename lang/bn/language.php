@@ -2181,4 +2181,11 @@
   'feed_url' => 'Feed url',
   'person_image' => 'Person image',
   'add_new_opinion' => 'Add new opinion',
+  'back' => 'Back',
+  'reporter_id' => 'Reporter ID',
+  'total_reports' => 'Total reports',
+  'daily' => 'Daily',
+  'weekly' => 'Weekly',
+  'monthly' => 'Monthly',
+  'yearly' => 'Yearly',
 );

@@ -1,42 +1,102 @@
-const container = document.querySelector(".daily-stories__outer");
-        const imgs_wrapper = document.querySelector(".daily-stories__container");
-        const imgs = document.querySelectorAll(".daily-stories .slide");
-        const bars = document.querySelectorAll(".progress-bars .bar");
-        const prevBtn = document.querySelector("#prev-slide");
-        const nextBtn = document.querySelector("#next-slide");
-        const centralArea = document.querySelector(".central-area");
-        const total_imgs = imgs.length;
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+let container;
+let swipeSurface;
+let imgs_wrapper;
+let imgs;
+let bars;
+let prevBtn;
+let nextBtn;
+let centralArea;
+let total_imgs;
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        const CM_container = document.querySelector(".context-menu-container");
-        const CM_button = CM_container.querySelector("a.btn_play_push");
-        const cm_link_save = document.querySelector("#c-menu_save");
-        const cm_link_share = document.querySelector("#c-menu_share");
-        const cm_link_copy = document.querySelector("#c-menu_copy");
-        const cm_link_cancel = document.querySelector("#c-menu_cancel");
+let CM_container;
+let CM_button;
+let cm_link_save;
+let cm_link_share;
+let cm_link_copy;
+let cm_link_cancel;
 
-        let entryURL;
+let entryURL;
 
-        let container_width = container.clientWidth;
-        let current_index = 0;
-        let pointer_is_down = false;
-        let [start_x, end_x] = [0, 0];
-        let move_distance = 0;
-        let timersSet = [];
-        let dataSet = [];
-        let timer;
+let container_width = 0;
+let current_index = 0;
+let pointer_is_down = false;
+let start_x = 0;
+let end_x = 0;
+let start_y = 0;
+let end_y = 0;
+let is_horizontal_drag = false;
+let move_distance = 0;
+let timersSet = [];
+let dataSet = [];
+let timer;
+
+function initStoryGallery() {
+    container = document.querySelector(".daily-stories__outer");
+    if (!container) return;
+    if (container.dataset.storyInit === "1") return;
+
+    swipeSurface = document.querySelector(".daily-stories") || container;
+    imgs_wrapper = document.querySelector(".daily-stories__container");
+    imgs = document.querySelectorAll(".daily-stories .slide");
+    bars = document.querySelectorAll(".progress-bars .bar");
+    prevBtn = document.querySelector("#prev-slide");
+    nextBtn = document.querySelector("#next-slide");
+    centralArea = document.querySelector(".central-area");
+    total_imgs = imgs.length;
+
+    CM_container = document.querySelector(".context-menu-container");
+    CM_button = CM_container ? CM_container.querySelector("a.btn_play_push") : null;
+    cm_link_save = document.querySelector("#c-menu_save");
+    cm_link_share = document.querySelector("#c-menu_share");
+    cm_link_copy = document.querySelector("#c-menu_copy");
+    cm_link_cancel = document.querySelector("#c-menu_cancel");
+
+    container_width = container.clientWidth;
+    current_index = 0;
+    pointer_is_down = false;
+    start_x = 0;
+    end_x = 0;
+    move_distance = 0;
+    timersSet = [];
+    dataSet = [];
+    timer = null;
+
+    if (!imgs_wrapper || !imgs.length) {
+        return;
+    }
+
+    container.dataset.storyInit = "1";
+
+    init();
+    collections();
+
+    setSlideActive(0);
+    setBarActive(0);
+    updateButtons();
+
+    if (isMobile) {
+        document.body.classList.add("mobile");
+    }
+
+    bindEvents();
+}
 
         function reload() {
             window.location.reload(false);
         }
 
         function init() {
+            if (!container || !imgs_wrapper) return;
             container_width = container.clientWidth;
-            CM_container.style.width = `${container_width - 30}px`;
+            if (CM_container) {
+                CM_container.style.width = `${container_width - 30}px`;
+            }
             imgs_wrapper.style.width = `${container_width * total_imgs}px`;
         }
 
         function collections() {
+            if (!imgs || !total_imgs) return;
             for (var i = 0; i < total_imgs; ++i) {
                 timersSet.push(imgs[i].getAttribute("data-timeout"));
 
@@ -98,6 +158,7 @@ const container = document.querySelector(".daily-stories__outer");
 
         // Set bar "active / animate"
         function setBarActive(i) {
+            if (!bars || !bars.length || !bars[i]) return;
             bars.forEach((el, index) => {
                 if (index >= i) {
                     el.classList.remove("animate");
@@ -111,19 +172,27 @@ const container = document.querySelector(".daily-stories__outer");
             });
 
             bars[i].classList.add("animate");
+            const span = bars[i].querySelector("span");
+            if (span && timersSet[i]) {
+                span.style.animationDuration = `${timersSet[i]}ms`;
+            }
         }
 
         // Set current slide active
         function setActive() {
-            if (current_index < total_imgs - 1) {
-                // if ain't LAST
-                setBarActive(parseInt(current_index, 10) + 1);
-            } else {
-                setBarActive(0);
+            if (bars && bars.length) {
+                if (current_index < total_imgs - 1) {
+                    // if ain't LAST
+                    setBarActive(parseInt(current_index, 10) + 1);
+                } else {
+                    setBarActive(0);
+                }
             }
 
             setTimeout(() => {
-                setBarActive(current_index);
+                if (bars && bars.length) {
+                    setBarActive(current_index);
+                }
                 setSlideActive(current_index);
             }, 1);
         }
@@ -288,6 +357,7 @@ const container = document.querySelector(".daily-stories__outer");
 
         // Update SRC of "Save Image" button on context menu
         function updateSaveImgSrc() {
+            if (!cm_link_save) return;
             cm_link_save.href = dataSet[current_index];
         }
 
@@ -296,9 +366,11 @@ const container = document.querySelector(".daily-stories__outer");
             const state = e.target.getAttribute("data-state");
 
             // Return if Context Menu is active
-            if (CM_container.classList.contains("active")) {
+            if (CM_container && CM_container.classList.contains("active")) {
                 return;
             }
+
+            if (!centralArea) return;
 
             if (state === "paused") {
                 centralArea.setAttribute("data-state", "playing");
@@ -326,6 +398,7 @@ const container = document.querySelector(".daily-stories__outer");
         // Handle Context-Menu
         function CM_Handle(e) {
             e.preventDefault();
+            if (!CM_container) return;
 
             CM_container.classList.toggle("active");
 
@@ -384,66 +457,175 @@ const container = document.querySelector(".daily-stories__outer");
             }, timeout);
         }
 
-        // Bind Events on document ready
-        document.addEventListener("DOMContentLoaded", () => {
-            init();
-            collections();
+        function bindEvents() {
+            const surface = swipeSurface || container;
+            const surfaces = new Set([surface, container, centralArea].filter(Boolean));
+            if (!surfaces.size) return;
 
-            setSlideActive(0);
-            setBarActive(0);
-
-            // slidesAutoPlay();
-
-            if (isMobile) {
-                document.body.classList.add("mobile");
+            // Handle PREV Slide btn
+            if (prevBtn) {
+                prevBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    prevSlide();
+                });
             }
-        });
 
-        // Handle PREV Slide btn
-        prevBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            prevSlide();
-        });
+            // Handle NEXT Slide btn
+            if (nextBtn) {
+                nextBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    nextSlide();
+                });
+            }
 
-        // Handle NEXT Slide btn
-        nextBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            nextSlide();
-        });
+            // Handle click on Central Area - Play/Pause animation
+            if (centralArea) {
+                centralArea.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    toggleSliderAutoplay(e);
+                });
+            }
 
-        // Handle click on Central Area - Play/Pause animation
-        centralArea.addEventListener("click", (e) => {
-            e.preventDefault();
-            toggleSliderAutoplay(e);
-        });
+            // Swipe support (reels-like)
+            const getClientX = (event) => {
+                if (event.touches && event.touches.length) return event.touches[0].clientX;
+                if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientX;
+                return event.clientX;
+            };
 
+            const handlePointerDown = (event) => {
+                if (document.body.classList.contains("menu-open")) return;
+                pointer_is_down = true;
+                start_x = getClientX(event);
+                end_x = start_x;
+                start_y = event.touches && event.touches.length
+                    ? event.touches[0].clientY
+                    : event.clientY;
+                end_y = start_y;
+                is_horizontal_drag = false;
 
+                if (event.pointerId && event.currentTarget?.setPointerCapture) {
+                    try {
+                        event.currentTarget.setPointerCapture(event.pointerId);
+                    } catch (e) {}
+                }
+            };
 
-        // Handle Window resize
-        window.addEventListener("resize", reload);
+            const handlePointerMove = (event) => {
+                if (!pointer_is_down) return;
+                end_x = getClientX(event);
+                end_y = event.touches && event.touches.length
+                    ? event.touches[0].clientY
+                    : event.clientY;
 
-        // Trigger Context Menu
-        CM_button.addEventListener("click", CM_Handle);
+                const dx = Math.abs(end_x - start_x);
+                const dy = Math.abs(end_y - start_y);
+                if (dx > dy && dx > 6) {
+                    is_horizontal_drag = true;
+                    if (event.cancelable) {
+                        event.preventDefault();
+                    }
+                }
 
-        // Dismiss Context Menu
-        cm_link_cancel.addEventListener("click", CM_Handle);
+                if (is_horizontal_drag) {
+                    createDraggingEffects();
+                }
+            };
 
-        // Copy STORIES Link from Context Menu
-        cm_link_copy.addEventListener("click", (e) => {
-            e.preventDefault();
-            copyText(e.target);
-        });
+            const handlePointerUp = (event) => {
+                if (!pointer_is_down) return;
+                end_x = getClientX(event);
+                end_y = event.changedTouches && event.changedTouches.length
+                    ? event.changedTouches[0].clientY
+                    : event.clientY;
+                pointer_is_down = false;
 
-        // Handle Progress Bar Click
-        bars.forEach((bar) => {
-            bar.addEventListener("click", () => {
-                slideTo(bar.getAttribute("data-index"));
+                if (event.pointerId && event.currentTarget?.releasePointerCapture) {
+                    try {
+                        event.currentTarget.releasePointerCapture(event.pointerId);
+                    } catch (e) {}
+                }
+
+                const dx = Math.abs(end_x - start_x);
+                const dy = Math.abs(end_y - start_y);
+
+                if (dx > dy && dx > 30) {
+                    calculateFinalMoveDistance();
+                } else {
+                    // reset any partial drag
+                    switchImages();
+                }
+            };
+
+            const supportsPointer = "PointerEvent" in window;
+
+            surfaces.forEach((el) => {
+                if (supportsPointer) {
+                    el.addEventListener("pointerdown", handlePointerDown, { passive: false });
+                    el.addEventListener("pointermove", handlePointerMove, { passive: false });
+                    el.addEventListener("pointerup", handlePointerUp, { passive: false });
+                    el.addEventListener("pointercancel", handlePointerUp, { passive: false });
+                } else {
+                    el.addEventListener("touchstart", handlePointerDown, { passive: false });
+                    el.addEventListener("touchmove", handlePointerMove, { passive: false });
+                    el.addEventListener("touchend", handlePointerUp, { passive: false });
+
+                    el.addEventListener("mousedown", handlePointerDown);
+                    el.addEventListener("mousemove", handlePointerMove);
+                    el.addEventListener("mouseup", handlePointerUp);
+                    el.addEventListener("mouseleave", handleMouseLeave);
+                }
             });
-        });
+
+            // Handle Window resize
+            window.removeEventListener("resize", reload);
+            window.addEventListener("resize", reload);
+
+            // Trigger Context Menu
+            if (CM_button) {
+                CM_button.addEventListener("click", CM_Handle);
+            }
+
+            // Dismiss Context Menu
+            if (cm_link_cancel) {
+                cm_link_cancel.addEventListener("click", CM_Handle);
+            }
+
+            // Copy STORIES Link from Context Menu
+            if (cm_link_copy) {
+                cm_link_copy.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    copyText(e.target);
+                });
+            }
+
+            // Handle Progress Bar Click
+            if (bars && bars.length) {
+                bars.forEach((bar) => {
+                    bar.addEventListener("click", () => {
+                        slideTo(bar.getAttribute("data-index"));
+                    });
+
+                    const span = bar.querySelector("span");
+                    if (span) {
+                        span.addEventListener("animationend", () => {
+                            if (document.body.classList.contains("paused")) return;
+                            if (document.body.classList.contains("menu-open")) return;
+                            const barIndex = parseInt(bar.getAttribute("data-index"), 10);
+                            if (barIndex !== current_index) return;
+                            if (current_index < total_imgs - 1) {
+                                nextSlide();
+                            }
+                        });
+                    }
+                });
+            }
+        }
 
 
         function updateBackground(index) {
             const mainBg = document.getElementById("main-bg");
+            if (!mainBg) return;
 
             // Clear previous background classes
             mainBg.className = "flex justify-center items-center";
@@ -494,6 +676,7 @@ const container = document.querySelector(".daily-stories__outer");
         }
 
         function updateButtons() {
+            if (!prevBtn || !nextBtn) return;
             if (current_index === 0) {
                 prevBtn.disabled = true;
                 prevBtn.style.opacity = "0.2";
@@ -524,3 +707,11 @@ const container = document.querySelector(".daily-stories__outer");
             updateBackground(i);
             playVideo();
         }
+
+window.initStoryGallery = initStoryGallery;
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => initStoryGallery());
+} else {
+    initStoryGallery();
+}

@@ -61,6 +61,9 @@ class ReporterDataTable extends DataTable
 
             ->addColumn('action', function ($row) {
                 $button = '';
+                if (auth()->user()->can('read_reporter')) {
+                    $button .= '<a href="' . route('reporter.report', $row->uuid) . '" class="btn btn-info-soft btn-sm me-1" data-bs-toggle="tooltip" title="' . localize("report") . '" ><i class="fas fa-chart-line"></i></a>';
+                }
                 if (auth()->user()->can('update_reporter')) {
                     $button .= '<button onclick="editReporterDetails(' . $row->id . ')" class="btn btn-success-soft btn-sm me-1" ><i class="fas fa-edit"></i></button>';
                 }

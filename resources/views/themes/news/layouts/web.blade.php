@@ -935,6 +935,9 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile.js') }}"></script>
+    <script>
+        window.storyGalleryScriptUrl = "{{ \App\Helpers\ThemeHelper::asset('js/story.js') }}";
+    </script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-modal.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/mega-menu-inner-tab.js') }}"></script>
     <script src="{{ \App\Helpers\ThemeHelper::asset('js/mobile-side-menu.js') }}"></script>

@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use App\Models\NewsMst;
+use Carbon\Carbon;
 use Modules\Reporter\Entities\Reporter;
 use Modules\Reporter\Entities\Department;
 use Modules\Setting\Entities\Country;
@@ -14,12 +16,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Modules\Reporter\DataTables\ReporterDataTable;
 use Intervention\Image\Facades\Image;
+use Modules\Setting\Entities\ActivityLog;
+use Modules\Setting\Entities\Application;
+use Modules\VideoNews\Entities\VideoNews;
 
 class ReporterController extends Controller
 {
     public function __construct()
     {
         $this->middleware('permission:read_reporter')->only('index');
+        $this->middleware('permission:read_reporter')->only('report');
         $this->middleware('permission:create_reporter')->only(['create', 'store']);
         $this->middleware('permission:update_reporter')->only(['edit', 'update']);
         $this->middleware('permission:delete_reporter')->only('destroy');
@@ -35,6 +41,105 @@ class ReporterController extends Controller
     public function index(ReporterDataTable $dataTable)
     {
         return $dataTable->render('reporter::index');
+    }
+
+    /**
+     * Reporter report and activity overview.
+     */
+    public function report(Reporter $reporter)
+    {
+        $department = $reporter->department_id ? Department::find($reporter->department_id) : null;
+
+        $reportsPeriod = request('reports_period');
+        $activityPeriod = request('activity_period');
+
+        $newsQuery = NewsMst::with(['category', 'language'])
+            ->where('reporter_id', $reporter->id);
+
+        $videoQuery = VideoNews::where('reporter_id', $reporter->id);
+
+        $activityQuery = ActivityLog::with('user');
+        if ($reporter->user_id) {
+            $activityQuery->where('causer_id', $reporter->user_id);
+        } else {
+            $activityQuery->whereRaw('1 = 0');
+        }
+
+        $this->applyPeriodFilter($newsQuery, $reportsPeriod, 'publish_date', true);
+        $this->applyPeriodFilter($activityQuery, $activityPeriod, 'created_at');
+
+        $totalNews = (clone $newsQuery)->count();
+        $publishedNews = (clone $newsQuery)->where('status', 1)->count();
+        $unpublishedNews = (clone $newsQuery)->where('status', 0)->count();
+        $totalNewsViews = (clone $newsQuery)->sum('reader_hit');
+
+        $totalVideoNews = (clone $videoQuery)->count();
+        $totalVideoViews = (clone $videoQuery)->sum('total_view');
+
+        $totalActivities = (clone $activityQuery)->count();
+
+        $newsReports = $newsQuery
+            ->orderByDesc('publish_date')
+            ->paginate(20, ['*'], 'reports_page');
+
+        $activityLogs = $activityQuery
+            ->orderByDesc('created_at')
+            ->paginate(20, ['*'], 'activity_page');
+
+        $appSettings = Application::first();
+
+        return view('reporter::report', compact(
+            'reporter',
+            'department',
+            'reportsPeriod',
+            'activityPeriod',
+            'totalNews',
+            'publishedNews',
+            'unpublishedNews',
+            'totalNewsViews',
+            'totalVideoNews',
+            'totalVideoViews',
+            'totalActivities',
+            'newsReports',
+            'activityLogs',
+            'appSettings'
+        ));
+    }
+
+    private function applyPeriodFilter($query, ?string $period, string $column, bool $isDate = false): void
+    {
+        if (! $period) {
+            return;
+        }
+
+        $now = Carbon::now();
+
+        switch ($period) {
+            case 'daily':
+                $start = $now->copy()->startOfDay();
+                $end = $now->copy()->endOfDay();
+                break;
+            case 'weekly':
+                $start = $now->copy()->startOfWeek();
+                $end = $now->copy()->endOfWeek();
+                break;
+            case 'monthly':
+                $start = $now->copy()->startOfMonth();
+                $end = $now->copy()->endOfMonth();
+                break;
+            case 'yearly':
+                $start = $now->copy()->startOfYear();
+                $end = $now->copy()->endOfYear();
+                break;
+            default:
+                return;
+        }
+
+        if ($isDate) {
+            $query->whereBetween($column, [$start->toDateString(), $end->toDateString()]);
+        } else {
+            $query->whereBetween($column, [$start, $end]);
+        }
     }
 
     /**

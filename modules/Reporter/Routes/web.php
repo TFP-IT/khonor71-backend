@@ -20,6 +20,7 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         Route::controller(ReporterController::class)->name('reporter.')->group(function () {
 
             Route::get('/reporter-list', 'index')->name('index');
+            Route::get('/report/{reporter:uuid}', 'report')->name('report');
 
             Route::get('/show', 'create')->name('create');
             Route::post('/store', 'store')->name('store');
