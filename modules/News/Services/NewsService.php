@@ -30,8 +30,9 @@ class NewsService
     {
         $categories = Category::whereNull('parents_id')->get();
         $subCategories = Category::whereNotNull('parents_id')->get();
+        $reporters = Reporter::where('status', 1)->orderBy('name')->get();
 
-        return compact('categories', 'subCategories');
+        return compact('categories', 'subCategories', 'reporters');
     }
 
     /**

@@ -10,6 +10,7 @@ $(document).ready(function () {
         let title = form.find("input[name='title']").val();
         let other_page = form.find("select[name='other_page']").val();
         let sub_category = form.find("select[name='sub_category_id']").val();
+        let reporter_id = form.find("select[name='reporter_id']").val();
 
         table.on("preXhr.dt", function (e, settings, data) {
             data.from_date = from_date;
@@ -17,6 +18,7 @@ $(document).ready(function () {
             data.title = title;
             data.other_page = other_page;
             data.sub_category_id = sub_category;
+            data.reporter_id = reporter_id;
         });
         table.DataTable().ajax.reload();
     });
@@ -30,6 +32,7 @@ $(document).ready(function () {
         form.find("input[name='title']").val('');
         form.find("select[name='other_page']").val('').trigger('change');
         form.find("select[name='sub_category_id']").val('').trigger('change');
+        form.find("select[name='reporter_id']").val('').trigger('change');
 
         table.on("preXhr.dt", function (e, settings, data) {
             data.from_date = '';
@@ -37,6 +40,7 @@ $(document).ready(function () {
             data.title = '';
             data.other_page = '';
             data.sub_category_id = '';
+            data.reporter_id = '';
         });
         table.DataTable().ajax.reload();
     });

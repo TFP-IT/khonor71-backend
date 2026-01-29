@@ -39,6 +39,18 @@
                 <label> {{ localize('Custom_url') }}</label>
                 <input type="text" name="title" class="form-control" />
             </div>
+            <div class="col-xl-2 col-md-6 col-12">
+                <label>{{ localize('reporter') }}</label>
+                <select name="reporter_id" id="reporter_id" class="form-control select-basic-single"
+                    data-placeholder="{{ localize_uc('select_reporter') }}" data-allow-clear="true">
+                    <option value=""></option>
+                    @foreach ($reporters as $reporter)
+                        <option value="{{ $reporter->id }}">
+                            {{ $reporter->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
             <div class="col-xl-2 col-md-2 align-self-end d-flex mt-2 mt-lg-0">
                 <button type="submit" class="btn btn-success me-1">{{ localize('find') }}</button>

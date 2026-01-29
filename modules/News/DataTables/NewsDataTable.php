@@ -95,6 +95,10 @@ class NewsDataTable extends DataTable
                     return $row->reporterBy->name ?? null;
                 }
 
+                if ($row->postByUser) {
+                    return $row->postByUser->full_name ?? $row->postByUser->user_name ?? null;
+                }
+
                 return null;
             })
 
@@ -167,7 +171,15 @@ class NewsDataTable extends DataTable
                 }
 
                 if (!empty($this->request()->input('title'))) {
-                    $query->where('title', 'LIKE', '%' . $this->request()->input('title') . '%');
+                    $title = $this->request()->input('title');
+                    $query->where(function ($query) use ($title) {
+                        $query->where('title', 'LIKE', '%' . $title . '%')
+                            ->orWhere('encode_title', 'LIKE', '%' . $title . '%');
+                    });
+                }
+
+                if (!empty($this->request()->input('reporter_id'))) {
+                    $query->where('reporter_id', '=', $this->request()->input('reporter_id'));
                 }
 
             })
