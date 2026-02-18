@@ -11,6 +11,13 @@ use App\Models\CommentsInfo;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Http\Request;
+use Modules\Category\Entities\Category;
+use Modules\Localize\Entities\Language;
+use Modules\Reporter\Entities\Reporter;
+use Modules\Setting\Entities\Application;
+use Modules\Story\Entities\Story;
+use Modules\VideoNews\Entities\VideoNews;
 
 class HomeController extends Controller
 {
@@ -26,115 +33,271 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $months           = '';
-        $readHit          = '';
-        $yearlyPost       = '';
-        $monthly_comments = '';
-        $syear            = '';
-        $syearformat      = '';
+        $range = $request->input('range', '30d');
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+        $languageId = $request->input('language_id');
+        $categoryId = $request->input('category_id');
+        $reporterId = $request->input('reporter_id');
 
-        $currentMonth   = date('m');
-        $currentYear    = date('Y');
-        $numbery        = $currentYear; // or the specific year you are interested in
-        $prevyear       = $currentYear - 1;
-        $prevyearformat = date('y', strtotime('-1 year'));
-        $year           = date('y');
+        [$start, $end] = $this->resolveDateRange($range, $fromDate, $toDate);
 
-        $month_names    = [];
-        $read_hits_data = [];
+        $filters = [
+            'range' => $range,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'language_id' => $languageId,
+            'category_id' => $categoryId,
+            'reporter_id' => $reporterId,
+        ];
 
-        for ($k = 1; $k < 13; $k++) {
-
-            $month = date('m', strtotime("+$k month", strtotime("first day of this month")));
-            $gety  = date('Y', strtotime("+$k month", strtotime("first day of this month")));
-
-            if ($gety == $numbery) {
-                $syear       = $prevyear;
-                $syearformat = $syear;
-            } else {
-                $syear       = $numbery;
-                $syearformat = $syear;
-            }
-
-            $monthlyReadHit = $this->readHit($syearformat, $month);
-            $comments       = $this->comments($syearformat, $month);
-
-            $monthly_comments .= ($comments->total_comment ? $comments->total_comment : 0) . ', ';
-
-            if ($readHit == '') {
-                $readHit .= $monthlyReadHit->read_hit ? $monthlyReadHit->read_hit : 0;
-                $read_hits_data[] = $monthlyReadHit->read_hit ? (int) $monthlyReadHit->read_hit : 0;
-            } else {
-                $readHit .= ', ' . ($monthlyReadHit->read_hit ? $monthlyReadHit->read_hit : 0);
-                $read_hits_data[] = $monthlyReadHit->read_hit ? (int) $monthlyReadHit->read_hit : 0;
-            }
-
-            $yearlyPost .= ($monthlyReadHit->total_post ? $monthlyReadHit->total_post : 0) . ', ';
-
-            if ($months == '') {
-                $months .= "'" . date('F-' . $syear, strtotime("+$k month", strtotime("first day of this month"))) . "'";
-                $month_names[] = date('F-' . $syear, strtotime("+$k month", strtotime("first day of this month")));
-            } else {
-                $months .= " , '" . date('F-' . $syear, strtotime("+$k month", strtotime("first day of this month"))) . "'";
-                $month_names[] = date('F-' . $syear, strtotime("+$k month", strtotime("first day of this month")));
-            }
-
+        $postBaseQuery = NewsMst::query();
+        if ($languageId) {
+            $postBaseQuery->where('language_id', $languageId);
+        }
+        if ($categoryId) {
+            $postBaseQuery->where('category_id', $categoryId);
+        }
+        if ($reporterId) {
+            $postBaseQuery->where('reporter_id', $reporterId);
         }
 
-        $data["monthly_comments"]  = $monthly_comments  = trim($monthly_comments, ',');
-        $data["yearlyPost"]        = $yearlyPost        = trim($yearlyPost, ',');
-        $data["readHit"]           = $readHit           = trim($readHit, ',');
-        $data["months"]            = $months            = trim($months, ',');
-        $data['total_comment']     = $total_comment     = $this->last_year_comments();
-        $data['yearly_total_post'] = $yearly_total_post = $this->last_year_readhit_totapost();
+        $postRangeQuery = clone $postBaseQuery;
+        if ($start && $end) {
+            $postRangeQuery->whereBetween('publish_date', [$start->toDateString(), $end->toDateString()]);
+        }
 
-        $date               = date('y-m-d');
-        $data['total_post'] = $total_post = NewsMst::count();
+        $totalPosts = (clone $postRangeQuery)->count();
+        $publishedPosts = (clone $postRangeQuery)->where('status', 1)->count();
+        $draftPosts = (clone $postRangeQuery)->where('status', 0)->count();
+        $scheduledPosts = (clone $postBaseQuery)->where('status', 1)->where('publish_date', '>', Carbon::today())->count();
+        $totalViews = (clone $postRangeQuery)->sum('reader_hit');
+        $avgViews = $totalPosts ? round($totalViews / $totalPosts, 1) : 0;
 
-        $data['today_post'] = $today_post = NewsMst::where('publish_date', date('Y-m-d'))->count();
+        $commentBaseQuery = NewsComment::query()->whereNotNull('news_mst_id');
+        $commentBaseQuery->whereIn('news_mst_id', (clone $postBaseQuery)->select('id'));
+        if ($start && $end) {
+            $commentBaseQuery->whereBetween('created_at', [$start, $end]);
+        }
+        $totalComments = (clone $commentBaseQuery)->count();
+        $pendingComments = (clone $commentBaseQuery)->where('is_approved', 0)->count();
 
-        $data['total_subscribers'] = $total_subscribers = Subscriber::count();
-        $data['today_subscribers'] = $today_subscribers = Subscriber::whereRaw('DATE(created_at) = ?', [date('Y-m-d')])->count();
+        $totalSubscribers = Subscriber::count();
+        $newSubscribers = $start && $end
+            ? Subscriber::whereBetween('created_at', [$start, $end])->count()
+            : $totalSubscribers;
+        $totalUsers = User::count();
 
-        $data['total_comments'] = $total_comments = NewsComment::count();
-        $data['today_comments'] = $today_comments = NewsComment::whereRaw('DATE(created_at) = ?', [date('Y-m-d')])->count();
+        $videoBaseQuery = VideoNews::query();
+        if ($languageId) {
+            $videoBaseQuery->where('language_id', $languageId);
+        }
+        if ($reporterId) {
+            $videoBaseQuery->where('reporter_id', $reporterId);
+        }
+        if ($start && $end) {
+            $videoBaseQuery->whereBetween('publish_date', [$start->toDateString(), $end->toDateString()]);
+        }
+        $totalVideos = (clone $videoBaseQuery)->count();
+        $totalVideoViews = (clone $videoBaseQuery)->sum('total_view');
 
-        $data['total_hit'] = $total_hit = NewsMst::select(DB::raw('SUM(reader_hit) as total'))->first();
+        $storyBaseQuery = Story::query();
+        if ($languageId) {
+            $storyBaseQuery->where('language_id', $languageId);
+        }
+        if ($start && $end) {
+            $storyBaseQuery->whereBetween('created_at', [$start, $end]);
+        }
+        $totalStories = (clone $storyBaseQuery)->count();
+        $totalStoryViews = (clone $storyBaseQuery)->sum('views');
 
-        $data['user'] = $user = $this->user_reporter();
+        $trendStart = $start ?: Carbon::now()->subDays(29)->startOfDay();
+        $trendEnd = $end ?: Carbon::now()->endOfDay();
+        [$trendLabels, $trendPosts, $trendViews, $trendComments] = $this->buildTrendData(
+            clone $postBaseQuery,
+            clone $commentBaseQuery,
+            $trendStart,
+            $trendEnd
+        );
 
-        $data['latest_post']  = $latest_posts  = $this->latest_post();
-        $data['populer_post'] = $populer_posts = $this->populer_post();
+        $topPosts = (clone $postRangeQuery)
+            ->with(['category', 'language', 'reporterBy'])
+            ->orderByDesc('reader_hit')
+            ->limit(10)
+            ->get();
 
-        $data['lastWeekPost']     = $lastWeekPost     = $this->lastWeekPost();
-        $data['lastWeekComments'] = $lastWeekComments = $this->lastWeekComments();
+        $latestPosts = (clone $postRangeQuery)
+            ->with(['category', 'language', 'reporterBy'])
+            ->where('status', 1)
+            ->orderByDesc('publish_date')
+            ->paginate(10, ['*'], 'latest_posts_page');
 
-        $data['month_names']    = $month_names    = json_encode($month_names);
-        $data['read_hits_data'] = $read_hits_data = json_encode($read_hits_data);
+        $popularPosts = (clone $postRangeQuery)
+            ->with(['category', 'language', 'reporterBy'])
+            ->where('status', 1)
+            ->orderByDesc('reader_hit')
+            ->paginate(10, ['*'], 'popular_posts_page');
+
+        $latestDrafts = (clone $postBaseQuery)
+            ->where('status', 0)
+            ->with('reporterBy')
+            ->orderByDesc('created_at')
+            ->paginate(10, ['*'], 'latest_drafts_page');
+
+        $recentComments = (clone $commentBaseQuery)
+            ->with(['user', 'newsMst'])
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
+        $topCategories = Category::select(
+            'categories.id',
+            'categories.category_name',
+            DB::raw('COUNT(news_msts.id) as total_posts'),
+            DB::raw('SUM(news_msts.reader_hit) as total_views')
+        )
+            ->join('news_msts', 'news_msts.category_id', '=', 'categories.id')
+            ->when($languageId, function ($query) use ($languageId) {
+                $query->where('news_msts.language_id', $languageId);
+            })
+            ->when($reporterId, function ($query) use ($reporterId) {
+                $query->where('news_msts.reporter_id', $reporterId);
+            })
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('news_msts.category_id', $categoryId);
+            })
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('news_msts.publish_date', [$start->toDateString(), $end->toDateString()]);
+            })
+            ->groupBy('categories.id', 'categories.category_name')
+            ->orderByDesc('total_views')
+            ->limit(8)
+            ->get();
+
+        $topReporters = Reporter::select(
+            'reporters.id',
+            'reporters.name',
+            DB::raw('COUNT(news_msts.id) as total_posts'),
+            DB::raw('SUM(news_msts.reader_hit) as total_views')
+        )
+            ->join('news_msts', 'news_msts.reporter_id', '=', 'reporters.id')
+            ->when($languageId, function ($query) use ($languageId) {
+                $query->where('news_msts.language_id', $languageId);
+            })
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('news_msts.category_id', $categoryId);
+            })
+            ->when($reporterId, function ($query) use ($reporterId) {
+                $query->where('news_msts.reporter_id', $reporterId);
+            })
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('news_msts.publish_date', [$start->toDateString(), $end->toDateString()]);
+            })
+            ->groupBy('reporters.id', 'reporters.name')
+            ->orderByDesc('total_views')
+            ->limit(8)
+            ->get();
+
+        $categoryChartLabels = $topCategories->pluck('category_name')->toArray();
+        $categoryChartViews = $topCategories->pluck('total_views')->map(fn ($val) => (int) $val)->toArray();
+
+        $countryViews = DB::table('news_msts')
+            ->leftJoin('reporters', 'reporters.id', '=', 'news_msts.reporter_id')
+            ->selectRaw("TRIM(reporters.country) as area")
+            ->selectRaw('SUM(news_msts.reader_hit) as total_views')
+            ->whereNotNull('reporters.country')
+            ->whereRaw("TRIM(reporters.country) != ''")
+            ->whereRaw("LOWER(TRIM(reporters.country)) != 'unknown'")
+            ->when($languageId, function ($query) use ($languageId) {
+                $query->where('news_msts.language_id', $languageId);
+            })
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('news_msts.category_id', $categoryId);
+            })
+            ->when($reporterId, function ($query) use ($reporterId) {
+                $query->where('news_msts.reporter_id', $reporterId);
+            })
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('news_msts.publish_date', [$start->toDateString(), $end->toDateString()]);
+            })
+            ->groupBy('area')
+            ->orderByDesc('total_views')
+            ->limit(8)
+            ->get();
+
+        $countryViewLabels = $countryViews->pluck('area')->toArray();
+        $countryViewValues = $countryViews->pluck('total_views')->map(fn ($val) => (int) $val)->toArray();
+
+        $divisionViews = DB::table('news_msts')
+            ->leftJoin('reporters', 'reporters.id', '=', 'news_msts.reporter_id')
+            ->selectRaw("COALESCE(NULLIF(reporters.state, ''), 'Unknown') as area")
+            ->selectRaw('SUM(news_msts.reader_hit) as total_views')
+            ->whereRaw('LOWER(reporters.country) = ?', ['bangladesh'])
+            ->when($languageId, function ($query) use ($languageId) {
+                $query->where('news_msts.language_id', $languageId);
+            })
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('news_msts.category_id', $categoryId);
+            })
+            ->when($reporterId, function ($query) use ($reporterId) {
+                $query->where('news_msts.reporter_id', $reporterId);
+            })
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('news_msts.publish_date', [$start->toDateString(), $end->toDateString()]);
+            })
+            ->groupBy('area')
+            ->orderByDesc('total_views')
+            ->limit(8)
+            ->get();
+
+        $divisionViewLabels = $divisionViews->pluck('area')->toArray();
+        $divisionViewValues = $divisionViews->pluck('total_views')->map(fn ($val) => (int) $val)->toArray();
+
+        $languages = Language::all();
+        $categories = Category::onlyParents()->get();
+        $reporters = Reporter::where('status', 1)->orderBy('name')->get();
+        $appSettings = Application::first();
 
         return view('backend.layouts.home', compact(
-            'monthly_comments',
-            'yearlyPost',
-            'readHit',
-            'months',
-            'total_comment',
-            'yearly_total_post',
-            'total_post',
-            'today_post',
-            'total_subscribers',
-            'today_subscribers',
-            'total_comments',
-            'today_comments',
-            'total_hit',
-            'user',
-            'latest_posts',
-            'populer_posts',
-            'lastWeekPost',
-            'lastWeekComments',
-            'month_names',
-            'read_hits_data'
+            'filters',
+            'languages',
+            'categories',
+            'reporters',
+            'totalPosts',
+            'publishedPosts',
+            'draftPosts',
+            'scheduledPosts',
+            'totalViews',
+            'avgViews',
+            'totalComments',
+            'pendingComments',
+            'totalSubscribers',
+            'newSubscribers',
+            'totalUsers',
+            'totalVideos',
+            'totalVideoViews',
+            'totalStories',
+            'totalStoryViews',
+            'trendLabels',
+            'trendPosts',
+            'trendViews',
+            'trendComments',
+            'categoryChartLabels',
+            'categoryChartViews',
+            'countryViews',
+            'countryViewLabels',
+            'countryViewValues',
+            'divisionViewLabels',
+            'divisionViewValues',
+            'topPosts',
+            'latestPosts',
+            'popularPosts',
+            'latestDrafts',
+            'recentComments',
+            'topReporters',
+            'appSettings'
         ));
     }
 
@@ -477,6 +640,100 @@ class HomeController extends Controller
         }
 
         return (object) ['total_comment' => 0];
+    }
+
+    private function resolveDateRange(?string $range, ?string $fromDate, ?string $toDate): array
+    {
+        if ($fromDate && $toDate) {
+            try {
+                $start = Carbon::parse($fromDate)->startOfDay();
+                $end = Carbon::parse($toDate)->endOfDay();
+                return [$start, $end];
+            } catch (\Throwable $e) {
+                // fall back to range presets
+            }
+        }
+
+        $range = $range ?: '30d';
+        $now = Carbon::now();
+
+        switch ($range) {
+            case 'today':
+                return [$now->copy()->startOfDay(), $now->copy()->endOfDay()];
+            case '7d':
+                return [$now->copy()->subDays(6)->startOfDay(), $now->copy()->endOfDay()];
+            case '30d':
+                return [$now->copy()->subDays(29)->startOfDay(), $now->copy()->endOfDay()];
+            case '90d':
+                return [$now->copy()->subDays(89)->startOfDay(), $now->copy()->endOfDay()];
+            case 'ytd':
+                return [$now->copy()->startOfYear(), $now->copy()->endOfDay()];
+            case 'all':
+                return [null, null];
+            default:
+                return [$now->copy()->subDays(29)->startOfDay(), $now->copy()->endOfDay()];
+        }
+    }
+
+    private function buildTrendData($postQuery, $commentQuery, Carbon $start, Carbon $end): array
+    {
+        $days = $start->diffInDays($end) + 1;
+        $labels = [];
+        $postsSeries = [];
+        $viewsSeries = [];
+        $commentsSeries = [];
+
+        if ($days <= 60) {
+            $postRows = $postQuery
+                ->whereBetween('publish_date', [$start->toDateString(), $end->toDateString()])
+                ->selectRaw('DATE(publish_date) as d, COUNT(*) as total_posts, SUM(reader_hit) as total_views')
+                ->groupBy('d')
+                ->get()
+                ->keyBy('d');
+
+            $commentRows = $commentQuery
+                ->whereBetween('created_at', [$start, $end])
+                ->selectRaw('DATE(created_at) as d, COUNT(*) as total_comments')
+                ->groupBy('d')
+                ->get()
+                ->keyBy('d');
+
+            $period = \Carbon\CarbonPeriod::create($start, $end);
+            foreach ($period as $date) {
+                $key = $date->format('Y-m-d');
+                $labels[] = $date->format('M d');
+                $postsSeries[] = (int) ($postRows[$key]->total_posts ?? 0);
+                $viewsSeries[] = (int) ($postRows[$key]->total_views ?? 0);
+                $commentsSeries[] = (int) ($commentRows[$key]->total_comments ?? 0);
+            }
+        } else {
+            $postRows = $postQuery
+                ->whereBetween('publish_date', [$start->toDateString(), $end->toDateString()])
+                ->selectRaw('DATE_FORMAT(publish_date, "%Y-%m") as m, COUNT(*) as total_posts, SUM(reader_hit) as total_views')
+                ->groupBy('m')
+                ->get()
+                ->keyBy('m');
+
+            $commentRows = $commentQuery
+                ->whereBetween('created_at', [$start, $end])
+                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as m, COUNT(*) as total_comments')
+                ->groupBy('m')
+                ->get()
+                ->keyBy('m');
+
+            $cursor = $start->copy()->startOfMonth();
+            $last = $end->copy()->startOfMonth();
+            while ($cursor <= $last) {
+                $key = $cursor->format('Y-m');
+                $labels[] = $cursor->format('M Y');
+                $postsSeries[] = (int) ($postRows[$key]->total_posts ?? 0);
+                $viewsSeries[] = (int) ($postRows[$key]->total_views ?? 0);
+                $commentsSeries[] = (int) ($commentRows[$key]->total_comments ?? 0);
+                $cursor->addMonth();
+            }
+        }
+
+        return [$labels, $postsSeries, $viewsSeries, $commentsSeries];
     }
 
 }

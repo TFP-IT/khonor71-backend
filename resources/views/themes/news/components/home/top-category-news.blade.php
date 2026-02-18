@@ -55,6 +55,8 @@
         </div>
     </section>
 
+
+    
     <!-- Right News section -->
     <section class="order-2">
         <div class="space-y-1 2xl:space-y-2">

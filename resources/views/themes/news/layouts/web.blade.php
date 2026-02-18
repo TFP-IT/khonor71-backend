@@ -956,29 +956,29 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('tvFrameVideo');
-    
+
             if (video && video.dataset.playlist) {
                 const playlist = JSON.parse(video.dataset.playlist);
                 const newsData = JSON.parse(video.dataset.newsdata || '[]');
                 const titleElement = document.querySelector('.tv-news-title');
-                
+
                 let currentVideoIndex = 0;
 
                 function playNextVideo() {
                     // Move to next video
                     currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
-                    
+
                     // Update video source
                     const videoPath = playlist[currentVideoIndex];
                     const fullPath = videoPath.startsWith('http') ? videoPath : `/storage/${videoPath}`;
                     video.src = fullPath;
-                    
+
                     // Update title if available
                     if (titleElement && newsData[currentVideoIndex]) {
                         titleElement.textContent = newsData[currentVideoIndex].title;
                         titleElement.setAttribute('href', newsData[currentVideoIndex].url);
                     }
-                    
+
                     // Load and play
                     video.load();
                     video.play().catch(e => {
