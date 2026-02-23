@@ -56,35 +56,108 @@
     </section>
 
 
-    
+
     <!-- Right News section -->
     <section class="order-2">
+        @php
+            $tvNewsItems = get_tv_news(5);
+            $tvVideoNews = $tvNewsItems->first(function ($news) {
+                return !empty($news->thumbnail_video);
+            });
+
+            $categoryNewsItems = get_probash_category_news(5);
+            $rightCategoryNews = $categoryNewsItems->first();
+        @endphp
         <div class="space-y-1 2xl:space-y-2">
-            <!-- cart -->
-            @foreach ($homePageTopNews->slice(1, 2) as $topRightNews)
-                <div class="">
+            <!-- card 1: TV Section with News (header style) -->
+            <div class="border-2 border-red-700 rounded-2xl p-2 bg-white dark:bg-neutral-900">
+                <div class="grid grid-cols-3 ">
+                    <div class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
+                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
+
+                        @if ($tvVideoNews && !empty($tvVideoNews->thumbnail_video))
+                            <a href="{{ __url($tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
+                                <video
+                                    class="rounded-sm object-cover"
+                                    style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
+                                    autoplay
+                                    muted
+                                    loop
+                                    playsinline
+                                    preload="metadata">
+                                    <source src="{{ asset('storage/' . $tvVideoNews->thumbnail_video) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </a>
+                        @else
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/5 h-3/5 object-cover rounded-sm">
+                        @endif
+                    </div>
+
+                    <div class="col-span-1 flex flex-col justify-between gap-2">
+                        @if ($tvVideoNews)
+                            <a
+                                href="{{ __url($tvVideoNews->encode_title) }}"
+                                class="line-clamp-3 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3">
+                            </a>
+                        @else
+                            <div class="line-clamp-2 text-xs text-neutral-700 dark:text-neutral-200 font-bold">No News Available</div>
+                            <div class="flex-1 min-h-0 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-1">
+                                <img class="w-full h-full object-contain" src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- card 2: Probash category news -->
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-800 py-1.5"  style="padding-left: 1rem; padding-right: 11rem;">
+                    <span class="h-2.5 "></span>
+                    <span class="text-sm font-semibold text-white">সর্বশেষ প্রবাস সংবাদ</span>
+                </div>
+                @if ($rightCategoryNews)
+                    @php
+                        $rightCategoryImage = asset('/assets/news-card-view.png');
+                        $photoLibraryImage = optional($rightCategoryNews->photoLibrary)->image_base_url;
+
+                        if (!empty($photoLibraryImage)) {
+                            $rightCategoryImage = $photoLibraryImage;
+                        } elseif (!empty($rightCategoryNews->image_base_url)) {
+                            $rightCategoryImage = $rightCategoryNews->image_base_url;
+                        } elseif (!empty($rightCategoryNews->image)) {
+                            $imagePath = str_starts_with($rightCategoryNews->image, 'images/')
+                                ? $rightCategoryNews->image
+                                : 'images/thumb/' . $rightCategoryNews->image;
+                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $imagePath);
+                        }
+                    @endphp
                     <a
-                        href="{{ __url($topRightNews->news->encode_title) }}"
+                        href="{{ __url($rightCategoryNews->encode_title) }}"
                         class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden">
                         <img
                             class="w-full h-full object-cover group-hover:scale-105 transition_slow"
-                            src="{{ isset($topRightNews->news->photoLibrary->image_base_url) ? $topRightNews->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
-                            alt="{{ $topRightNews->news->image_alt }}"
+                            src="{{ $rightCategoryImage }}"
+                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
                         />
                     </a>
                     <div class="py-3 space-y-2">
                         <a
-                            href="{{ __url($topRightNews->news->encode_title) }}"
+                            href="{{ __url($rightCategoryNews->encode_title) }}"
                             class="line-clamp-2 text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg leading-6 transition_3">
-                            {{ $topRightNews->news->title }}
+                            {{ $rightCategoryNews->title }}
                         </a>
-                        <p
-                            class="text-sm line-clamp-2 text-neutral-600 dark:text-neutral-400">
-                            {{ clean_news_content($topRightNews->news->news) }}
-                        </p>
                     </div>
-                </div>
-            @endforeach
+                @else
+                    <div class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 overflow-hidden">
+                        <img
+                            class="w-full h-full object-cover"
+                            src="{{ asset('/assets/news-card-view.png') }}"
+                            alt="No Category News">
+                    </div>
+                @endif
+            </div>
         </div>
     </section>
 </section>

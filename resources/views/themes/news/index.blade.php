@@ -51,9 +51,9 @@
 
 
     <!-- STORIES NEWS SECTION START -->
-    @if ($homeStories->isNotEmpty())
+    {{-- @if ($homeStories->isNotEmpty())
         @include('themes.news.components.home.stories-news')
-    @endif
+    @endif --}}
 
     <section class="container my-8 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 4xl:grid-cols-4 gap-4">
         <!-- Left section -->

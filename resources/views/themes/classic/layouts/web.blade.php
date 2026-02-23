@@ -82,7 +82,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 	@include('themes.classic.layouts.header.top-section')
 
 	<!-- top banner section -->
-	<section class="container hidden xl:flex justify-between items-center my-2">
+	<section class="container hidden xl:flex justify-between items-center">
 		<!-- Brand Logo -->
 		<a class="hidden dark:block w-52 h-10 flex_center overflow-hidden" href="{{ __url('/') }}">
 			<img src="{{ app_setting()->footer_logo }}" alt="" />

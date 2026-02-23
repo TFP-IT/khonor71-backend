@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 @php
-$direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
+    $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 @endphp
 <html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
@@ -18,14 +18,17 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
-    <link href="{{ $font->source_url }}" rel="stylesheet">
+        <link href="{{ $font->source_url }}" rel="stylesheet">
     @endforeach
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2TEHY5NY81"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
 
         gtag('config', 'G-2TEHY5NY81');
@@ -34,23 +37,28 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     {{-- Set CSS Variables --}}
     <style>
         :root {
-            @if ($principalFont) --font-principal: {
-                ! ! $principalFont->font_family ! !
-            }
+            @if ($principalFont)
+                --font-principal: {
+                    ! ! $principalFont->font_family ! !
+                }
 
-            ;
+                ;
 
-            @endif @if ($alternateFont) --font-alternate: {
-                ! ! $alternateFont->font_family ! !
-            }
+            @endif
+            @if ($alternateFont)
+                --font-alternate: {
+                    ! ! $alternateFont->font_family ! !
+                }
 
-            ;
+                ;
 
-            @endif @if ($supplementaryFont) --font-supplementary: {
-                ! ! $supplementaryFont->font_family ! !
-            }
+            @endif
+            @if ($supplementaryFont)
+                --font-supplementary: {
+                    ! ! $supplementaryFont->font_family ! !
+                }
 
-            ;
+                ;
             @endif
         }
 
@@ -256,7 +264,7 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 120px;
+            height: 110px;
         }
 
         .probash-logo {
@@ -421,8 +429,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
-                        0 2px 6px rgba(0, 0, 0, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                0 2px 6px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             width: 80%;
             margin: 0 auto;
             min-height: 0;
@@ -459,7 +467,6 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
             gap: 8px;
             align-items: stretch;
             height: 120px;
-            border: 2px solid #B91C1C;
             border-left: none;
             border-top-right-radius: 16px;
             border-bottom-right-radius: 16px;
@@ -610,17 +617,17 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
 
     <!-- Google Analytics (GA4) -->
     @if (app()->environment('production') && isset($metaInfo->google_analytics) && $metaInfo->google_analytics)
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $metaInfo->google_analytics }}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $metaInfo->google_analytics }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
 
-        gtag('config', '{{ $metaInfo->google_analytics }}');
-    </script>
+            gtag('config', '{{ $metaInfo->google_analytics }}');
+        </script>
     @endif
 
 </head>
@@ -634,173 +641,82 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     <!-- Top Section -->
     @include('themes.news.layouts.header.top-section')
 
+
+    <!-- top banner section -->
     <section class="container hidden xl:flex justify-between items-center my-2">
         <!-- Brand Logo - Takes 1/3 width -->
-        <div class="flex-none w-1/3 flex justify-start">
+        <div class="flex-none justify-start">
             <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto" style="height: 7rem;" />
+                <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto"
+                    style="height: 7rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
             <a class="dark:hidden flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->logo }}" alt="" class="w-auto" style="height: 7rem;" />
+                <img src="{{ app_setting()->logo }}" alt="" class="w-auto"
+                    style="height: 7rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
         </div>
-
-        <!-- News Sections Container - Takes 2/3 width -->
-        <div class="news-container">
-            <!-- 1. Probash Janala Logo Section -->
-            <div class="probash-section">
-                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
-            </div>
-
-            <!-- 2. News Article Section -->
-            @php
-            $categoryNewsItems = get_probash_category_news(5);
-            @endphp
-            <div class="news-section probash-category-section">
-                <div class="news-rotator">
-                    @if($categoryNewsItems->isNotEmpty())
-                    @foreach($categoryNewsItems as $index => $news)
-                    <div class="news-item {{ $index === 0 ? 'active' : '' }}">
-                        <a href="{{ __url($news->encode_title) }}" class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                            {{ Str::limit($news->title, 100) }}
-                        </a>
-                        <div class="news-image">
-                            @if($news->image)
-                            <a href="{{ __url($news->encode_title) }}"><img src="{{ asset('storage/images/thumb/'.$news->image) }}" alt="News Image"></a>
-                            @else
-                            <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default News">
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                    @else
-                    <div class="news-item active">
-                        <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                            No News Available
-                        </div>
-
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- 3. TV Section with News -->
-            <div class="news-section tv-section">
-                <div class="tv-frame">
-                    <div class="tv-frame-container">
-                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="tv-frame-bg">
-                        @php
-                            $newsVideos = get_tv_news(5);
-                            $videoList = [];
-                            $newsDataList = [];
-
-                            foreach($newsVideos as $index => $news) {
-                                if(!empty($news->thumbnail_video)) {
-                                    $videoList[] = $news->thumbnail_video;
-                                    $newsDataList[] = [
-                                        'title' => Str::limit($news->title, 40),
-                                        'url' => __url($news->encode_title)
-                                    ];
-                                }
-                            }
-                            @endphp
-
-                            @if(!empty($videoList))
-                            <video
-                                id="tvFrameVideo"
-                                class="tv-frame-video"
-                                autoplay
-                                muted
-                                playsinline
-                                preload="metadata"
-                                data-playlist="{{ json_encode($videoList) }}"
-                                data-newsdata="{{ json_encode($newsDataList) }}">
-                                <source src="{{ asset('storage/'.$videoList[0]) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                            @else
-                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="tv-frame-video">
-                            @endif
-                    </div>
-                </div>
-                <div class="tv-news">
-                    @php
-                        $tvNews = get_tv_news(5)->first();
-                    @endphp
-                    @if($tvNews)
-                        <a href="{{ __url($tvNews->encode_title) }}" class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
-                            {{ Str::limit($tvNews->title, 40) }}
-                        </a>
-                        <div class="tv-news-image">
-                            @if($tvNews->qr_code)
-                                <a href="{{ __url($tvNews->encode_title) }}">
-                                    <img src="{{ asset('storage/'.$tvNews->qr_code) }}" alt="TV News QR Code">
-                                </a>
-                            @else
-                                <a href="{{ __url($tvNews->encode_title) }}">
-                                    <img src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
-                                </a>
-                            @endif
-                        </div>
-                    @else
-                        <div class="tv-news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50">
-                            No News Available
-                        </div>
-                        <div class="tv-news-image">
-                            <img src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- 4. Ami Sangbadik Section -->
-            <div class="news-section sangbadik-section">
-                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
-                <div class="sangbadik-content">
-                    @php
+        <!-- Ad Banner Section -->
+        <figure class="w-[660px] h-20 object-cover overflow-hidden">
+            @if ($ad = get_advertisements(1, 1))
+                {!! $ad->embed_code !!}
+            @else
+                <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
+                    alt="" />
+            @endif
+        </figure>
+        <div class="probash-section">
+            <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
+        </div>
+        <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+        <div class="news-section sangbadik-section">
+            <div class="sangbadik-content">
+                @php
                     $sangbadikNewsItems = get_probashi_news(5);
-                    @endphp
-                    @if($sangbadikNewsItems->isNotEmpty())
+                @endphp
+                @if ($sangbadikNewsItems->isNotEmpty())
                     <div class="sangbadik-news-rotator">
-                        @foreach($sangbadikNewsItems as $index => $news)
-                        <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}" data-news-index="{{ $index }}">
-                            @php
-                            /* <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                        @foreach ($sangbadikNewsItems as $index => $news)
+                            <div class="sangbadik-news-item {{ $index === 0 ? 'active' : '' }}"
+                                data-news-index="{{ $index }}">
+                                @php
+                                    /* <div class="sangbadik-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
                                 <a href="{{ __url($news->encode_title) }}">
                                     {{ Str::limit($news->title, 35) }}
                                 </a>
                             </div> */
-                            @endphp
-                            <div class="sangbadik-image">
-                                @if($news->thumbnails && $news->thumbnails->count() > 0)
-                                <!-- Thumbnail cycling container -->
-                                <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck(' thumbnail_path'))'>
-                                    <a href="{{ __url($news->encode_title) }}">
-                                        @foreach($news->thumbnails as $thumbIndex => $thumbnail)
-                                        <img src="{{ asset('storage/'.$thumbnail->thumbnail_path) }}"
-                                            alt="Sangbadik News Thumbnail {{ $thumbIndex + 1 }}"
-                                            class="thumbnail-image {{ $thumbIndex === 0 ? 'active' : '' }}"
-                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 90px; border-radius: 4px; object-fit: cover; object-position: top; transition: opacity 0.3s ease; opacity: {{ $thumbIndex === 0 ? '1' : '0' }};">
-                                        @endforeach
-                                    </a>
+                                @endphp
+                                <div class="sangbadik-image">
+                                    @if ($news->thumbnails && $news->thumbnails->count() > 0)
+                                        <!-- Thumbnail cycling container -->
+                                        <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck(' thumbnail_path'))'>
+                                            <a href="{{ __url($news->encode_title) }}">
+                                                @foreach ($news->thumbnails as $thumbIndex => $thumbnail)
+                                                    <img src="{{ asset('storage/' . $thumbnail->thumbnail_path) }}"
+                                                        alt="Sangbadik News Thumbnail {{ $thumbIndex + 1 }}"
+                                                        class="thumbnail-image {{ $thumbIndex === 0 ? 'active' : '' }}"
+                                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 90px; border-radius: 4px; object-fit: cover; object-position: top; transition: opacity 0.3s ease; opacity: {{ $thumbIndex === 0 ? '1' : '0' }};">
+                                                @endforeach
+                                            </a>
+                                        </div>
+                                    @elseif($news->thumbnail_image)
+                                        <a href="{{ __url($news->encode_title) }}">
+                                            <img src="{{ asset('storage/' . $news->thumbnail_image) }}"
+                                                alt="Sangbadik News">
+                                        </a>
+                                    @else
+                                        <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+                                            alt="Default Report">
+                                    @endif
                                 </div>
-                                @elseif($news->thumbnail_image)
-                                <a href="{{ __url($news->encode_title) }}">
-                                    <img src="{{ asset('storage/'.$news->thumbnail_image) }}" alt="Sangbadik News">
-                                </a>
-                                @else
-                                <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Default Report">
-                                @endif
                             </div>
-                        </div>
                         @endforeach
                     </div>
-                    @else
-                    <div class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
+                @else
+                    <div
+                        class="news-title text-neutral-800 text-md font-bold line-clamp-2 dark:text-neutral-50 dark:hover:text-red-300 hover:text-brand-primary transition_3">
                         No News Available
                     </div>
-                    @endif
-                </div>
+                @endif
             </div>
         </div>
     </section>
@@ -819,11 +735,15 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     @include('themes.news.components.common.cookies')
 
     <!-- Global Modal -->
-    <div id="globalModal" class="fixed inset-0 flex items-center justify-center bg-black/75 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="globalModal"
+        class="fixed inset-0 flex items-center justify-center bg-black/75 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="globalModalContent">
-            <button id="globalModalClose" class="p-2 text-white bg-red-600 hover:bg-red-800 rounded-full w-8 h-8 flex items-center justify-center absolute top-4 right-4 transition_3">
+            <button id="globalModalClose"
+                class="p-2 text-white bg-red-600 hover:bg-red-800 rounded-full w-8 h-8 flex items-center justify-center absolute top-4 right-4 transition_3">
                 <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" fill="currentColor" />
+                    <path
+                        d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
+                        fill="currentColor" />
                 </svg>
             </button>
             <div id="modalBody"></div>
@@ -831,9 +751,11 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
     </div>
 
     {{-- Btn scroll To Top --}}
-    <button id="scrollToTopBtn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="hidden bg-red-600 hover:bg-brand-primary rounded-full w-10 h-10 flex justify-center items-center fixed bottom-4 right-2 hover:-translate-y-1 z-50 transition-all duration-300 ease-in">
+    <button id="scrollToTopBtn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="hidden bg-red-600 hover:bg-brand-primary rounded-full w-10 h-10 flex justify-center items-center fixed bottom-4 right-2 hover:-translate-y-1 z-50 transition-all duration-300 ease-in">
         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-            <path fill="#fff" d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z" />
+            <path fill="#fff"
+                d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z" />
         </svg>
     </button>
 
@@ -872,7 +794,8 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                             thumbnailImages[currentThumbnailIndex].classList.remove('active');
 
                             // Move to next thumbnail
-                            currentThumbnailIndex = (currentThumbnailIndex + 1) % thumbnailImages.length;
+                            currentThumbnailIndex = (currentThumbnailIndex + 1) % thumbnailImages
+                                .length;
 
                             // Show next thumbnail
                             thumbnailImages[currentThumbnailIndex].style.opacity = '1';
@@ -998,7 +921,9 @@ $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
                         // Enable play on user interaction
                         document.addEventListener('click', function() {
                             video.play().catch(err => console.log('Play failed:', err));
-                        }, { once: true });
+                        }, {
+                            once: true
+                        });
                     });
                 });
 
