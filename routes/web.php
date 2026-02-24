@@ -175,6 +175,13 @@ Route::get('{lang}/web-stories/{param}', [WebsiteHomeController::class, 'storyLa
     ->where(['lang' => '[a-zA-Z]{2}', 'param' => '.*'])
     ->name('website.lang.story-gallery');
 
+Route::get('probash-news-tv/{slug}', [WebsiteHomeController::class, 'probashNewsTvDetails'])
+    ->where('slug', '[\p{L}\p{M}\p{N}_\-]+')
+    ->name('website.probash-news-tv');
+Route::get('{lang}/probash-news-tv/{slug}', [WebsiteHomeController::class, 'probashNewsTvDetailsLang'])
+    ->where(['lang' => '[a-zA-Z]{2}', 'slug' => '[\p{L}\p{M}\p{N}_\-]+'])
+    ->name('website.lang.probash-news-tv');
+
 
 Route::get('/{param}', [WebsiteHomeController::class, 'handle'])
 ->where('param', '[\p{L}\p{M}\p{N}_\-]+')->name('website.handle');

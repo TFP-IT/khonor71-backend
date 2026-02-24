@@ -76,7 +76,7 @@
                         <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
 
                         @if ($tvVideoNews && !empty($tvVideoNews->thumbnail_video))
-                            <a href="{{ __url($tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
+                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
                                 <video
                                     class="rounded-sm object-cover"
                                     style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
@@ -97,8 +97,9 @@
                     <div class="col-span-1 flex flex-col justify-between gap-2">
                         @if ($tvVideoNews)
                             <a
-                                href="{{ __url($tvVideoNews->encode_title) }}"
+                                href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
                                 class="line-clamp-3 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3">
+                                {{ $tvVideoNews->title }}
                             </a>
                         @else
                             <div class="line-clamp-2 text-xs text-neutral-700 dark:text-neutral-200 font-bold">No News Available</div>
@@ -133,7 +134,7 @@
                         }
                     @endphp
                     <a
-                        href="{{ __url($rightCategoryNews->encode_title) }}"
+                        href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
                         class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden">
                         <img
                             class="w-full h-full object-cover group-hover:scale-105 transition_slow"
@@ -144,7 +145,7 @@
                     </a>
                     <div class="py-3 space-y-2">
                         <a
-                            href="{{ __url($rightCategoryNews->encode_title) }}"
+                            href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
                             class="line-clamp-2 text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg leading-6 transition_3">
                             {{ $rightCategoryNews->title }}
                         </a>

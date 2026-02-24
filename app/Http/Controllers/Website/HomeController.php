@@ -659,6 +659,114 @@ class HomeController extends Controller
 
         return ThemeHelper::view('video-details', $data);
     }
+
+    public function probashNewsTvDetails(string $slug)
+    {
+        return $this->renderProbashNewsTvDetails($slug);
+    }
+
+    public function probashNewsTvDetailsLang(string $lang, string $slug)
+    {
+        $language = Language::where('value', $lang)->value('value');
+        $defaultLang = Language::getDefault()->value;
+
+        if (!$language || $language == $defaultLang) {
+            return redirect('/');
+        }
+
+        return $this->renderProbashNewsTvDetails($slug);
+    }
+
+    private function renderProbashNewsTvDetails(string $slug)
+    {
+        $languageId = get_language_id();
+        $categoryId = $languageId == 17 ? 92 : 91;
+
+        $tvBaseQuery = VideoNews::with(['postByUser:id,full_name'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', ActivationStatusEnum::ACTIVE)
+            ->where('is_tv_news', 1);
+
+        $newsBaseQuery = NewsMst::with(['postByUser:id,full_name', 'photoLibrary'])
+            ->select([
+                'id',
+                'news_id',
+                'encode_title',
+                'title',
+                'news',
+                'image',
+                'image_base_url',
+                'image_alt',
+                'image_title',
+                'publish_date',
+                'post_by',
+                'category_id',
+            ])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('category_id', $categoryId)
+            ->where('status', 1);
+
+        $tvVideoNews = (clone $tvBaseQuery)->where('encode_title', $slug)->first();
+        $rightCategoryNews = (clone $newsBaseQuery)->where('encode_title', $slug)->first();
+
+        $activeType = null;
+        if ($tvVideoNews) {
+            $activeType = 'tv';
+        } elseif ($rightCategoryNews) {
+            $activeType = 'category';
+        } else {
+            return redirect('/');
+        }
+
+        if (!$tvVideoNews) {
+            $tvVideoNews = (clone $tvBaseQuery)
+                ->whereNotNull('thumbnail_video')
+                ->where('thumbnail_video', '!=', '')
+                ->latest('created_at')
+                ->first();
+
+            if (!$tvVideoNews) {
+                $tvVideoNews = (clone $tvBaseQuery)->latest('created_at')->first();
+            }
+        }
+
+        if (!$rightCategoryNews) {
+            $rightCategoryNews = (clone $newsBaseQuery)->latest('created_at')->first();
+        }
+
+        $recentProbashCategoryNewsQuery = (clone $newsBaseQuery);
+        if (!empty($rightCategoryNews?->id)) {
+            $recentProbashCategoryNewsQuery->where('id', '!=', $rightCategoryNews->id);
+        }
+        $recentProbashCategoryNews = $recentProbashCategoryNewsQuery
+            ->latest('created_at')
+            ->take(8)
+            ->get();
+
+        $titleSource = $activeType === 'tv' ? $tvVideoNews : $rightCategoryNews;
+        $title = $titleSource->title ?? localize('home');
+        $rawContent = $activeType === 'tv'
+            ? ($tvVideoNews->meta_description ?? $tvVideoNews->details ?? $tvVideoNews->title)
+            : ($rightCategoryNews->news ?? $rightCategoryNews->title);
+        $description = Str::limit(
+            preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($rawContent))),
+            160
+        );
+
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical(url()->current());
+        SEOTools::opengraph()->setUrl(url()->current());
+        SEOTools::opengraph()->addProperty('type', 'article');
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::twitter()->setTitle($title);
+        SEOTools::twitter()->setDescription($description);
+
+        return ThemeHelper::view('probash-news-tv-details', compact('tvVideoNews', 'rightCategoryNews', 'activeType', 'recentProbashCategoryNews'));
+    }
     public function Registration()
     {
         $metaData = Setting::select('details')->where('event','meta')->first();
