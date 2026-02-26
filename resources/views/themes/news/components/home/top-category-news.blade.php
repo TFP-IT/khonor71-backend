@@ -94,11 +94,12 @@
                         @endif
                     </div>
 
-                    <div class="col-span-1 flex flex-col justify-between gap-2">
+                    <div class="col-span-1 min-w-0 flex flex-col justify-between gap-2">
                         @if ($tvVideoNews)
                             <a
                                 href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
-                                class="line-clamp-3 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3">
+                                class="block w-full min-w-0 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3"
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 {{ $tvVideoNews->title }}
                             </a>
                         @else

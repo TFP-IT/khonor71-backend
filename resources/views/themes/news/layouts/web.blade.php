@@ -473,7 +473,7 @@
         }
 
         .sangbadik-logo {
-            width: 60px;
+            width: 95px;
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
             align-self: center;
