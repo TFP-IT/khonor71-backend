@@ -643,20 +643,20 @@
 
 
     <!-- top banner section -->
-    <section class="container hidden xl:flex justify-between items-center my-2">
+    <section class="container hidden xl:flex justify-between items-center">
         <!-- Brand Logo - Takes 1/3 width -->
         <div class="flex-none justify-start">
             <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
                 <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto"
-                    style="height: 7rem; transform: scale(1.35); transform-origin: left center;" />
+                    style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
             <a class="dark:hidden flex_center" href="{{ __url('/') }}">
                 <img src="{{ app_setting()->logo }}" alt="" class="w-auto"
-                    style="height: 7rem; transform: scale(1.35); transform-origin: left center;" />
+                    style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
         </div>
         <!-- Ad Banner Section -->
-        <figure class="w-[660px] h-20 object-cover overflow-hidden">
+        <figure class="w-[660px] h-20 object-cover overflow-hidden" style="margin-left: 20px">
             @if ($ad = get_advertisements(1, 1))
                 {!! $ad->embed_code !!}
             @else

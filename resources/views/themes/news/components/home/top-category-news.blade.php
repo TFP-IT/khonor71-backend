@@ -104,9 +104,6 @@
                             </a>
                         @else
                             <div class="line-clamp-2 text-xs text-neutral-700 dark:text-neutral-200 font-bold">No News Available</div>
-                            <div class="flex-1 min-h-0 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-1">
-                                <img class="w-full h-full object-contain" src="{{ asset('assets/qr.jpeg') }}" alt="Default QR Code">
-                            </div>
                         @endif
                     </div>
                 </div>
