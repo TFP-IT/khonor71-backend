@@ -665,7 +665,9 @@
             @endif
         </figure>
         <div class="probash-section">
-            <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
+            <a href="{{ __url('প্রবাসী') }}" title="Probashi" style="height: 100px">
+                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
+            </a>
         </div>
         <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
         <div class="news-section sangbadik-section">
