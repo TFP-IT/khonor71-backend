@@ -746,7 +746,6 @@ class HomeController extends Controller
     private function renderProbashNewsTvDetails(string $slug)
     {
         $languageId = get_language_id();
-        $categoryId = $languageId == 17 ? 92 : 91;
 
         $tvBaseQuery = VideoNews::with(['postByUser:id,full_name'])
             ->where('language_id', $languageId)
@@ -754,25 +753,21 @@ class HomeController extends Controller
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->where('is_tv_news', 1);
 
-        $newsBaseQuery = NewsMst::with(['postByUser:id,full_name', 'photoLibrary'])
+        $newsBaseQuery = ProbashiNews::query()
             ->select([
                 'id',
-                'news_id',
                 'encode_title',
                 'title',
-                'news',
-                'image',
-                'image_base_url',
+                'details',
+                'thumbnail_image',
                 'image_alt',
                 'image_title',
                 'publish_date',
-                'post_by',
-                'category_id',
+                'total_view',
             ])
             ->where('language_id', $languageId)
             ->whereDate('publish_date', '<=', Carbon::today())
-            ->where('category_id', $categoryId)
-            ->where('status', 1);
+            ->where('status', ActivationStatusEnum::ACTIVE->value);
 
         $tvVideoNews = (clone $tvBaseQuery)->where('encode_title', $slug)->first();
         $rightCategoryNews = (clone $newsBaseQuery)->where('encode_title', $slug)->first();
@@ -815,7 +810,7 @@ class HomeController extends Controller
         $title = $titleSource->title ?? localize('home');
         $rawContent = $activeType === 'tv'
             ? ($tvVideoNews->meta_description ?? $tvVideoNews->details ?? $tvVideoNews->title)
-            : ($rightCategoryNews->news ?? $rightCategoryNews->title);
+            : ($rightCategoryNews->details ?? $rightCategoryNews->title);
         $description = Str::limit(
             preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($rawContent))),
             160

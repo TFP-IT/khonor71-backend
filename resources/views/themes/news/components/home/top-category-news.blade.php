@@ -65,7 +65,7 @@
                 return !empty($news->thumbnail_video);
             });
 
-            $categoryNewsItems = get_probash_category_news(5);
+            $categoryNewsItems = get_probashi_news(5);
             $rightCategoryNews = $categoryNewsItems->first();
         @endphp
         <div class="space-y-1 2xl:space-y-2">
@@ -118,17 +118,8 @@
                 @if ($rightCategoryNews)
                     @php
                         $rightCategoryImage = asset('/assets/news-card-view.png');
-                        $photoLibraryImage = optional($rightCategoryNews->photoLibrary)->image_base_url;
-
-                        if (!empty($photoLibraryImage)) {
-                            $rightCategoryImage = $photoLibraryImage;
-                        } elseif (!empty($rightCategoryNews->image_base_url)) {
-                            $rightCategoryImage = $rightCategoryNews->image_base_url;
-                        } elseif (!empty($rightCategoryNews->image)) {
-                            $imagePath = str_starts_with($rightCategoryNews->image, 'images/')
-                                ? $rightCategoryNews->image
-                                : 'images/thumb/' . $rightCategoryNews->image;
-                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $imagePath);
+                        if (!empty($rightCategoryNews->thumbnail_image)) {
+                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $rightCategoryNews->thumbnail_image);
                         }
                     @endphp
                     <a

@@ -5,7 +5,7 @@
                 return '#';
             }
 
-            return __url(ltrim($slug, '/'));
+            return __url('probash-news-tv/' . ltrim($slug, '/'));
         };
 
         $resolveCategoryImage = function ($news): string {
@@ -13,6 +13,17 @@
 
             if (empty($news)) {
                 return $fallback;
+            }
+
+            if (!empty($news->thumbnail_image)) {
+                if (
+                    str_starts_with($news->thumbnail_image, 'http://') ||
+                    str_starts_with($news->thumbnail_image, 'https://')
+                ) {
+                    return $news->thumbnail_image;
+                }
+
+                return get_image_url('/assets/news-card-view.png', $news->thumbnail_image);
             }
 
             $photoLibraryImage = optional($news->photoLibrary)->image_base_url;
@@ -79,9 +90,9 @@
             }
         }
 
-        $categoryContent = !empty($rightCategoryNews?->news)
-            ? $rightCategoryNews->news
-            : '<p>No details available.</p>';
+        $categoryContent = $rightCategoryNews?->details
+            ?? $rightCategoryNews?->news
+            ?? '<p>No details available.</p>';
 
         $tvContent = !empty($tvVideoNews?->details) ? $tvVideoNews->details : '<p>No details available.</p>';
     @endphp
