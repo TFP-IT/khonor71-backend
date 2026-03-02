@@ -90,7 +90,7 @@
                                 </video>
                             </a>
                         @else
-                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/5 h-3/5 object-cover rounded-sm">
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
                     </div>
 
