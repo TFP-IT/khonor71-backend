@@ -677,6 +677,72 @@ class HomeController extends Controller
         return $this->renderProbashNewsTvDetails($slug);
     }
 
+    public function probashiNewsList()
+    {
+        return $this->renderProbashiNewsList();
+    }
+
+    public function probashiNewsListLang(string $lang)
+    {
+        $language = Language::where('value', $lang)->value('value');
+        $defaultLang = Language::getDefault()->value;
+
+        if (!$language || $language == $defaultLang) {
+            return redirect('/');
+        }
+
+        return $this->renderProbashiNewsList();
+    }
+
+    private function renderProbashiNewsList()
+    {
+        $search = trim((string) request('q'));
+
+        $probashiNewsQuery = ProbashiNews::query()
+            ->select([
+                'id',
+                'title',
+                'details',
+                'encode_title',
+                'thumbnail_image',
+                'image_alt',
+                'publish_date',
+            ])
+            ->where('language_id', get_language_id())
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', ActivationStatusEnum::ACTIVE->value);
+
+        if ($search !== '') {
+            $probashiNewsQuery->where(function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('details', 'like', '%' . $search . '%');
+            });
+        }
+
+        $probashiNews = $probashiNewsQuery
+            ->latest('publish_date')
+            ->latest('id')
+            ->paginate(12)
+            ->withQueryString();
+
+        $title = 'সর্বশেষ প্রবাস সংবাদ';
+        $description = $search !== ''
+            ? 'প্রবাসী সংবাদ অনুসন্ধান ফলাফল'
+            : 'প্রবাসী সংবাদসমূহের সর্বশেষ আপডেট';
+
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical(url()->current());
+        SEOTools::opengraph()->setUrl(url()->current());
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::twitter()->setTitle($title);
+        SEOTools::twitter()->setDescription($description);
+
+        return ThemeHelper::view('probashi-news-list', compact('probashiNews', 'search'));
+    }
+
     private function renderProbashNewsTvDetails(string $slug)
     {
         $languageId = get_language_id();

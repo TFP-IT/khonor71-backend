@@ -181,6 +181,11 @@ Route::get('probash-news-tv/{slug}', [WebsiteHomeController::class, 'probashNews
 Route::get('{lang}/probash-news-tv/{slug}', [WebsiteHomeController::class, 'probashNewsTvDetailsLang'])
     ->where(['lang' => '[a-zA-Z]{2}', 'slug' => '[\p{L}\p{M}\p{N}_\-]+'])
     ->name('website.lang.probash-news-tv');
+Route::get('probashi-news-list', [WebsiteHomeController::class, 'probashiNewsList'])
+    ->name('website.probashi-news');
+Route::get('{lang}/probashi-news-list', [WebsiteHomeController::class, 'probashiNewsListLang'])
+    ->where(['lang' => '[a-zA-Z]{2}'])
+    ->name('website.lang.probashi-news');
 
 
 Route::get('/{param}', [WebsiteHomeController::class, 'handle'])

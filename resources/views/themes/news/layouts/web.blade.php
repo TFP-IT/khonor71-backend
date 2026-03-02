@@ -669,7 +669,9 @@
                 <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
             </a>
         </div>
-        <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+        <a href="{{ __url('probashi-news-list') }}" title="সর্বশেষ প্রবাস সংবাদ">
+            <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+        </a>
         <div class="news-section sangbadik-section">
             <div class="sangbadik-content">
                 @php
