@@ -16,24 +16,33 @@
     </section>
 
     <section class="container mt-3 pb-8">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-900 py-1.5 px-4 w-fit">
-                <span class="text-xs font-semibold text-white">সর্বশেষ প্রবাস সংবাদ</span>
+        <div class="flex flex-col md:flex-row md:items-center gap-3">
+            <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-900 py-1.5 px-4 w-fit whitespace-nowrap">
+                <span class="text-xs font-semibold text-white whitespace-nowrap">সর্বশেষ প্রবাস সংবাদ</span>
             </div>
-            <form method="GET" action="{{ __url('probashi-news-list') }}" class="flex items-center gap-2">
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ $search ?? '' }}"
-                    placeholder="প্রবাস সংবাদ খুঁজুন..."
-                    class="w-64 max-w-full border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-brand-primary"
-                />
-                <button
-                    type="submit"
-                    class="px-3 py-2 rounded-md bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition_3">
-                    {{ localize('search') }}
-                </button>
-            </form>
+            <div class="w-full flex justify-end">
+                <div class="flex items-center gap-2">
+                    <form method="GET" action="{{ __url('probashi-news-list') }}" class="flex items-center gap-2">
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ $search ?? '' }}"
+                            placeholder="প্রবাস সংবাদ খুঁজুন..."
+                            class="w-64 max-w-full border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-brand-primary"
+                        />
+                        <button
+                            type="submit"
+                            class="px-3 py-2 rounded-md bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition_3">
+                            {{ localize('search') }}
+                        </button>
+                    </form>
+                    <a
+                        href="{{ __url('registration') }}"
+                        class="px-3 py-2 rounded-md bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition_3 whitespace-nowrap">
+                        {{ localize('registration') }}
+                    </a>
+                </div>
+            </div>
         </div>
 
         <p class="text-sm text-neutral-500 dark:text-neutral-300 mt-3">
