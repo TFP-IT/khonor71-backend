@@ -50,10 +50,40 @@
             </div> -->
             <!-- Address Section -->
             <div class="text-white space-y-8 lg:pr-4 2xl:pr-6">
-                <div>
+                <!-- <div>
                     <h2 class="text-xl font-bold mb-8 capitalize">আমাদের সম্পর্কে</h2>
-                </div>
+                </div> -->
                 <ul class="space-y-4">
+                                        <!-- উপদেষ্টা সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>উপদেষ্টা সম্পাদক:</strong> ব্যারিস্টার মো. মনির হোসেন</span>
+                    </li>
+                    <!-- প্রধান সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>প্রধান সম্পাদক:</strong> নাসির উদ্দিন</span>
+                    </li>
+
+                    <!-- সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>সম্পাদক:</strong> লেফটেন্যান্ট কর্নেল এ এস এম আল ইমরান (অব:)</span>
+                    </li>
+
+
                     <!-- প্রকাশক -->
                     <li class="flex gap-3 items-center">
                         <div>
@@ -64,15 +94,7 @@
                         <span><strong>প্রকাশক:</strong> এস এম তাসদীদ সোয়াদ</span>
                     </li>
 
-                    <!-- সম্পাদক -->
-                    <li class="flex gap-3 items-center">
-                        <div>
-                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
-                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
-                            </svg>
-                        </div>
-                        <span><strong>সম্পাদক:</strong> লে. কর্নেল এ এস এম আল ইমরান (অব:)</span>
-                    </li>
+                    
 
                     <!-- যোগাযোগ -->
                     <li class="flex gap-3 items-center">
@@ -83,7 +105,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>যোগাযোগ:</strong> বাড়ী নং-০১, ২য় তলা, রোড নং-০৬, মধ্যবাড্ডা, বাড্ডা, ঢাকা</span>
+                        <span><strong>যোগাযোগ:</strong> বাড়ী: ০১, ২য় তলা, রোড: ০৬ (গুলশান লেক সংলগ্ন) মধ্যবাড্ডা, গুলশান ১, ঢাকা</span>
                     </li>
 
                     <!-- মার্কেটিং মোবাইল -->
@@ -95,11 +117,11 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>মার্কেটিং মোবাইল:</strong> ০১৯০৭০৯৯২৫২</span>
+                        <span><strong>মোবাইল:</strong> ০১৯০৭০৯৯২৫২</span>
                     </li>
 
                     <!-- নিউজ রুম মোবাইল -->
-                    <li class="flex gap-3 items-center">
+                    <!-- <li class="flex gap-3 items-center">
                         <div>
                             <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 <path
@@ -108,7 +130,7 @@
                             </svg>
                         </div>
                         <span><strong>নিউজ রুম মোবাইল:</strong> ০১৯০৭০৯৯২৫২</span>
-                    </li>
+                    </li> -->
 
                     <!-- নিউজ রুম ইমেইল -->
                     <li class="flex gap-3 items-center">
@@ -119,7 +141,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>নিউজ রুম ইমেইল:</strong> news.khobor71@gmail.com</span>
+                        <span><strong>ইমেইল:</strong> info@khobor71.com</span>
                     </li>
                 </ul>
             </div>
@@ -268,10 +290,42 @@
             </div> -->
 <!-- right aligned content -->
             <div class="text-white space-y-8 lg:pl-4 2xl:pl-6">
-                <div>
+                <!-- <div>
                     <h2 class="text-xl font-bold mb-8 capitalize">About Us</h2>
-                </div>
+                </div> -->
                 <ul class="space-y-4">
+                     <!-- সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>Advisory Editor:</strong> Barrister Md Manir Hossain, <small>LLB, LLM,BBA,MBA</small></span>
+                    </li>
+                    <!-- সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>Editor-in-Chief:</strong> Nashir Uddin</span>
+                    </li>
+
+                     <!-- সম্পাদক -->
+                    <li class="flex gap-3 items-center">
+                        <div>
+                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
+                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
+                            </svg>
+                        </div>
+                        <span><strong>Editor:</strong> Lieutenant Colonel A S M Al Imran (Retd.)</span>
+                    </li>
+
+                   
+
+                   
                     <!-- প্রকাশক -->
                     <li class="flex gap-3 items-center">
                         <div>
@@ -282,15 +336,7 @@
                         <span><strong>Publisher:</strong> S M Tasdid Swad</span>
                     </li>
 
-                    <!-- সম্পাদক -->
-                    <li class="flex gap-3 items-center">
-                        <div>
-                            <svg class="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 640 640" stroke="currentColor">
-                                <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
-                            </svg>
-                        </div>
-                        <span><strong>Editor:</strong> Lt. Col. A S M Al Imran (Retd.)</span>
-                    </li>
+                    
 
                     <!-- যোগাযোগ -->
                     <li class="flex gap-3 items-center">
@@ -301,7 +347,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>Contact us:</strong> House No. 01, 2nd Floor, Road No. 06, Middle Badda, Badda, Dhaka</span>
+                        <span><strong>Contact us:</strong> House: 01, 2nd Floor, Road: 06 (Gulshan Lake Adjacent), Madhya Badda, Gulshan 1, Dhaka</span>
                     </li>
 
                     <!-- মার্কেটিং মোবাইল -->
@@ -313,11 +359,11 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>Marketing Mobile:</strong> 01907099252</span>
+                        <span><strong>Mobile:</strong> 01907099252</span>
                     </li>
 
                     <!-- নিউজ রুম মোবাইল -->
-                    <li class="flex gap-3 items-center">
+                    <!-- <li class="flex gap-3 items-center">
                         <div>
                             <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                 <path
@@ -326,7 +372,7 @@
                             </svg>
                         </div>
                         <span><strong>News Room Mobile:</strong> 01907099252</span>
-                    </li>
+                    </li> -->
 
                     <!-- নিউজ রুম ইমেইল -->
                     <li class="flex gap-3 items-center">
@@ -337,7 +383,7 @@
                                     fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>News Room Email:</strong> news.khobor71@gmail.com</span>
+                        <span><strong>Email:</strong> info@khobor71.com</span>
                     </li>
                 </ul>
             </div>
