@@ -228,19 +228,32 @@
                     <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
 
                     @if ($tvVideoNews && !empty($tvVideoNews->thumbnail_video))
-                            <a href="{{ __url($tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
-                                <video
-                                    class="rounded-sm object-cover"
-                                    style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
-                                    autoplay
-                                    muted
-                                    loop
-                                    playsinline
-                                    preload="metadata">
-                                    <source src="{{ asset('storage/' . $tvVideoNews->thumbnail_video) }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </a>
+                        <a href="{{ __url($tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
+                            <video
+                                class="rounded-sm object-cover"
+                                style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                preload="metadata">
+                                <source src="{{ asset('storage/' . $tvVideoNews->thumbnail_video) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </a>
+                    @elseif (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'video')
+                        <video
+                            class="absolute rounded-sm object-cover"
+                            style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
+                            controls
+                            autoplay
+                            muted
+                            playsinline
+                            preload="metadata"
+                            poster="{{ $tvPoster }}">
+                            <source src="{{ $tvSource }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     @elseif (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'iframe')
                         <div x-data="{ showPlayer: false }" class="relative aspect-video">
                             <template x-if="!showPlayer">
@@ -263,6 +276,10 @@
                                 </iframe>
                             </template>
                         </div>
+                    @elseif (!empty($tvVideoNews))
+                        <img src="{{ $tvPoster }}" alt="TV Thumbnail"
+                            class="absolute rounded-sm object-cover"
+                            style="width: 75%; height: 65%; transform: translate(-8%, 13%);">
                     @endif
                 </div>
                 <div class="prose-content dark:text-white">
