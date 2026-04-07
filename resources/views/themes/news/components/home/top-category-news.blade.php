@@ -62,8 +62,44 @@
         @php
             $tvNewsItems = get_tv_news(5);
             $tvVideoNews = $tvNewsItems->first(function ($news) {
-                return !empty($news->thumbnail_video);
-            });
+                return !empty($news->thumbnail_video) || !empty($news->video) || !empty($news->video_url);
+            }) ?? $tvNewsItems->first();
+
+            $tvOverlaySource = '';
+            $tvSource = '';
+            $tvRenderType = '';
+            $tvPoster = asset('assets/no_news.jpg');
+
+            if (!empty($tvVideoNews)) {
+                if (!empty($tvVideoNews->thumbnail_image)) {
+                    $tvPoster =
+                        str_starts_with($tvVideoNews->thumbnail_image, 'http://') ||
+                        str_starts_with($tvVideoNews->thumbnail_image, 'https://')
+                            ? $tvVideoNews->thumbnail_image
+                            : get_image_url('/assets/no_news.jpg', $tvVideoNews->thumbnail_image);
+                }
+
+                if (!empty($tvVideoNews->thumbnail_video)) {
+                    $tvOverlaySource =
+                        str_starts_with($tvVideoNews->thumbnail_video, 'http://') ||
+                        str_starts_with($tvVideoNews->thumbnail_video, 'https://')
+                            ? $tvVideoNews->thumbnail_video
+                            : asset('storage/' . $tvVideoNews->thumbnail_video);
+                }
+
+                if (!empty($tvVideoNews->video)) {
+                    $tvRenderType = 'video';
+                    $tvSource = asset('storage/' . $tvVideoNews->video);
+                } elseif (!empty($tvVideoNews->video_url)) {
+                    $videoData = manageVideoUrl($tvVideoNews->video_url);
+                    $tvSource = $videoData['src'] ?? '';
+                    $tvRenderType = $videoData['type'] ?? '';
+
+                    if (!empty($videoData['thumb'])) {
+                        $tvPoster = $videoData['thumb'];
+                    }
+                }
+            }
 
             $categoryNewsItems = get_probashi_news(5);
             $rightCategoryNews = $categoryNewsItems->first();
@@ -75,7 +111,7 @@
                     <div class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
                         <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
 
-                        @if ($tvVideoNews && !empty($tvVideoNews->thumbnail_video))
+                        @if (!empty($tvVideoNews) && !empty($tvOverlaySource))
                             <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
                                 <video
                                     class="rounded-sm object-cover"
@@ -85,9 +121,29 @@
                                     loop
                                     playsinline
                                     preload="metadata">
-                                    <source src="{{ asset('storage/' . $tvVideoNews->thumbnail_video) }}" type="video/mp4">
+                                    <source src="{{ $tvOverlaySource }}" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
+                            </a>
+                        @elseif (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'video')
+                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
+                                <video
+                                    class="rounded-sm object-cover"
+                                    style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
+                                    autoplay
+                                    muted
+                                    loop
+                                    playsinline
+                                    preload="metadata">
+                                    <source src="{{ $tvSource }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </a>
+                        @elseif (!empty($tvVideoNews))
+                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
+                                <img src="{{ $tvPoster }}" alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm"
+                                    style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                             </a>
                         @else
                             <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">

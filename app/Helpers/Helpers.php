@@ -1347,7 +1347,20 @@ if (!function_exists('get_tv_news')) {
             $limit = 4;
         }
 
-        $videoNews = VideoNews::select(['id', 'publish_date', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by', 'thumbnail_video', 'qr_code'])
+        $videoNews = VideoNews::select([
+                'id',
+                'publish_date',
+                'encode_title',
+                'title',
+                'thumbnail_image',
+                'image_alt',
+                'image_title',
+                'created_by',
+                'video',
+                'video_url',
+                'thumbnail_video',
+                'qr_code',
+            ])
             ->where('language_id', $languageId)
             ->whereDate('publish_date', '<=', Carbon::today())
             ->where('status', ActivationStatusEnum::ACTIVE)
@@ -1358,4 +1371,3 @@ if (!function_exists('get_tv_news')) {
         return $videoNews;
     }
 }
-
