@@ -123,9 +123,14 @@ class VideoNewsController extends Controller
                 );
 
                 try {
-                    exec($ffmpegCommand . ' 2>&1', $output, $returnVar);
-                    if ($returnVar !== 0) {
-                        throw new \Exception('FFmpeg failed: ' . implode(', ', $output));
+                    if (function_exists('exec')) {
+                        exec($ffmpegCommand . ' 2>&1', $output, $returnVar);
+                        if ($returnVar !== 0) {
+                            throw new \Exception('FFmpeg failed: ' . implode(', ', $output));
+                        }
+                    } else {
+                        \Log::warning('exec() is disabled. FFmpeg thumbnail video generation skipped.');
+                        $thumbnailVideoPath = '';
                     }
                 } catch (\Exception $e) {
                     // Log error and continue without thumbnail video
@@ -396,11 +401,16 @@ class VideoNewsController extends Controller
                     );
 
                     try {
-                        exec($ffmpegCommand . ' 2>&1', $output, $returnVar);
-                        if ($returnVar !== 0) {
-                            throw new \Exception('FFmpeg failed: ' . implode(', ', $output));
+                        if (function_exists('exec')) {
+                            exec($ffmpegCommand . ' 2>&1', $output, $returnVar);
+                            if ($returnVar !== 0) {
+                                throw new \Exception('FFmpeg failed: ' . implode(', ', $output));
+                            }
+                            \Log::info('Thumbnail video created: ' . $thumbnailVideoPath);
+                        } else {
+                            \Log::warning('exec() is disabled. FFmpeg thumbnail video generation skipped.');
+                            $thumbnailVideoPath = '';
                         }
-                        \Log::info('Thumbnail video created: ' . $thumbnailVideoPath);
                     } catch (\Exception $e) {
                         \Log::error('FFmpeg thumbnail video creation failed: ' . $e->getMessage());
                         $thumbnailVideoPath = '';
