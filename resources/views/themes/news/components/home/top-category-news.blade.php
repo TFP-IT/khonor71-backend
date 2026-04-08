@@ -144,7 +144,6 @@
                             <video
                                 class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden"
                                 style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);"
-                                muted
                                 loop
                                 playsinline
                                 preload="none"
