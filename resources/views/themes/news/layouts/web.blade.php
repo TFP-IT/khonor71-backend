@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 @php
     $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
+    $gaTrackingId = null;
+    if (app()->environment('production')) {
+        $gaTrackingId = $metaInfo->google_analytics ?? 'G-2TEHY5NY81';
+    }
 @endphp
 <html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
@@ -10,6 +14,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="base-url" content="{{ url('/') }}">
     <meta name="google-site-verification" content="F_Q9nuMHlFCzzIgz2Ow-5bJM2ZVqoAYYIIVDwbsjOTI" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
 
     {!! SEOTools::generate() !!}
 
@@ -20,19 +27,6 @@
     @foreach ($loadedFonts as $font)
         <link href="{{ $font->source_url }}" rel="stylesheet">
     @endforeach
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2TEHY5NY81"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'G-2TEHY5NY81');
-    </script>
 
     {{-- Set CSS Variables --}}
     <style>
@@ -616,8 +610,8 @@
     @stack('custom-css')
 
     <!-- Google Analytics (GA4) -->
-    @if (app()->environment('production') && isset($metaInfo->google_analytics) && $metaInfo->google_analytics)
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $metaInfo->google_analytics }}"></script>
+    @if ($gaTrackingId)
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaTrackingId }}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
 
@@ -626,7 +620,7 @@
             }
             gtag('js', new Date());
 
-            gtag('config', '{{ $metaInfo->google_analytics }}');
+            gtag('config', '{{ $gaTrackingId }}');
         </script>
     @endif
 
@@ -648,10 +642,14 @@
         <div class="flex-none justify-start">
             <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
                 <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto"
+                    fetchpriority="high"
+                    decoding="async"
                     style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
             <a class="dark:hidden flex_center" href="{{ __url('/') }}">
                 <img src="{{ app_setting()->logo }}" alt="" class="w-auto"
+                    fetchpriority="high"
+                    decoding="async"
                     style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
         </div>
@@ -661,16 +659,22 @@
                 {!! $ad->embed_code !!}
             @else
                 <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
+                    loading="lazy"
+                    decoding="async"
                     alt="" />
             @endif
         </figure>
         <div class="probash-section">
             <a href="{{ __url('প্রবাসী') }}" title="Probashi" style="height: 100px">
-                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo">
+                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo"
+                    loading="lazy"
+                    decoding="async">
             </a>
         </div>
         <a href="{{ __url('probashi-news-list') }}" title="সর্বশেষ প্রবাস সংবাদ">
-            <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo">
+            <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                loading="lazy"
+                decoding="async">
         </a>
         <div class="news-section sangbadik-section">
             <div class="sangbadik-content">
@@ -692,7 +696,7 @@
                                 <div class="sangbadik-image">
                                     @if ($news->thumbnails && $news->thumbnails->count() > 0)
                                         <!-- Thumbnail cycling container -->
-                                        <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck(' thumbnail_path'))'>
+                                        <div class="thumbnail-rotator" data-thumbnails='@json($news->thumbnails->pluck('thumbnail_path'))'>
                                             <a href="{{ __url($news->encode_title) }}">
                                                 @foreach ($news->thumbnails as $thumbIndex => $thumbnail)
                                                     <img src="{{ asset('storage/' . $thumbnail->thumbnail_path) }}"
@@ -705,10 +709,14 @@
                                     @elseif($news->thumbnail_image)
                                         <a href="{{ __url($news->encode_title) }}">
                                             <img src="{{ asset('storage/' . $news->thumbnail_image) }}"
+                                                loading="lazy"
+                                                decoding="async"
                                                 alt="Sangbadik News">
                                         </a>
                                     @else
                                         <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+                                            loading="lazy"
+                                            decoding="async"
                                             alt="Default Report">
                                     @endif
                                 </div>
@@ -787,9 +795,14 @@
                 const thumbnailRotators = document.querySelectorAll('.thumbnail-rotator');
 
                 thumbnailRotators.forEach(rotator => {
+                    if (rotator.dataset.cyclingInitialized === '1') {
+                        return;
+                    }
+
                     const thumbnailImages = rotator.querySelectorAll('.thumbnail-image');
 
                     if (thumbnailImages.length > 1) {
+                        rotator.dataset.cyclingInitialized = '1';
                         let currentThumbnailIndex = 0;
 
                         const cycleThumbnails = () => {
@@ -806,8 +819,8 @@
                             thumbnailImages[currentThumbnailIndex].classList.add('active');
                         };
 
-                        // Start cycling every 1 second
-                        setInterval(cycleThumbnails, 1000);
+                        // Keep thumbnail changes moderate to reduce main-thread churn.
+                        setInterval(cycleThumbnails, 2500);
                     }
                 });
             }
@@ -854,31 +867,31 @@
         });
     </script>
 
-    <script src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/swiper/breaking-news.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/category-tab.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile.js') }}"></script>
+    <script defer src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/swiper/breaking-news.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/category-tab.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile.js') }}"></script>
     <script>
         window.storyGalleryScriptUrl = "{{ \App\Helpers\ThemeHelper::asset('js/story.js') }}";
     </script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-modal.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/mega-menu-inner-tab.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/mobile-side-menu.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/top-menu.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/video-play.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/login-modal.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile-setting.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/subscribe-form.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/category-view.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
-    <script src="{{ asset('website/js/copy-url.js') }}"></script>
-    <script src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/global-modal.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/mega-menu-inner-tab.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/mobile-side-menu.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/top-menu.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/video-play.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/login-modal.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile-setting.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/subscribe-form.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/category-view.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
+    <script defer src="{{ asset('website/js/copy-url.js') }}"></script>
+    <script defer src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

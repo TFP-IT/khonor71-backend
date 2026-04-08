@@ -15,11 +15,14 @@
         <div class="">
             <a
                 href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
-                class="block group overflow-hidden w-full h-52 md:h-80 xl:h-360px] 2xl:h-[380px] 4xl:h-[460px] object-cover">
+                class="block group overflow-hidden w-full h-52 md:h-80 xl:h-[360px] 2xl:h-[380px] 4xl:h-[460px] object-cover">
                 <img
                     class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                     src="{{ isset($homePageTopNews[0]->news->photoLibrary->large_image) ? asset('storage/'.$homePageTopNews[0]->news->photoLibrary->large_image) : asset('/assets/news-details-view.png') }}"
-                    alt="{{ $homePageTopNews[0]->news->image_alt }}"
+                    alt="{{ $homePageTopNews[0]->news->image_alt ?? $homePageTopNews[0]->news->title }}"
+                    fetchpriority="high"
+                    loading="eager"
+                    decoding="async"
                 />
             </a>
 
@@ -67,6 +70,7 @@
 
             $tvOverlaySource = '';
             $tvSource = '';
+            $tvPlayableSource = '';
             $tvRenderType = '';
             $tvPoster = asset('assets/no_news.jpg');
 
@@ -99,6 +103,12 @@
                         $tvPoster = $videoData['thumb'];
                     }
                 }
+
+                if (!empty($tvOverlaySource)) {
+                    $tvPlayableSource = $tvOverlaySource;
+                } elseif (!empty($tvSource) && $tvRenderType === 'video') {
+                    $tvPlayableSource = $tvSource;
+                }
             }
 
             $categoryNewsItems = get_probashi_news(5);
@@ -109,44 +119,49 @@
             <div class="border-2 border-red-700 rounded-2xl p-2 bg-white dark:bg-neutral-900">
                 <div class="grid grid-cols-3 ">
                     <div class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
-                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
+                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain" loading="lazy" decoding="async">
 
-                        @if (!empty($tvVideoNews) && !empty($tvOverlaySource))
-                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
-                                <video
-                                    class="rounded-sm object-cover"
-                                    style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
-                                    autoplay
-                                    muted
-                                    loop
-                                    playsinline
-                                    preload="metadata">
-                                    <source src="{{ $tvOverlaySource }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </a>
-                        @elseif (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'video')
-                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
-                                <video
-                                    class="rounded-sm object-cover"
-                                    style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
-                                    autoplay
-                                    muted
-                                    loop
-                                    playsinline
-                                    preload="metadata">
-                                    <source src="{{ $tvSource }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </a>
+                        @if (!empty($tvVideoNews) && !empty($tvPlayableSource))
+                            <button
+                                type="button"
+                                class="absolute inset-0 flex items-center justify-center js-tv-play-trigger"
+                                aria-label="Play video: {{ $tvVideoNews->title }}">
+                                <img
+                                    src="{{ $tvPoster }}"
+                                    alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm"
+                                    loading="lazy"
+                                    decoding="async"
+                                    style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
+                                <span
+                                    class="absolute z-10 w-12 h-12 rounded-full bg-black/70 text-white flex items-center justify-center"
+                                    style="transform: translate(-7.5%, 13%);">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M8 5v14l11-7z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                            <video
+                                class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden"
+                                style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);"
+                                muted
+                                loop
+                                playsinline
+                                preload="none"
+                                poster="{{ $tvPoster }}">
+                                <source src="{{ $tvPlayableSource }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
                         @elseif (!empty($tvVideoNews))
                             <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
                                 <img src="{{ $tvPoster }}" alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
                                     class="absolute w-3/4 h-3/4 object-cover rounded-sm"
+                                    loading="lazy"
+                                    decoding="async"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                             </a>
                         @else
-                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
                     </div>
 
@@ -186,6 +201,8 @@
                             src="{{ $rightCategoryImage }}"
                             onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
                             alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </a>
                     <div class="py-3 space-y-2">
@@ -200,6 +217,8 @@
                         <img
                             class="w-full h-full object-cover"
                             src="{{ asset('/assets/news-card-view.png') }}"
+                            loading="lazy"
+                            decoding="async"
                             alt="No Category News">
                     </div>
                 @endif
@@ -207,3 +226,26 @@
         </div>
     </section>
 </section>
+
+@once
+    @push('custom-js')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.js-tv-play-trigger').forEach(function (trigger) {
+                    trigger.addEventListener('click', function () {
+                        const wrapper = trigger.parentElement;
+                        if (!wrapper) return;
+
+                        const player = wrapper.querySelector('.js-tv-inline-player');
+                        if (!player) return;
+
+                        trigger.classList.add('hidden');
+                        player.classList.remove('hidden');
+                        player.currentTime = 0;
+                        player.play().catch(function () {});
+                    });
+                });
+            });
+        </script>
+    @endpush
+@endonce
