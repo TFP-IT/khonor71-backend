@@ -1,7 +1,11 @@
-const baseUrl = $('meta[name="base-url"]').attr("content");
+const baseUrl =
+    document.querySelector('meta[name="base-url"]')?.getAttribute("content") ||
+    window.location.origin;
 // Dark & Light Mode
 document.addEventListener("DOMContentLoaded", function () {
     const toggleButton = document.getElementById("theme-toggle");
+    if (!toggleButton) return;
+
     const html = document.documentElement;
 
     // Optional: Persist theme in localStorage
@@ -24,7 +28,18 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("theme", "light");
         }
 
-        await axios.get(baseUrl + "/mode/change/" + theme);
+        try {
+            await fetch(baseUrl + "/mode/change/" + theme, {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            });
+        } catch (error) {
+            // Continue with local mode switch even if preference update fails.
+        }
+
         window.location.reload();
     });
 });

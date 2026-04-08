@@ -88,6 +88,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         $languages = Language::where('status', 1)->get();
         $activeLanguage = Language::where('value', app()->getLocale())->first();
 
+        $isMobileClientHint = request()->header('sec-ch-ua-mobile') === '?1';
         $today = Carbon::today();
         $mainMenus = MenuContent::with([
             'submenus' => function ($query) {
@@ -101,25 +102,38 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         ->where('status', 1)
         ->orderBy('menu_position', 'asc')
         ->limit(10)
-        ->get()
-        ->map(function ($menu) use ($today) {
-            if ($menu->submenus->isEmpty()) {
-                // Main menu only → use category_id
-                $news = NewsMst::where('category_id', $menu->content_id)->where('status', 1)
-                    ->whereDate('publish_date', '<=', $today)
-                    ->withCount('comments')
-                    ->with(['postByUser:id,full_name', 'comments'])
-                    ->orderBy('created_at', 'desc')
-                    ->take(4)
-                    ->get();
+        ->get();
 
-                $menu->top_news = $news;
-            } else {
-                
-                $submenuIds = $menu->submenus->pluck('content_id')->toArray();
-                // Loop over submenus to attach news per submenu
-                $menu->submenus->transform(function ($submenu) use ($today) {
-                    $news = NewsMst::where('sub_category_id', $submenu->content_id)->where('status', 1)
+        if (!$isMobileClientHint) {
+            $mainMenus = $mainMenus->map(function ($menu) use ($today) {
+                if ($menu->submenus->isEmpty()) {
+                    $news = NewsMst::where('category_id', $menu->content_id)->where('status', 1)
+                        ->whereDate('publish_date', '<=', $today)
+                        ->withCount('comments')
+                        ->with(['postByUser:id,full_name', 'comments'])
+                        ->orderBy('created_at', 'desc')
+                        ->take(4)
+                        ->get();
+
+                    $menu->top_news = $news;
+                } else {
+                    $submenuIds = $menu->submenus->pluck('content_id')->toArray();
+                    $menu->submenus->transform(function ($submenu) use ($today) {
+                        $news = NewsMst::where('sub_category_id', $submenu->content_id)->where('status', 1)
+                            ->whereDate('publish_date', '<=', $today)
+                            ->withCount('comments')
+                            ->with(['postByUser:id,full_name', 'comments'])
+                            ->orderBy('created_at', 'desc')
+                            ->take(3)
+                            ->get();
+
+                        $submenu->top_news = $news;
+
+                        return $submenu;
+                    });
+
+                    $combinedNews = NewsMst::whereIn('sub_category_id', $submenuIds)
+                        ->where('status', 1)
                         ->whereDate('publish_date', '<=', $today)
                         ->withCount('comments')
                         ->with(['postByUser:id,full_name', 'comments'])
@@ -127,44 +141,36 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
                         ->take(3)
                         ->get();
 
-                    $submenu->top_news = $news;
-                    return $submenu;
-                });
+                    $menu->top_combined_submenu_news = $combinedNews;
+                }
 
-                $combinedNews = NewsMst::whereIn('sub_category_id', $submenuIds)
-                    ->where('status', 1)
-                    ->whereDate('publish_date', '<=', $today)
-                    ->withCount('comments')
-                    ->with(['postByUser:id,full_name', 'comments'])
-                    ->orderBy('created_at', 'desc')
-                    ->take(3)
-                    ->get();
+                return $menu;
+            });
+        }
 
-                $menu->top_combined_submenu_news = $combinedNews;
-            }
+        $allVedioNews = collect();
+        $pageMenus = collect();
+        if (!$isMobileClientHint) {
+            $allVedioNews = VideoNews::with(['postByUser:id,full_name'])
+                ->select(['id', 'publish_date', 'total_view', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by'])
+                ->where('language_id', $languageId)
+                ->where('status', ActivationStatusEnum::ACTIVE)
+                ->latest('created_at')
+                ->take(4)
+                ->get();
 
-            return $menu;
-        });
-
-        $allVedioNews = VideoNews::with(['postByUser:id,full_name'])
-            ->select(['id', 'publish_date', 'total_view', 'encode_title', 'title', 'thumbnail_image', 'image_alt', 'image_title', 'created_by'])
-            ->where('language_id', $languageId)
-            ->where('status', ActivationStatusEnum::ACTIVE)
-            ->latest('created_at')
-            ->take(4)
-            ->get();
-
-        $pageMenus = MenuContent::with('pagesubmenus')
-            ->where('language_id', $languageId)
-            ->where('content_type', '!=', 'categories')
-            ->when(app_setting()->show_archive_post == 0, function ($query) {
-                $query->where('content_type', '!=', 'archive');
-            })
-            ->whereNull('parent_id')
-            ->where('menu_id', 1)
-            ->where('status', 1)
-            ->orderBy('menu_position', 'asc')
-            ->get();
+            $pageMenus = MenuContent::with('pagesubmenus')
+                ->where('language_id', $languageId)
+                ->where('content_type', '!=', 'categories')
+                ->when(app_setting()->show_archive_post == 0, function ($query) {
+                    $query->where('content_type', '!=', 'archive');
+                })
+                ->whereNull('parent_id')
+                ->where('menu_id', 1)
+                ->where('status', 1)
+                ->orderBy('menu_position', 'asc')
+                ->get();
+        }
 
         $fontSetup = \Modules\Setting\Entities\FontSetup::getByLanguageGroupedByType($languageId);
         $principalFont = $fontSetup[FontSetupEnum::PRINCIPAL->value] ?? null;
@@ -183,27 +189,32 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         $loadedFonts = $fontModels->unique('id');
 
         // RSS Feeds
-        $allRssFeeds = RssFeed::where('status', 1)->where('paper_language', $languageId)->get();
-        $allRssFeedsNews = $this->homeDataService->getRssFeedNews();
-        
-        $feedsLatest = collect($allRssFeedsNews)
-            ->map(function ($feed) {
-                return collect($feed['news'])->sortByDesc('pubDate')->first();
-            })
-            ->filter();
+        $allRssFeeds = collect();
+        $allRssFeedsNews = [];
+        $randomRssFeedsNews = collect();
+        if (!$isMobileClientHint) {
+            $allRssFeeds = RssFeed::where('status', 1)->where('paper_language', $languageId)->get();
+            $allRssFeedsNews = $this->homeDataService->getRssFeedNews();
+            
+            $feedsLatest = collect($allRssFeedsNews)
+                ->map(function ($feed) {
+                    return collect($feed['news'])->sortByDesc('pubDate')->first();
+                })
+                ->filter();
 
-        $additionalNeeded = 3 - $feedsLatest->count();
+            $additionalNeeded = 3 - $feedsLatest->count();
 
-        if ($additionalNeeded > 0) {
-            $allAdditionalNews = collect($allRssFeedsNews)
-                ->flatMap(fn($feed) => $feed['news'])
-                ->sortByDesc('pubDate')
-                ->reject(fn($item) => $feedsLatest->pluck('encode_title')->contains($item['encode_title']))
-                ->take($additionalNeeded);
+            if ($additionalNeeded > 0) {
+                $allAdditionalNews = collect($allRssFeedsNews)
+                    ->flatMap(fn($feed) => $feed['news'])
+                    ->sortByDesc('pubDate')
+                    ->reject(fn($item) => $feedsLatest->pluck('encode_title')->contains($item['encode_title']))
+                    ->take($additionalNeeded);
 
-            $randomRssFeedsNews = $feedsLatest->merge($allAdditionalNews)->sortByDesc('pubDate');
-        } else {
-            $randomRssFeedsNews = $feedsLatest->sortByDesc('pubDate')->take(3);
+                $randomRssFeedsNews = $feedsLatest->merge($allAdditionalNews)->sortByDesc('pubDate');
+            } else {
+                $randomRssFeedsNews = $feedsLatest->sortByDesc('pubDate')->take(3);
+            }
         }
         // RSS Feeds
 
@@ -233,6 +244,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
             'randomRssFeedsNews' => $randomRssFeedsNews,
             'metaInfo' => $metaInfo,
             'cookieInfo' => $cookieInfo,
+            'isMobileClientHint' => $isMobileClientHint,
         ]);
     }
 

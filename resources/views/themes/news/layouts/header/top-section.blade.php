@@ -4,7 +4,7 @@
     <div class="container mx-auto py-2 flex justify-between items-center">
         <!-- Left section -->
 
-       <button onclick="openSidebar()" type="button"
+       <button onclick="openSidebar()" type="button" aria-label="Open menu"
             class="xl:hidden bg-neutral-100 dark:bg-neutral-600 text-neutral-600 dark:text-neutral-50 border dark:border-neutral-800 rounded-full w-9 h-9 flex justify-center items-center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 6H20M4 12H20H7M4 18H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -32,11 +32,12 @@
         </section>
         <!-- Mobile Brand Logo -->
         <div class="xl:hidden">
-            <a class="hidden dark:block w-32 flex_center overflow-hidden" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->footer_logo }}" alt="Brand logo dark" loading="eager" decoding="async" />
-            </a>
-            <a class="dark:hidden w-32 flex_center overflow-hidden" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->logo }}" alt="Brand logo light" loading="eager" decoding="async" />
+            @php
+                $mobileHeaderLogo = mode() ? app_setting()->footer_logo : app_setting()->logo;
+                $mobileHeaderLogoAlt = mode() ? 'Brand logo dark' : 'Brand logo light';
+            @endphp
+            <a class="w-32 flex_center overflow-hidden" href="{{ __url('/') }}">
+                <img src="{{ $mobileHeaderLogo }}" alt="{{ $mobileHeaderLogoAlt }}" loading="eager" decoding="async" fetchpriority="high" />
             </a>
         </div>
 

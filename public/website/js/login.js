@@ -1,33 +1,63 @@
-$(document).ready(function () {
-    $('#loginForm').on('submit', async function (e) {
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("loginForm");
+    if (!form) return;
+
+    const loginBtn = document.getElementById("loginBtn");
+    const responseBox = document.getElementById("responseMessage");
+
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const loginBtn = $('#loginBtn');
-        const responseBox = $('#responseMessage');
+        if (loginBtn) {
+            loginBtn.textContent = "Logging in...";
+            loginBtn.disabled = true;
+        }
+        if (responseBox) {
+            responseBox.classList.remove("text-green-600", "text-red-600");
+            responseBox.textContent = "";
+        }
 
-        loginBtn.text('Logging in...').prop('disabled', true);
-        responseBox.removeClass().text('');
-
-        const formData = new FormData(this);
+        const formData = new FormData(form);
+        const csrfToken = form.querySelector('input[name="_token"]')?.value;
 
         try {
-            const response = await axios.post(loginRoute, formData);
-            const res = response.data;
+            const response = await fetch(loginRoute, {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+                },
+            });
 
-            if (res.status) {
-                responseBox.addClass('text-green-600').text(res.message);
+            const res = await response.json().catch(function () {
+                return { status: false, message: "Login failed." };
+            });
+
+            if (response.ok && res.status) {
+                if (responseBox) {
+                    responseBox.classList.add("text-green-600");
+                    responseBox.textContent = res.message;
+                }
                 window.location.reload();
-            } else {
-                responseBox.addClass('text-red-600').text(res.message);
+                return;
+            }
+
+            if (responseBox) {
+                responseBox.classList.add("text-red-600");
+                responseBox.textContent = res.message || "Login failed.";
             }
         } catch (error) {
-            let message = 'Login failed.';
-            if (error.response && error.response.data && error.response.data.message) {
-                message = error.response.data.message;
+            if (responseBox) {
+                responseBox.classList.add("text-red-600");
+                responseBox.textContent = "Login failed.";
             }
-            responseBox.addClass('text-red-600').text(message);
         } finally {
-            loginBtn.text('Login').prop('disabled', false);
+            if (loginBtn) {
+                loginBtn.textContent = "Login";
+                loginBtn.disabled = false;
+            }
         }
     });
 });

@@ -50,6 +50,7 @@
                 </a>
                 <div id="responseMessage" class="mt-4 text-sm"></div>
                 <form id="loginForm">
+                    @csrf
                     <div class="flex flex-col mb-4">
                         <label class="mb-2 text-sm text-neutral-800 dark:text-white" for="email">
                             {{ localize('email_address') }}

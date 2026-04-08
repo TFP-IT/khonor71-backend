@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const baseUrlMeta = document.querySelector('meta[name="base-url"]');
+    const baseUrl = baseUrlMeta
+        ? baseUrlMeta.getAttribute("content")
+        : window.location.origin;
     const toggleBtn = document.getElementById("lang-toggle");
     const dropdown = document.getElementById("lang-menu");
+    const langLabel = document.getElementById("lang-label");
     let opinionSwiperInstance;
     let storiesNewsSwiperInstance;
     let politicsNewsSwiperInstance;
@@ -211,45 +216,58 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Initial setup
-    const initialDirection = $("#direction").val() || "ltr";
+    const initialDirection =
+        document.getElementById("direction")?.value || "ltr";
     document.documentElement.setAttribute("dir", initialDirection);
-    const initialLang = $("#language").val() ?? "en";
+    const initialLang = document.getElementById("language")?.value || "en";
     document.documentElement.setAttribute("lang", initialLang);
-    document.getElementById("lang-label").textContent = document.querySelector(
+    const initialLangOption = document.querySelector(
         `.lang-option[data-lang="${initialLang}"]`
-    ).textContent;
+    );
+    if (langLabel && initialLangOption) {
+        langLabel.textContent = initialLangOption.textContent;
+    }
 
     initializeSwipers(initialDirection);
 
-    toggleBtn.addEventListener("click", () => {
-        dropdown.classList.toggle("opacity-0");
-        dropdown.classList.toggle("scale-95");
-        dropdown.classList.toggle("translate-y-2");
-        dropdown.classList.toggle("pointer-events-none");
-    });
+    if (toggleBtn && dropdown) {
+        toggleBtn.addEventListener("click", () => {
+            dropdown.classList.toggle("opacity-0");
+            dropdown.classList.toggle("scale-95");
+            dropdown.classList.toggle("translate-y-2");
+            dropdown.classList.toggle("pointer-events-none");
+        });
 
-    document.addEventListener("click", (e) => {
-        if (!toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        document.addEventListener("click", (e) => {
+            if (toggleBtn.contains(e.target) || dropdown.contains(e.target)) {
+                return;
+            }
             dropdown.classList.add(
                 "opacity-0",
                 "scale-95",
                 "translate-y-2",
                 "pointer-events-none"
             );
-        }
-    });
+        });
+    }
 
     document.querySelectorAll(".lang-option").forEach((option) => {
         option.addEventListener("click", (e) => {
             const selectedLang = e.target.getAttribute("data-lang");
-            const baseUrl = $('meta[name="base-url"]').attr("content");
             window.location.href = `${baseUrl}/${selectedLang}`;
         });
     });
 });
 
-$(document).on("change", "#language, #language_side", function () {
-    let language = $(this).val();
-    const baseUrl = $('meta[name="base-url"]').attr("content");
+document.addEventListener("change", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (!target.matches("#language, #language_side")) return;
+    const language = target.value;
+    if (!language) return;
+    const baseUrlMeta = document.querySelector('meta[name="base-url"]');
+    const baseUrl = baseUrlMeta
+        ? baseUrlMeta.getAttribute("content")
+        : window.location.origin;
     window.location.href = `${baseUrl}/${language}`;
 });

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 @php
     $direction = app()->getLocale() == 'ar' ? 'rtl' : 'ltr';
+    $isMobileClientHint = request()->header('sec-ch-ua-mobile') === '?1';
     $gaTrackingId = null;
     if (app()->environment('production')) {
         $gaTrackingId = $metaInfo->google_analytics ?? 'G-2TEHY5NY81';
@@ -21,11 +22,16 @@
     {!! SEOTools::generate() !!}
 
     <!-- Link Swiper's CSS -->
-    <link rel="stylesheet" href="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css') }}" />
+    @php
+        $swiperCssUrl = \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css');
+    @endphp
+    <link rel="stylesheet" href="{{ $swiperCssUrl }}" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="{{ $swiperCssUrl }}" /></noscript>
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
-        <link href="{{ $font->source_url }}" rel="stylesheet">
+        <link href="{{ $font->source_url }}" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="{{ $font->source_url }}" rel="stylesheet"></noscript>
     @endforeach
 
     {{-- Set CSS Variables --}}
@@ -605,7 +611,7 @@
     </style>
 
     <!-- Tailwind css -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
     @stack('plugins-css')
     @stack('custom-css')
 
@@ -637,17 +643,15 @@
 
 
     <!-- top banner section -->
+    @if (!($isMobileClientHint ?? false))
     <section class="container hidden xl:flex justify-between items-center">
         <!-- Brand Logo - Takes 1/3 width -->
         <div class="flex-none justify-start">
-            <a class="hidden dark:block flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->footer_logo }}" alt="" class="w-auto"
-                    fetchpriority="high"
-                    decoding="async"
-                    style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
-            </a>
-            <a class="dark:hidden flex_center" href="{{ __url('/') }}">
-                <img src="{{ app_setting()->logo }}" alt="" class="w-auto"
+            @php
+                $desktopHeaderLogo = mode() ? app_setting()->footer_logo : app_setting()->logo;
+            @endphp
+            <a class="flex_center" href="{{ __url('/') }}">
+                <img src="{{ $desktopHeaderLogo }}" alt="" class="w-auto"
                     fetchpriority="high"
                     decoding="async"
                     style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
@@ -732,9 +736,12 @@
             </div>
         </div>
     </section>
+    @endif
 
     {{-- Menu section --}}
-    @include('themes.news.layouts.header.top-menu')
+    @if (!($isMobileClientHint ?? false))
+        @include('themes.news.layouts.header.top-menu')
+    @endif
     @include('themes.news.layouts.header.side-menu')
     @include('themes.news.layouts.header.mobile-menu')
 
@@ -867,7 +874,6 @@
         });
     </script>
 
-    <script defer src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/swiper/breaking-news.js') }}"></script>
@@ -888,7 +894,27 @@
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/subscribe-form.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/category-view.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
-    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
+    <script>
+        (function () {
+            function loadAlpineBundle() {
+                if (!document.querySelector('[x-data]')) {
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = "{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}";
+                script.defer = true;
+                document.body.appendChild(script);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadAlpineBundle, { once: true });
+                return;
+            }
+
+            loadAlpineBundle();
+        })();
+    </script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
     <script defer src="{{ asset('website/js/copy-url.js') }}"></script>
     <script defer src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>

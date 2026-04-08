@@ -1,5 +1,27 @@
 
 <!-- Top Category News section -->
+@php
+    $heroPhotoLibrary = $homePageTopNews[0]->news->photoLibrary ?? null;
+    $heroLargeImage = !empty($heroPhotoLibrary?->large_image)
+        ? asset('storage/' . $heroPhotoLibrary->large_image)
+        : asset('/assets/news-details-view.png');
+
+    $heroThumbImage = '';
+    if (!empty($heroPhotoLibrary?->image_base_url)) {
+        $heroThumbImage = $heroPhotoLibrary->image_base_url;
+    } elseif (!empty($heroPhotoLibrary?->thumb_image)) {
+        $heroThumbImage = asset('storage/' . $heroPhotoLibrary->thumb_image);
+    }
+
+    $heroImageSrc = $heroThumbImage ?: $heroLargeImage;
+    $heroImageSrcsetParts = [];
+    if (!empty($heroThumbImage)) {
+        $heroImageSrcsetParts[] = $heroThumbImage . ' 438w';
+    }
+    $heroImageSrcsetParts[] = $heroLargeImage . ' 1067w';
+    $heroImageSrcset = implode(', ', array_unique($heroImageSrcsetParts));
+    $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66vw, 50vw';
+@endphp
 <section class="container grid md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 mt-4">
     <!-- Left Section -->
     <section class="order-3 md:col-span-3 xl:col-auto xl:order-1">
@@ -18,8 +40,14 @@
                 class="block group overflow-hidden w-full h-52 md:h-80 xl:h-[360px] 2xl:h-[380px] 4xl:h-[460px] object-cover">
                 <img
                     class="w-full h-full object-cover group-hover:scale-105 transition_slow"
-                    src="{{ isset($homePageTopNews[0]->news->photoLibrary->large_image) ? asset('storage/'.$homePageTopNews[0]->news->photoLibrary->large_image) : asset('/assets/news-details-view.png') }}"
+                    src="{{ $heroImageSrc }}"
+                    @if (!empty($heroImageSrcset))
+                        srcset="{{ $heroImageSrcset }}"
+                        sizes="{{ $heroImageSizes }}"
+                    @endif
                     alt="{{ $homePageTopNews[0]->news->image_alt ?? $homePageTopNews[0]->news->title }}"
+                    width="1067"
+                    height="585"
                     fetchpriority="high"
                     loading="eager"
                     decoding="async"
@@ -119,7 +147,7 @@
             <div class="border-2 border-red-700 rounded-2xl p-2 bg-white dark:bg-neutral-900">
                 <div class="grid grid-cols-3 ">
                     <div class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
-                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain" loading="lazy" decoding="async">
+                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain" loading="lazy" decoding="async" fetchpriority="low">
 
                         @if (!empty($tvVideoNews) && !empty($tvPlayableSource))
                             <button
@@ -132,6 +160,7 @@
                                     class="absolute w-3/4 h-3/4 object-cover rounded-sm"
                                     loading="lazy"
                                     decoding="async"
+                                    fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                                 <span
                                     class="absolute z-10 w-12 h-12 rounded-full bg-black/70 text-white flex items-center justify-center"
@@ -157,10 +186,11 @@
                                     class="absolute w-3/4 h-3/4 object-cover rounded-sm"
                                     loading="lazy"
                                     decoding="async"
+                                    fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                             </a>
                         @else
-                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async" fetchpriority="low" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
                     </div>
 
@@ -202,6 +232,7 @@
                             alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
                             loading="lazy"
                             decoding="async"
+                            fetchpriority="low"
                         />
                     </a>
                     <div class="py-3 space-y-2">
@@ -227,6 +258,19 @@
 </section>
 
 @once
+    @push('custom-css')
+        @if (!empty($heroImageSrc))
+            <link
+                rel="preload"
+                as="image"
+                href="{{ $heroImageSrc }}"
+                @if (!empty($heroImageSrcset))
+                    imagesrcset="{{ $heroImageSrcset }}"
+                    imagesizes="{{ $heroImageSizes }}"
+                @endif
+                fetchpriority="high">
+        @endif
+    @endpush
     @push('custom-js')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
