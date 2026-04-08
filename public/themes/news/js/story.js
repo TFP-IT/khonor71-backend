@@ -109,7 +109,7 @@ function initStoryGallery() {
         }
 
         function redirect(url) {
-            let storyUrl = $("#story_page_hidden_url").val() ?? '';
+            const storyUrl = document.getElementById("story_page_hidden_url")?.value ?? '';
             if (url !== null) {
                 window.location = storyUrl + url; // Redirect to "entry" URL
             } else {

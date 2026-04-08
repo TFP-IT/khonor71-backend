@@ -162,7 +162,10 @@
     document.querySelectorAll(".reply-btn").forEach(button => {
         button.addEventListener("click", (e) => {
             let commentId = e.currentTarget.getAttribute("data-comment-id");
-            $("#commentId").val(commentId);
+            const commentIdInput = document.getElementById("commentId");
+            if (commentIdInput) {
+                commentIdInput.value = commentId;
+            }
             const commentBox = e.target.closest("[data-comment]");
             commentBox.after(globalReplyBox);
 

@@ -79,7 +79,7 @@
 
 
             <!-- Multi-language Start -->
-            @if ($languages->count() > 1)
+            {{-- @if ($languages->count() > 1)
                 <div class="hidden xl:block relative text-left">
                     <button type="button" id="lang-toggle"
                         class="text-sm bg-white border border-gray-300 rounded-lg px-2 py-1 shadow-sm hover:bg-gray-50 focus:outline-none flex gap-0.5 dark:bg-neutral-700 dark:border-neutral-600 dark:text-neutral-50">
@@ -100,7 +100,7 @@
                         </ul>
                     </div>
                 </div>
-            @endif
+            @endif --}}
             <!-- Multi-language End -->
 
             <!-- Search Button -->

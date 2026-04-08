@@ -1,26 +1,29 @@
-// grid and list view and load data for category
+const getCsrfToken = () =>
+    document.querySelector('input[name="_token"]')?.value ||
+    document.querySelector('meta[name="csrf-token"]')?.content ||
+    "";
+
 const loadMoreBtn = document.getElementById("load-more-btn");
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener("click", function () {
         const button = this;
-        const offset = parseInt(button.getAttribute("data-offset"));
+        const offset = Number.parseInt(button.getAttribute("data-offset"), 10);
         const categoryId = button.getAttribute("data-category-id");
         const categoryStyle = button.getAttribute("data-view-style");
-        const url = categoryLoadMoreUrl;
-        const token = $('input[name="_token"]').val();
+        const token = getCsrfToken();
         const noMoreMessage = document.getElementById("no-more-news-message");
 
         button.disabled = true;
         button.textContent = "Loading...";
 
-        fetch(url, {
+        fetch(categoryLoadMoreUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": token,
             },
             body: JSON.stringify({
-                offset: offset,
+                offset,
                 category_id: categoryId,
                 category_style: categoryStyle,
             }),
@@ -29,85 +32,83 @@ if (loadMoreBtn) {
             .then((data) => {
                 if (data.html_grid && data.html_list) {
                     const grid = document.querySelector("#news-grid");
-                    grid.insertAdjacentHTML("beforeend", data.html_grid);
-
                     const list = document.querySelector("#news-list");
+
+                    grid.insertAdjacentHTML("beforeend", data.html_grid);
                     list.insertAdjacentHTML("beforeend", data.html_list);
 
-                    button.setAttribute("data-offset", offset + data.count);
+                    button.setAttribute("data-offset", String(offset + data.count));
 
                     if (!data.hasMore) {
                         button.remove();
                         grid.classList.remove("before:bg-gradient-to-t");
-                    } else {
-                        button.disabled = false;
-                        button.textContent = "Load More";
+                        return;
                     }
-                } else {
-                    button.remove();
-                    if (noMoreMessage) {
-                        noMoreMessage.classList.remove("hidden");
-                    }
+
+                    button.disabled = false;
+                    button.textContent = "Load More";
+                    return;
+                }
+
+                button.remove();
+                if (noMoreMessage) {
+                    noMoreMessage.classList.remove("hidden");
                 }
             })
-            .catch((error) => {
-                console.error("Error loading news:", error);
+            .catch(() => {
                 button.disabled = false;
                 button.textContent = "Load More";
             });
     });
 }
 
-// grid and list view and load data for video
 const loadMoreVideoBtn = document.getElementById("load-more-video-news-btn");
 if (loadMoreVideoBtn) {
     loadMoreVideoBtn.addEventListener("click", function () {
         const button = this;
-        const offset = parseInt(button.getAttribute("data-offset"));
-        const url = videoLoadMoreUrl;
-        const token = $('input[name="_token"]').val();
+        const offset = Number.parseInt(button.getAttribute("data-offset"), 10);
+        const token = getCsrfToken();
         const noMoreMessage = document.getElementById("no-more-news-message");
 
         button.disabled = true;
         button.textContent = "Loading...";
 
-        fetch(url, {
+        fetch(videoLoadMoreUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": token,
             },
-            body: JSON.stringify({
-                offset: offset,
-            }),
+            body: JSON.stringify({ offset }),
         })
             .then((response) => response.json())
             .then((data) => {
                 if (data.html_grid && data.html_list) {
                     const grid = document.querySelector("#news-grid");
-                    grid.insertAdjacentHTML("beforeend", data.html_grid);
-
                     const list = document.querySelector("#news-list");
+
+                    grid.insertAdjacentHTML("beforeend", data.html_grid);
                     list.insertAdjacentHTML("beforeend", data.html_list);
 
-                    button.setAttribute("data-offset", offset + data.count);
+                    button.setAttribute("data-offset", String(offset + data.count));
 
                     if (!data.hasMore) {
                         button.remove();
                         grid.classList.remove("before:bg-gradient-to-t");
-                    } else {
-                        button.disabled = false;
-                        button.textContent = "Load More";
+                        return;
                     }
-                } else {
-                    button.remove();
-                    if (noMoreMessage) {
-                        noMoreMessage.classList.remove("hidden");
-                    }
+
+                    button.disabled = false;
+                    button.textContent = "Load More";
+                    return;
+                }
+
+                button.remove();
+                if (noMoreMessage) {
+                    noMoreMessage.classList.remove("hidden");
                 }
             })
-            .catch((error) => {
-                console.error("Error loading news:", error);
+            .catch(() => {
                 button.disabled = false;
                 button.textContent = "Load More";
             });

@@ -65,7 +65,7 @@
                                                             <div class="overflow-hidden px-2">
                                                                 <a href="{{ __url($item->encode_title) }}"
                                                                     class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                                    <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                                    <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                                         src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
                                                                         alt="" />
                                                                 </a>
@@ -105,7 +105,7 @@
                                                         <div class="overflow-hidden px-2">
                                                             <a href="{{ __url($item->encode_title) }}"
                                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                                     src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
                                                                     alt="" />
                                                             </a>
@@ -167,7 +167,7 @@
                                         <div class="overflow-hidden px-2">
                                             <a href="{{ __url($item->encode_title) }}"
                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                     src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
                                                     alt="News" />
                                             </a>
@@ -254,7 +254,7 @@
                                                             <div class="overflow-hidden px-2">
                                                                 <a href="{{ __url($item['encode_title']) }}"
                                                                     class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                                    <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                                    <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                                         src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
                                                                         alt="" />
                                                                 </a>
@@ -288,7 +288,7 @@
                                                         <div class="overflow-hidden px-2">
                                                             <a href="{{ __url($item['encode_title']) }}"
                                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                                     src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
                                                                     alt="" />
                                                             </a>
@@ -349,7 +349,7 @@
                                         <div class="overflow-hidden px-2">
                                             <a href="{{ __url($item['encode_title']) }}"
                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
-                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                     src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
                                                     alt="" />
                                             </a>
@@ -403,7 +403,7 @@
                                     <div class="overflow-hidden px-2">
                                         <figure class="relative w-full h-36 2xl:h-48 group overflow-hidden block">
                                             <a href="{{ __url($video->encode_title) }}" class="">
-                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+                                                <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
                                                     src="{{ get_image_url('/assets/thumbnail-image.jpg', $video->thumbnail_image) }}"
                                                     alt="{{ $video->image_alt }}" />
                                             </a>
