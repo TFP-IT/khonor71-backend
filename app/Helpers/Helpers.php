@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\Entities\AccCoa;
 use Illuminate\Support\Facades\Storage;
 use Modules\Localize\Entities\Language;
+use Modules\Category\Entities\Category;
 use Modules\Accounts\Entities\AccVoucher;
 use Modules\Setting\Entities\Application;
 use Modules\UserManagement\Entities\PerMenu;
@@ -1320,7 +1321,25 @@ if (!function_exists('get_probash_category_news')) {
     function get_probash_category_news($limit = 3)
     {
         $languageId = get_language_id();
-        $categoryId = $languageId == 17 ? 92 : 91;
+        $categoryId = Category::query()
+            ->where('language_id', $languageId)
+            ->whereIn('slug', ['প্রবাসী', 'probashi', 'probash'])
+            ->value('id');
+
+        if (empty($categoryId)) {
+            $categoryId = Category::query()
+                ->where('language_id', $languageId)
+                ->where(function ($query) {
+                    $query->where('category_name', 'like', '%প্রবাস%')
+                        ->orWhere('category_name', 'like', '%Probashi%')
+                        ->orWhere('category_name', 'like', '%Probash%');
+                })
+                ->value('id');
+        }
+
+        if (empty($categoryId)) {
+            $categoryId = $languageId == 17 ? 92 : 91;
+        }
 
         $featuresNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
             ->select(['id', 'news_id', 'encode_title', 'title', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
@@ -1328,7 +1347,8 @@ if (!function_exists('get_probash_category_news')) {
             ->whereDate('publish_date', '<=', Carbon::today())
             ->where('category_id', $categoryId)
             ->where('status', 1)
-            ->latest('created_at')
+            ->orderByDesc('publish_date')
+            ->orderByDesc('id')
             ->limit($limit)
             ->get();
 

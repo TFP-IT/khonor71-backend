@@ -1,4 +1,3 @@
-
 <!-- Top Category News section -->
 @php
     $heroPhotoLibrary = $homePageTopNews[0]->news->photoLibrary ?? null;
@@ -27,7 +26,7 @@
     <section class="order-3 md:col-span-3 xl:col-auto xl:order-1">
         @if ($latestNews->isNotEmpty())
             @include('themes.news.components.home.latest-news', [
-                'latestNews' => $latestNews->take(4)
+                'latestNews' => $latestNews->take(4),
             ])
         @endif
     </section>
@@ -35,38 +34,25 @@
     <!-- Middle Section -->
     <section class="md:col-span-2 order-1">
         <div class="">
-            <a
-                href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
+            <a href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
                 class="block group overflow-hidden w-full h-52 md:h-80 xl:h-[360px] 2xl:h-[380px] 4xl:h-[460px] object-cover">
-                <img
-                    class="w-full h-full object-cover group-hover:scale-105 transition_slow"
-                    src="{{ $heroImageSrc }}"
-                    @if (!empty($heroImageSrcset))
-                        srcset="{{ $heroImageSrcset }}"
-                        sizes="{{ $heroImageSizes }}"
-                    @endif
-                    alt="{{ $homePageTopNews[0]->news->image_alt ?? $homePageTopNews[0]->news->title }}"
-                    width="1067"
-                    height="585"
-                    fetchpriority="high"
-                    loading="eager"
-                    decoding="async"
-                />
+                <img class="w-full h-full object-cover group-hover:scale-105 transition_slow" src="{{ $heroImageSrc }}"
+                    @if (!empty($heroImageSrcset)) srcset="{{ $heroImageSrcset }}"
+                        sizes="{{ $heroImageSizes }}" @endif
+                    alt="{{ $homePageTopNews[0]->news->image_alt ?? $homePageTopNews[0]->news->title }}" width="1067"
+                    height="585" fetchpriority="high" loading="eager" decoding="async" />
             </a>
 
             <div class="py-3 space-y-2">
-                <div
-                    class="h-7 pl-3 pr-6 text-white uppercase flex justify-center items-center clip-hex-right"
+                <div class="h-7 pl-3 pr-6 text-white uppercase flex justify-center items-center clip-hex-right"
                     {!! bgColorStyle($homePageTopNews[0]->category->color_code) !!}>
                     {{ $homePageTopNews[0]->category->category_name }}
                 </div>
-                <a
-                    href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
+                <a href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
                     class="text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary text-2xl lg:text-3xl font-bold my-2 transition_3 line-clamp-2">
                     {{ $homePageTopNews[0]->news->title }}
                 </a>
-                <p
-                    class="text-sm text-neutral-600 dark:text-neutral-400 capitalize line-clamp-2">
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 capitalize line-clamp-2">
                     {{ clean_news_content($homePageTopNews[0]->news->news) }}
                 </p>
                 <div class="capitalize flex items-center gap-1 text-xs">
@@ -87,14 +73,64 @@
     </section>
 
 
+    {{-- <!-- card 2: Probash category news -->
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-800 py-1.5"  style="padding-left: 1rem; padding-right: 11rem;">
+                    <span class="h-2.5 "></span>
+                    <span class="text-sm font-semibold text-white">সর্বশেষ প্রবাস সংবাদ</span>
+                </div>
+                @if ($rightCategoryNews)
+                    @php
+                        $rightCategoryImage = asset('/assets/news-card-view.png');
+                        $photoLibraryImage = optional($rightCategoryNews->photoLibrary)->image_base_url;
+
+                        if (!empty($photoLibraryImage)) {
+                            $rightCategoryImage = $photoLibraryImage;
+                        } elseif (!empty($rightCategoryNews->image_base_url)) {
+                            $rightCategoryImage = $rightCategoryNews->image_base_url;
+                        } elseif (!empty($rightCategoryNews->image)) {
+                            $imagePath = str_starts_with($rightCategoryNews->image, 'images/')
+                                ? $rightCategoryNews->image
+                                : 'images/thumb/' . $rightCategoryNews->image;
+                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $imagePath);
+                        }
+                    @endphp
+                    <a
+                        href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
+                        class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden">
+                        <img
+                            class="w-full h-full object-cover group-hover:scale-105 transition_slow"
+                            src="{{ $rightCategoryImage }}"
+                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
+                        />
+                    </a>
+                    <div class="py-3 space-y-2">
+                        <a
+                            href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
+                            class="line-clamp-2 text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg leading-6 transition_3">
+                            {{ $rightCategoryNews->title }}
+                        </a>
+                    </div>
+                @else
+                    <div class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 overflow-hidden">
+                        <img
+                            class="w-full h-full object-cover"
+                            src="{{ asset('/assets/news-card-view.png') }}"
+                            alt="No Category News">
+                    </div>
+                @endif
+            </div> --}}
+
 
     <!-- Right News section -->
     <section class="order-2">
         @php
             $tvNewsItems = get_tv_news(5);
-            $tvVideoNews = $tvNewsItems->first(function ($news) {
-                return !empty($news->thumbnail_video) || !empty($news->video) || !empty($news->video_url);
-            }) ?? $tvNewsItems->first();
+            $tvVideoNews =
+                $tvNewsItems->first(function ($news) {
+                    return !empty($news->thumbnail_video) || !empty($news->video) || !empty($news->video_url);
+                }) ?? $tvNewsItems->first();
 
             $tvOverlaySource = '';
             $tvSource = '';
@@ -139,117 +175,110 @@
                 }
             }
 
-            $categoryNewsItems = get_probashi_news(5);
+            $categoryNewsItems = get_probash_category_news(1);
             $rightCategoryNews = $categoryNewsItems->first();
         @endphp
         <div class="space-y-1 2xl:space-y-2">
             <!-- card 1: TV Section with News (header style) -->
             <div class="border-2 border-red-700 rounded-2xl p-2 bg-white dark:bg-neutral-900">
                 <div class="grid grid-cols-3 ">
-                    <div class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
-                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain" loading="lazy" decoding="async" fetchpriority="low">
+                    <div
+                        class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
+                        <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame"
+                            class="w-full h-full object-contain" loading="lazy" decoding="async" fetchpriority="low">
 
                         @if (!empty($tvVideoNews) && !empty($tvPlayableSource))
-                            <button
-                                type="button"
+                            <button type="button"
                                 class="absolute inset-0 flex items-center justify-center js-tv-play-trigger"
                                 aria-label="Play video: {{ $tvVideoNews->title }}">
-                                <img
-                                    src="{{ $tvPoster }}"
+                                <img src="{{ $tvPoster }}"
                                     alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
-                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm"
-                                    loading="lazy"
-                                    decoding="async"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
                                     fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                                 <span
                                     class="absolute z-10 w-12 h-12 rounded-full bg-black/70 text-white flex items-center justify-center"
                                     style="transform: translate(-7.5%, 13%);">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"
+                                        aria-hidden="true">
                                         <path d="M8 5v14l11-7z"></path>
                                     </svg>
                                 </span>
                             </button>
-                            <video
-                                class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden"
-                                style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);"
-                                loop
-                                playsinline
-                                preload="none"
-                                poster="{{ $tvPoster }}">
+                            <video class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden"
+                                style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);" loop playsinline
+                                preload="none" poster="{{ $tvPoster }}">
                                 <source src="{{ $tvPlayableSource }}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         @elseif (!empty($tvVideoNews))
-                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
-                                <img src="{{ $tvPoster }}" alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
-                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm"
-                                    loading="lazy"
-                                    decoding="async"
+                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
+                                class="absolute inset-0 flex items-center justify-center">
+                                <img src="{{ $tvPoster }}"
+                                    alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
                                     fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                             </a>
                         @else
-                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async" fetchpriority="low" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
+                            <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News"
+                                class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
+                                fetchpriority="low" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
                     </div>
 
-                    <div class="col-span-1 min-w-0 flex flex-col justify-between gap-2">
+                    <div class="col-span-3 min-w-0 flex flex-col justify-between gap-2">
                         @if ($tvVideoNews)
-                            <a
-                                href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
-                                class="block w-full min-w-0 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3"
-                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
+                                class="block w-full min-w-0 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3 whitespace-normal break-words">
                                 {{ $tvVideoNews->title }}
                             </a>
                         @else
-                            <div class="line-clamp-2 text-xs text-neutral-700 dark:text-neutral-200 font-bold">No News Available</div>
+                            <div class="line-clamp-2 text-xs text-neutral-700 dark:text-neutral-200 font-bold">No News
+                                Available</div>
                         @endif
                     </div>
                 </div>
             </div>
 
+
             <!-- card 2: Probash category news -->
             <div class="space-y-2">
-                <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-800 py-1.5"  style="padding-left: 1rem; padding-right: 11rem;">
+                <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-800 py-1.5"
+                    style="padding-left: 1rem; padding-right: 11rem;">
                     <span class="h-2.5 "></span>
                     <span class="text-sm font-semibold text-white">সর্বশেষ প্রবাস সংবাদ</span>
                 </div>
                 @if ($rightCategoryNews)
                     @php
                         $rightCategoryImage = asset('/assets/news-card-view.png');
-                        if (!empty($rightCategoryNews->thumbnail_image)) {
-                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $rightCategoryNews->thumbnail_image);
+                        if (!empty($rightCategoryNews->image_base_url)) {
+                            $rightCategoryImage = $rightCategoryNews->image_base_url;
+                        } elseif (!empty($rightCategoryNews->image)) {
+                            $rightCategoryImagePath = str_starts_with($rightCategoryNews->image, 'images/')
+                                ? $rightCategoryNews->image
+                                : 'images/thumb/' . ltrim($rightCategoryNews->image, '/');
+                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $rightCategoryImagePath);
                         }
                     @endphp
-                    <a
-                        href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
+                    <a href="{{ __url($rightCategoryNews->encode_title) }}"
                         class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden">
-                        <img
-                            class="w-full h-full object-cover group-hover:scale-105 transition_slow"
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                             src="{{ $rightCategoryImage }}"
                             onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
-                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
-                            loading="lazy"
-                            decoding="async"
-                            fetchpriority="low"
-                        />
+                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" loading="lazy"
+                            decoding="async" fetchpriority="low" />
                     </a>
                     <div class="py-3 space-y-2">
-                        <a
-                            href="{{ __url('probash-news-tv/' . $rightCategoryNews->encode_title) }}"
+                        <a href="{{ __url($rightCategoryNews->encode_title) }}"
                             class="line-clamp-2 text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg leading-6 transition_3">
                             {{ $rightCategoryNews->title }}
                         </a>
                     </div>
                 @else
                     <div class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 overflow-hidden">
-                        <img
-                            class="w-full h-full object-cover"
-                            src="{{ asset('/assets/news-card-view.png') }}"
-                            loading="lazy"
-                            decoding="async"
-                            alt="No Category News">
+                        <img class="w-full h-full object-cover" src="{{ asset('/assets/news-card-view.png') }}"
+                            loading="lazy" decoding="async" alt="No Category News">
                     </div>
                 @endif
             </div>
@@ -260,22 +289,17 @@
 @once
     @push('custom-css')
         @if (!empty($heroImageSrc))
-            <link
-                rel="preload"
-                as="image"
-                href="{{ $heroImageSrc }}"
-                @if (!empty($heroImageSrcset))
-                    imagesrcset="{{ $heroImageSrcset }}"
-                    imagesizes="{{ $heroImageSizes }}"
-                @endif
+            <link rel="preload" as="image" href="{{ $heroImageSrc }}"
+                @if (!empty($heroImageSrcset)) imagesrcset="{{ $heroImageSrcset }}"
+                    imagesizes="{{ $heroImageSizes }}" @endif
                 fetchpriority="high">
         @endif
     @endpush
     @push('custom-js')
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                document.querySelectorAll('.js-tv-play-trigger').forEach(function (trigger) {
-                    trigger.addEventListener('click', function () {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.js-tv-play-trigger').forEach(function(trigger) {
+                    trigger.addEventListener('click', function() {
                         const wrapper = trigger.parentElement;
                         if (!wrapper) return;
 
@@ -285,7 +309,7 @@
                         trigger.classList.add('hidden');
                         player.classList.remove('hidden');
                         player.currentTime = 0;
-                        player.play().catch(function () {});
+                        player.play().catch(function() {});
                     });
                 });
             });
