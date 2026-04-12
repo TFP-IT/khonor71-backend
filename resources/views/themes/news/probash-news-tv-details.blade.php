@@ -90,9 +90,8 @@
             }
         }
 
-        $categoryContent = $rightCategoryNews?->details
-            ?? $rightCategoryNews?->news
-            ?? '<p>No details available.</p>';
+        $categoryContent =
+            $rightCategoryNews?->details ?? ($rightCategoryNews?->news ?? '<p>No details available.</p>');
 
         $tvContent = !empty($tvVideoNews?->details) ? $tvVideoNews->details : '<p>No details available.</p>';
     @endphp
@@ -196,29 +195,7 @@
         </div> --}}
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <section class="rounded-md bg-white dark:bg-neutral-900 p-4">
-                <h2 class="text-lg font-semibold text-brand-primary mb-3">প্রবাস সংবাদ বিস্তারিত</h2>
 
-                @if (!empty($rightCategoryNews))
-                    <a href="{{ $combinedDetailUrl($rightCategoryNews->encode_title) }}"
-                        class="block mb-4 overflow-hidden rounded-md">
-                        <img class="w-full h-64 md:h-80 object-cover" src="{{ $categoryImage }}"
-                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
-                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" />
-                    </a>
-
-                    <h3 class="text-xl font-semibold text-neutral-800 dark:text-white mb-1">
-                        {{ $rightCategoryNews->title }}
-                    </h3>
-                    <p class="text-sm text-neutral-500 dark:text-neutral-300 mb-3">
-                        {{ news_publish_date_format($rightCategoryNews->publish_date) }}
-                    </p>
-                @endif
-
-                <div class="prose-content dark:text-white">
-                    {!! $categoryContent !!}
-                </div>
-            </section>
 
             <section class="rounded-md bg-white dark:bg-neutral-900 p-4">
                 <h2 class="text-lg font-semibold text-brand-primary">প্রবাস টিভি বিস্তারিত</h2>
@@ -227,30 +204,10 @@
                     class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
                     <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame" class="w-full h-full object-contain">
 
-                    @if ($tvVideoNews && !empty($tvVideoNews->thumbnail_video))
-                        <a href="{{ __url($tvVideoNews->encode_title) }}" class="absolute inset-0 flex items-center justify-center">
-                            <video
-                                class="rounded-sm object-cover"
-                                style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
-                                autoplay
-                                muted
-                                loop
-                                playsinline
-                                preload="metadata">
-                                <source src="{{ asset('storage/' . $tvVideoNews->thumbnail_video) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </a>
-                    @elseif (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'video')
-                        <video
-                            class="absolute rounded-sm object-cover"
-                            style="width: 75%; height: 65%; transform: translate(-8%, 13%);"
-                            controls
-                            autoplay
-                            muted
-                            playsinline
-                            preload="metadata"
-                            poster="{{ $tvPoster }}">
+                    @if (!empty($tvVideoNews) && !empty($tvSource) && $tvRenderType === 'video')
+                        <video class="absolute rounded-sm object-cover"
+                            style="width: 75%; height: 65%; transform: translate(-8%, 13%);" controls playsinline
+                            preload="metadata" poster="{{ $tvPoster }}">
                             <source src="{{ $tvSource }}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -276,14 +233,47 @@
                                 </iframe>
                             </template>
                         </div>
+                    @elseif (!empty($tvVideoNews) && !empty($tvOverlaySource))
+                        <a href="{{ $combinedDetailUrl($tvVideoNews->encode_title) }}"
+                            class="absolute inset-0 flex items-center justify-center">
+                            <video class="rounded-sm object-cover"
+                                style="width: 75%; height: 65%; transform: translate(-8%, 13%);" autoplay muted loop
+                                playsinline preload="metadata">
+                                <source src="{{ $tvOverlaySource }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </a>
                     @elseif (!empty($tvVideoNews))
-                        <img src="{{ $tvPoster }}" alt="TV Thumbnail"
-                            class="absolute rounded-sm object-cover"
+                        <img src="{{ $tvPoster }}" alt="TV Thumbnail" class="absolute rounded-sm object-cover"
                             style="width: 75%; height: 65%; transform: translate(-8%, 13%);">
                     @endif
                 </div>
                 <div class="prose-content dark:text-white">
                     {!! $tvContent !!}
+                </div>
+            </section>
+
+            <section class="rounded-md bg-white dark:bg-neutral-900 p-4">
+                <h2 class="text-lg font-semibold text-brand-primary mb-3">প্রবাস সংবাদ বিস্তারিত</h2>
+
+                @if (!empty($rightCategoryNews))
+                    <a href="{{ $combinedDetailUrl($rightCategoryNews->encode_title) }}"
+                        class="block mb-4 overflow-hidden rounded-md">
+                        <img class="w-full h-64 md:h-80 object-cover" src="{{ $categoryImage }}"
+                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" />
+                    </a>
+
+                    <h3 class="text-xl font-semibold text-neutral-800 dark:text-white mb-1">
+                        {{ $rightCategoryNews->title }}
+                    </h3>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-300 mb-3">
+                        {{ news_publish_date_format($rightCategoryNews->publish_date) }}
+                    </p>
+                @endif
+
+                <div class="prose-content dark:text-white">
+                    {!! $categoryContent !!}
                 </div>
             </section>
 

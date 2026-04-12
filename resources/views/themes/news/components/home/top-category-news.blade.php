@@ -131,6 +131,7 @@
                 $tvNewsItems->first(function ($news) {
                     return !empty($news->thumbnail_video) || !empty($news->video) || !empty($news->video_url);
                 }) ?? $tvNewsItems->first();
+            $tvRedirectUrl = !empty($tvVideoNews) ? __url('probash-news-tv/' . $tvVideoNews->encode_title) : '';
 
             $tvOverlaySource = '';
             $tvSource = '';
@@ -168,10 +169,11 @@
                     }
                 }
 
-                if (!empty($tvOverlaySource)) {
-                    $tvPlayableSource = $tvOverlaySource;
-                } elseif (!empty($tvSource) && $tvRenderType === 'video') {
+                // Always prefer the full playable video; fallback to thumbnail preview clip.
+                if (!empty($tvSource) && $tvRenderType === 'video') {
                     $tvPlayableSource = $tvSource;
+                } elseif (!empty($tvOverlaySource)) {
+                    $tvPlayableSource = $tvOverlaySource;
                 }
             }
 
@@ -205,14 +207,15 @@
                                     </svg>
                                 </span>
                             </button>
-                            <video class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden"
+                            <video
+                                class="absolute w-3/4 h-3/4 object-cover rounded-sm js-tv-inline-player hidden cursor-pointer"
                                 style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);" loop playsinline
-                                preload="none" poster="{{ $tvPoster }}">
+                                preload="none" poster="{{ $tvPoster }}" data-redirect-url="{{ $tvRedirectUrl }}">
                                 <source src="{{ $tvPlayableSource }}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         @elseif (!empty($tvVideoNews))
-                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
+                            <a href="{{ $tvRedirectUrl }}"
                                 class="absolute inset-0 flex items-center justify-center">
                                 <img src="{{ $tvPoster }}"
                                     alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
@@ -229,7 +232,7 @@
 
                     <div class="col-span-3 min-w-0 flex flex-col justify-between gap-2">
                         @if ($tvVideoNews)
-                            <a href="{{ __url('probash-news-tv/' . $tvVideoNews->encode_title) }}"
+                            <a href="{{ $tvRedirectUrl }}"
                                 class="block w-full min-w-0 text-xs md:text-[11px] xl:text-[10px] 4xl:text-xs text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold leading-4 transition_3 whitespace-normal break-words">
                                 {{ $tvVideoNews->title }}
                             </a>
@@ -310,6 +313,15 @@
                         player.classList.remove('hidden');
                         player.currentTime = 0;
                         player.play().catch(function() {});
+                    });
+                });
+
+                document.querySelectorAll('.js-tv-inline-player').forEach(function(player) {
+                    player.addEventListener('click', function() {
+                        const redirectUrl = player.getAttribute('data-redirect-url');
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        }
                     });
                 });
             });
