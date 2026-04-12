@@ -70,6 +70,16 @@ class HomeController extends Controller
 
     public function handle($param)
     {
+        if ($this->isLatestNewsPageSlug($param)) {
+            $canonicalSlug = $this->latestNewsCanonicalSlug();
+
+            if ($param !== $canonicalSlug) {
+                return redirect(__url($canonicalSlug));
+            }
+
+            return $this->latestNewsList();
+        }
+
         $language = Language::where('value', $param)->value('value');
         if ($language) {
             return $this->index($language);
@@ -135,6 +145,10 @@ class HomeController extends Controller
         $language = Language::where('value', $lang)->value('value');
         $defaultLang = Language::getDefault()->value;
         if ($language && $language != $defaultLang) {
+            if ($this->isLatestNewsPageSlug($param)) {
+                return $this->latestNewsList();
+            }
+
             $news = NewsMst::where('encode_title', $param)->whereDate('publish_date', '<=', Carbon::today())->where('status', 1)->first();
             if ($news) {
                 return $this->detailNews($param, $language);
@@ -390,6 +404,60 @@ class HomeController extends Controller
         SEOTools::twitter()->setTitle($title);
 
         return ThemeHelper::view('category_news', $data);
+    }
+
+    private function latestNewsList()
+    {
+        $data = $this->homeDataService->getLatestNewsView();
+
+        $metaData = Setting::select('details')->where('event','meta')->first();
+        $metaInfo = json_decode($metaData->details);
+
+        $title = localize('breaking');
+        $description = $metaInfo->meta_description ?? '';
+        $metaKeywords = $metaInfo->meta_tag ?? '';
+
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        if (isset($metaKeywords) && !empty($metaKeywords)) {
+            SEOMeta::addKeyword(explode(',', $metaKeywords));
+        }
+        SEOTools::setCanonical(url()->current());
+        SEOTools::opengraph()->setUrl(url()->current());
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::twitter()->setTitle($title);
+
+        return ThemeHelper::view('category_news', $data);
+    }
+
+    private function latestNewsCanonicalSlug(): string
+    {
+        $localizedBreaking = Str::of((string) localize('breaking'))->squish()->toString();
+
+        if (preg_match('/^[\x20-\x7E]+$/', $localizedBreaking)) {
+            return Str::slug($localizedBreaking);
+        }
+
+        return $localizedBreaking ?: 'সর্বশেষ';
+    }
+
+    private function isLatestNewsPageSlug(string $slug): bool
+    {
+        $normalizedSlug = Str::of(rawurldecode($slug))->squish()->lower()->toString();
+
+        $aliases = collect([
+            $this->latestNewsCanonicalSlug(),
+            localize('breaking'),
+            'breaking',
+            'latest',
+            'latest-news',
+        ])->map(function ($item) {
+            return Str::of(rawurldecode((string) $item))->squish()->lower()->toString();
+        })->filter()->values()->all();
+
+        return in_array($normalizedSlug, $aliases, true);
     }
 
     public function CategoryNewsDetailsListView($categorySlug)
@@ -1154,20 +1222,31 @@ class HomeController extends Controller
         $limit = 3;
 
         $categoryId = (int) $request->get('category_id');
+        $isLatestNewsPage = $categoryId <= 0;
         $languageId = get_language_id();
 
-        $news = NewsMst::select([
+        $newsQuery = NewsMst::select([
                 'id', 'news_id', 'encode_title', 'title', 'news', 'image',
                 'image_base_url', 'image_alt', 'image_title', 'post_by',
                 'publish_date', 'status'
             ])
             ->withCount('comments')
             ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
-            ->where('category_id', $categoryId)
             ->where('language_id', $languageId)
             ->whereDate('publish_date', '<=', Carbon::today())
-            ->where('status', 1)
-            ->latest('created_at')
+            ->where('status', 1);
+
+        if ($isLatestNewsPage) {
+            $newsQuery
+                ->orderBy('publish_date', 'desc')
+                ->orderBy('id', 'desc');
+        } else {
+            $newsQuery
+                ->where('category_id', $categoryId)
+                ->latest('created_at');
+        }
+
+        $news = $newsQuery
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -1180,11 +1259,15 @@ class HomeController extends Controller
             $htmlList .= ThemeHelper::view('single-category-news-list', ['news' => $single])->render();
         }
 
-        $totalNewsCount = NewsMst::where('category_id', $categoryId)
-                            ->where('language_id', $languageId)
-                            ->whereDate('publish_date', '<=', Carbon::today())
-                            ->where('status', 1)
-                            ->count();
+        $totalNewsQuery = NewsMst::where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1);
+
+        if (!$isLatestNewsPage) {
+            $totalNewsQuery->where('category_id', $categoryId);
+        }
+
+        $totalNewsCount = $totalNewsQuery->count();
 
         return response()->json([
             'html_grid' => $htmlGrid,

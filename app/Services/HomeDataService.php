@@ -1308,6 +1308,49 @@ class HomeDataService
         return compact('category', 'categoryNews', 'popularNews', 'topWeekNews', 'votingPoll');
     }
 
+    public function getLatestNewsView(): array
+    {
+        $languageId = get_language_id();
+
+        $category = (object) [
+            'id' => 0,
+            'category_name' => localize('breaking'),
+            'slug' => 'latest',
+            'meta_keyword' => null,
+            'meta_description' => null,
+        ];
+
+        $categoryNews = NewsMst::select([
+                'id',
+                'news_id',
+                'encode_title',
+                'title',
+                'news',
+                'image',
+                'image_base_url',
+                'image_alt',
+                'image_title',
+                'post_by',
+                'publish_date',
+                'status',
+            ])
+            ->withCount('comments')
+            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1)
+            ->orderBy('publish_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(21)
+            ->get();
+
+        $popularNews = $this->getPopularNews();
+        $topWeekNews = $this->getTopWeekNews();
+        $votingPoll = $this->getVotingPoll();
+
+        return compact('category', 'categoryNews', 'popularNews', 'topWeekNews', 'votingPoll');
+    }
+
     public function getOpinionDetails(string $categorySlug)
     {
         // Try to find the category by slug

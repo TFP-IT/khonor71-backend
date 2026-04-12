@@ -9,6 +9,7 @@ use App\Enums\FontSetupEnum;
 use App\Helpers\ThemeHelper;
 use Illuminate\View\Component;
 use App\Services\HomeDataService;
+use Illuminate\Support\Str;
 use App\Enums\ActivationStatusEnum;
 use Illuminate\Contracts\View\View;
 use Modules\Setting\Entities\Setting;
@@ -106,17 +107,49 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
 
         if (!$isMobileClientHint) {
             $mainMenus = $mainMenus->map(function ($menu) use ($today) {
+                $isLatestMenu = $this->isLatestNewsMenu($menu);
+
                 if ($menu->submenus->isEmpty()) {
-                    $news = NewsMst::where('category_id', $menu->content_id)->where('status', 1)
+                    $newsQuery = NewsMst::where('status', 1)
                         ->whereDate('publish_date', '<=', $today)
                         ->withCount('comments')
-                        ->with(['postByUser:id,full_name', 'comments'])
-                        ->orderBy('created_at', 'desc')
-                        ->take(4)
-                        ->get();
+                        ->with(['postByUser:id,full_name', 'comments']);
+
+                    if ($isLatestMenu) {
+                        $newsQuery
+                            ->orderBy('publish_date', 'desc')
+                            ->orderBy('id', 'desc');
+                    } else {
+                        $newsQuery
+                            ->where('category_id', $menu->content_id)
+                            ->orderBy('created_at', 'desc');
+                    }
+
+                    $news = $newsQuery->take(4)->get();
 
                     $menu->top_news = $news;
                 } else {
+                    if ($isLatestMenu) {
+                        $latestNews = NewsMst::where('status', 1)
+                            ->whereDate('publish_date', '<=', $today)
+                            ->withCount('comments')
+                            ->with(['postByUser:id,full_name', 'comments'])
+                            ->orderBy('publish_date', 'desc')
+                            ->orderBy('id', 'desc')
+                            ->take(3)
+                            ->get();
+
+                        $menu->submenus->transform(function ($submenu) use ($latestNews) {
+                            $submenu->top_news = $latestNews;
+
+                            return $submenu;
+                        });
+
+                        $menu->top_combined_submenu_news = $latestNews;
+
+                        return $menu;
+                    }
+
                     $submenuIds = $menu->submenus->pluck('content_id')->toArray();
                     $menu->submenus->transform(function ($submenu) use ($today) {
                         $news = NewsMst::where('sub_category_id', $submenu->content_id)->where('status', 1)
@@ -246,6 +279,30 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
             'cookieInfo' => $cookieInfo,
             'isMobileClientHint' => $isMobileClientHint,
         ]);
+    }
+
+    private function isLatestNewsMenu($menu): bool
+    {
+        $normalizedMenuLevel = $this->normalizeMenuText((string) $menu->menu_level);
+        $normalizedMenuSlug = $this->normalizeMenuText((string) $menu->slug);
+
+        $latestMenuNames = collect([
+            localize('breaking'),
+            'সর্বশেষ',
+            'latest',
+            'breaking',
+        ])->map(fn ($item) => $this->normalizeMenuText((string) $item))
+            ->filter()
+            ->values()
+            ->all();
+
+        return in_array($normalizedMenuLevel, $latestMenuNames, true)
+            || in_array($normalizedMenuSlug, ['latest', 'breaking', 'latest-news'], true);
+    }
+
+    private function normalizeMenuText(string $text): string
+    {
+        return Str::of($text)->squish()->lower()->toString();
     }
 
 }
