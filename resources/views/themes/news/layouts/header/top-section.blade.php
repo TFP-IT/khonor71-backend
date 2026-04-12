@@ -1,7 +1,7 @@
 <!-- Top Section -->
 <section
     class="bg-white dark:bg-neutral-950 shadow-md top_header  transition-all duration-500 z-20 ease-in dark:shadow-white/10 fixed left-0 top-0 w-full xl:relative">
-    <div class="container mx-auto py-2 flex justify-between items-center">
+    <div class="container mx-auto py-4 xl:py-2 flex justify-between items-center">
         <!-- Left section -->
 
        <button onclick="openSidebar()" type="button" aria-label="Open menu"
@@ -36,8 +36,8 @@
                 $mobileHeaderLogo = mode() ? app_setting()->footer_logo : app_setting()->logo;
                 $mobileHeaderLogoAlt = mode() ? 'Brand logo dark' : 'Brand logo light';
             @endphp
-            <a class="w-32 flex_center overflow-hidden" href="{{ __url('/') }}">
-                <img src="{{ $mobileHeaderLogo }}" alt="{{ $mobileHeaderLogoAlt }}" loading="eager" decoding="async" fetchpriority="high" />
+            <a class="w-44 sm:w-48 flex_center overflow-hidden" href="{{ __url('/') }}">
+                <img class="w-full h-14 sm:h-16 object-contain" src="{{ $mobileHeaderLogo }}" alt="{{ $mobileHeaderLogoAlt }}" loading="eager" decoding="async" fetchpriority="high" />
             </a>
         </div>
 

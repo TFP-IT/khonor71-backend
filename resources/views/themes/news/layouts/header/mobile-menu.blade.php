@@ -1,4 +1,4 @@
-<section class="container mt-16 xl:hidden">
+<section class="container mt-24 xl:hidden">
     <ul class="mobile_category_menu flex items-center gap-4 overflow-x-auto overflow-y-hidden">
         <li><a href="{{ __url('/') }}"
                 class="uppercase text-nowrap text-base whitespace-nowrap font-semibold dark:text-white transition_3 {{ request()->segment(1) === null ? 'text-brand-primary dark:!text-brand-primary' : '' }}">{{ localize('home') }}</a>
