@@ -4,8 +4,8 @@
         alt="Footer Background" />
     <div class="container py-8">
 
-        <?php /* 
-        @include ('themes.news.components.common.footer-heading') 
+        <?php /*
+        @include ('themes.news.components.common.footer-heading')
         */ ?>
 
         <section
@@ -70,7 +70,7 @@
                                 <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>প্রধান সম্পাদক:</strong> নাসির উদ্দিন</span>
+                        <span><strong>প্রধান সম্পাদক:</strong> মোঃ নাসির উদ্দিন</span>
                     </li>
 
                     <!-- সম্পাদক -->
@@ -94,7 +94,7 @@
                         <span><strong>প্রকাশক:</strong> এস এম তাসদীদ সোয়াদ</span>
                     </li>
 
-                    
+
 
                     <!-- যোগাযোগ -->
                     <li class="flex gap-3 items-center">
@@ -310,7 +310,7 @@
                                 <path d="M320 312C253.7 312 200 258.3 200 192C200 125.7 253.7 72 320 72C386.3 72 440 125.7 440 192C440 258.3 386.3 312 320 312zM289.5 368L350.5 368C360.2 368 368 375.8 368 385.5C368 389.7 366.5 393.7 363.8 396.9L336.4 428.9L367.4 544L368 544L402.6 405.5C404.8 396.8 413.7 391.5 422.1 394.7C484 418.3 528 478.3 528 548.5C528 563.6 515.7 575.9 500.6 575.9L139.4 576C124.3 576 112 563.7 112 548.6C112 478.4 156 418.4 217.9 394.8C226.3 391.6 235.2 396.9 237.4 405.6L272 544.1L272.6 544.1L303.6 429L276.2 397C273.5 393.8 272 389.8 272 385.6C272 375.9 279.8 368.1 289.5 368.1z" fill="#d3d3d3" />
                             </svg>
                         </div>
-                        <span><strong>Editor-in-Chief:</strong> Nashir Uddin</span>
+                        <span><strong>Editor-in-Chief:</strong> Md Nashir Uddin</span>
                     </li>
 
                      <!-- সম্পাদক -->
@@ -323,9 +323,9 @@
                         <span><strong>Editor:</strong> Lieutenant Colonel A S M Al Imran (Retd.)</span>
                     </li>
 
-                   
 
-                   
+
+
                     <!-- প্রকাশক -->
                     <li class="flex gap-3 items-center">
                         <div>
@@ -336,7 +336,7 @@
                         <span><strong>Publisher:</strong> S M Tasdid Swad</span>
                     </li>
 
-                    
+
 
                     <!-- যোগাযোগ -->
                     <li class="flex gap-3 items-center">
@@ -388,7 +388,7 @@
                 </ul>
             </div>
 
-            
+
         </section>
 
         <section class="md:flex items-center justify-between pt-4 text-sm text-white">
