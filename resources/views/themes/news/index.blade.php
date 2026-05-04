@@ -1,5 +1,5 @@
 <x-web-layout>
-    <div class="h-1 md:h-4"></div>
+    <div class="hidden lg:block h-8"></div>
     <!-- News Ticker Section -->
     @if ($breakingNews->isNotEmpty())
         <div class="container">
@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <div class="h-1 md:h-4"></div>
+    <div class="h-1 md:h-8"></div>
 
     @if ($homePageTopNews->slice(3)->isNotEmpty())
         @include('themes.news.components.home.top-category-news')
