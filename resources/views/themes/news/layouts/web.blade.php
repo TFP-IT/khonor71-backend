@@ -38,27 +38,15 @@
     <style>
         :root {
             @if ($principalFont)
-                --font-principal: {
-                    ! ! $principalFont->font_family ! !
-                }
-
-                ;
+                --font-principal: {{ $principalFont->font_family }};
 
             @endif
             @if ($alternateFont)
-                --font-alternate: {
-                    ! ! $alternateFont->font_family ! !
-                }
-
-                ;
+                --font-alternate: {{ $alternateFont->font_family }};
 
             @endif
             @if ($supplementaryFont)
-                --font-supplementary: {
-                    ! ! $supplementaryFont->font_family ! !
-                }
-
-                ;
+                --font-supplementary: {{ $supplementaryFont->font_family }};
             @endif
         }
 
@@ -930,56 +918,104 @@
             const video = document.getElementById('tvFrameVideo');
 
             if (video && video.dataset.playlist) {
-                const playlist = JSON.parse(video.dataset.playlist);
-                const newsData = JSON.parse(video.dataset.newsdata || '[]');
+                let playlist = [];
+                let newsData = [];
+                try {
+                    playlist = JSON.parse(video.dataset.playlist);
+                    newsData = JSON.parse(video.dataset.newsdata || '[]');
+                } catch (error) {
+                    return;
+                }
+
+                if (!Array.isArray(playlist)) {
+                    return;
+                }
+
+                playlist = playlist.filter((item) => typeof item === 'string' && item.trim() !== '');
+                if (!playlist.length) {
+                    return;
+                }
+
+                if (!Array.isArray(newsData)) {
+                    newsData = [];
+                }
+
                 const titleElement = document.querySelector('.tv-news-title');
 
                 let currentVideoIndex = 0;
+                let userInteractionListenerAttached = false;
+                let consecutiveLoadErrors = 0;
+                const maxConsecutiveLoadErrors = Math.max(playlist.length * 2, 3);
 
-                function playNextVideo() {
-                    // Move to next video
-                    currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
-
-                    // Update video source
-                    const videoPath = playlist[currentVideoIndex];
-                    const fullPath = videoPath.startsWith('http') ? videoPath : `/storage/${videoPath}`;
-                    video.src = fullPath;
-
-                    // Update title if available
-                    if (titleElement && newsData[currentVideoIndex]) {
-                        titleElement.textContent = newsData[currentVideoIndex].title;
-                        titleElement.setAttribute('href', newsData[currentVideoIndex].url);
+                function buildVideoSource(videoPath) {
+                    if (videoPath.startsWith('http')) {
+                        return videoPath;
                     }
 
-                    // Load and play
-                    video.load();
-                    video.play().catch(e => {
-                        console.log('Autoplay prevented:', e);
-                        // Try next video if current fails
-                        playNextVideo();
+                    return `/storage/${videoPath.replace(/^\/+/, '')}`;
+                }
+
+                function updateTitle() {
+                    if (!titleElement || !newsData[currentVideoIndex]) {
+                        return;
+                    }
+
+                    titleElement.textContent = newsData[currentVideoIndex].title;
+                    titleElement.setAttribute('href', newsData[currentVideoIndex].url);
+                }
+
+                function requestPlayOnUserInteraction() {
+                    if (userInteractionListenerAttached) {
+                        return;
+                    }
+
+                    userInteractionListenerAttached = true;
+                    document.addEventListener('click', function() {
+                        userInteractionListenerAttached = false;
+                        video.play().catch(function() {});
+                    }, {
+                        once: true
                     });
                 }
 
-                // Play next video when current ends
-                video.addEventListener('ended', playNextVideo);
-
-                // Handle initial load
-                video.addEventListener('loadeddata', function() {
-                    video.play().catch(e => {
-                        console.log('Autoplay prevented:', e);
-                        // Enable play on user interaction
-                        document.addEventListener('click', function() {
-                            video.play().catch(err => console.log('Play failed:', err));
-                        }, {
-                            once: true
-                        });
+                function tryPlayCurrentVideo() {
+                    video.play().catch(function() {
+                        requestPlayOnUserInteraction();
                     });
+                }
+
+                function playNextVideo() {
+                    currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+                    const videoPath = playlist[currentVideoIndex];
+                    video.src = buildVideoSource(videoPath);
+                    updateTitle();
+                    video.load();
+                    tryPlayCurrentVideo();
+                }
+
+                // Keep the displayed title in sync with the initially selected media.
+                updateTitle();
+
+                // Play next video when current ends.
+                video.addEventListener('ended', function() {
+                    consecutiveLoadErrors = 0;
+                    playNextVideo();
                 });
 
-                // Handle errors by skipping to next video
+                // Attempt playback whenever the current media has enough data.
+                video.addEventListener('loadeddata', function() {
+                    consecutiveLoadErrors = 0;
+                    tryPlayCurrentVideo();
+                });
+
+                // Skip broken video sources, but stop retrying after repeated failures.
                 video.addEventListener('error', function() {
-                    console.log('Video failed to load, trying next video');
-                    playNextVideo();
+                    consecutiveLoadErrors += 1;
+                    if (consecutiveLoadErrors > maxConsecutiveLoadErrors) {
+                        return;
+                    }
+
+                    setTimeout(playNextVideo, 300);
                 });
             }
         });
