@@ -155,10 +155,11 @@
         </section>
 
         <!-- Right section news -->
-        <section>
+        <section class="hidden lg:block">
             <div class="space-y-6 sticky top-16">
                 <!-- Popular post -->
                 @include('themes.news.components.common.popular-post')
+                {{-- @include('themes.news.components.common.recent-video-post') --}}
 
                 <!-- Ads section -->
                 <!-- TODO Uncomment for adShow -->

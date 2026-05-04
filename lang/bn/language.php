@@ -1920,7 +1920,7 @@
     'web_story_details' => 'Web story details',
     'web_stories' => 'Web stories',
     'video_details' => 'Video details',
-    'recent_post' => 'Recent post',
+    'recent_post' => 'সাম্প্রতিক পোস্ট',
     'home_page_view_setting' => 'Home page view setting',
     'position_number' => 'Position number',
     'contact_settings' => 'Contact settings',
