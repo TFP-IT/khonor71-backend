@@ -190,21 +190,27 @@
         /* Responsive design */
         @media (max-width: 768px) {
             .news-ticker {
-                flex-direction: column;
+                flex-direction: row;
             }
 
             .ticker-label {
                 flex-direction: row;
-                justify-content: flex-start;
-                padding: 8px 15px;
+                justify-content: center;
+                padding: 8px 12px;
+                min-width: auto;
+                flex-shrink: 0;
             }
 
             .ticker-label:after {
                 display: none;
             }
 
+            .ticker-content-container {
+                min-width: 0;
+            }
+
             .breaking-badge {
-                margin-right: 10px;
+                margin-right: 0;
             }
 
             .ticker-date {

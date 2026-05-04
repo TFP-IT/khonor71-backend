@@ -23,7 +23,7 @@
 @endphp
 <section class="container grid md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 mt-4">
     <!-- Left Section -->
-    <section class="order-3 md:col-span-3 xl:col-auto xl:order-1">
+    <section class="order-2 md:col-span-3 xl:col-auto xl:order-1">
         @if ($latestNews->isNotEmpty())
             @include('themes.news.components.home.latest-news', [
                 'latestNews' => $latestNews->take(4),
@@ -124,7 +124,7 @@
 
 
     <!-- Right News section -->
-    <section class="order-2">
+    <section class="order-3 xl:order-2">
         @php
             $tvNewsItems = get_tv_news(5);
             $tvVideoNews =
