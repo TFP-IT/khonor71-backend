@@ -25,7 +25,7 @@ class MenuSetupService
         $menuContents     = MenuContent::where('menu_id', $menuId)->where('language_id', $languageId)->orderBy('menu_position', 'ASC')->get();
         $menuContentSlugs = $menuContents->whereNotNull('slug')->pluck('slug')->toArray();
 
-        $categories = Category::whereNotIn('slug', $menuContentSlugs)->where('language_id', $languageId)->get();
+        $categories = Category::where('language_id', $languageId)->get();
         $pages      = Page::where('language_id', $languageId)->get();
         $links      = Link::get();
         $languages = Language::all();
