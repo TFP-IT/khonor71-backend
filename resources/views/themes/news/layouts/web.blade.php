@@ -674,6 +674,21 @@
                 loading="lazy"
                 decoding="async">
         </a>
+        @php
+            $podcast = get_last_podcast();
+        @endphp
+        @if ($podcast)
+            <a href="{{ $podcast['youtube_url'] }}" target="_blank" rel="noopener noreferrer" 
+               title="{{ $podcast['title'] }}" 
+               class="flex items-center justify-center overflow-hidden hover:shadow-lg transition-shadow duration-300"
+               style="height: 100px;">
+                <img src="{{ $podcast['thumbnail'] }}" 
+                     alt="{{ $podcast['title'] }}" 
+                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                     loading="lazy"
+                     decoding="async">
+            </a>
+        @endif
         <div class="news-section sangbadik-section">
             <div class="sangbadik-content">
                 @php

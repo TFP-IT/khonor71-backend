@@ -8,6 +8,7 @@ use App\Enums\AssetsFolderEnum;
 use App\Models\NewsMst;
 use Modules\Theme\Entities\Theme;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Modules\Accounts\Entities\AccCoa;
 use Illuminate\Support\Facades\Storage;
 use Modules\Localize\Entities\Language;
@@ -1314,6 +1315,57 @@ if (!function_exists('get_probashi_news')) {
             ->orderBy('id', 'desc')
             ->take($limit)
             ->get();
+    }
+}
+
+if (!function_exists('get_last_podcast')) {
+
+    function get_last_podcast()
+    {
+        $apiKey = env('YOUTUBE_API_KEY');
+        $playlistId = env('YOUTUBE_PLAYLIST_ID');
+
+        try {
+
+            $response = Http::get(
+                'https://www.googleapis.com/youtube/v3/playlistItems',
+                [
+                    'part' => 'snippet',
+                    'maxResults' => 1,
+                    'playlistId' => $playlistId,
+                    'key' => $apiKey,
+                ]
+            );
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $item = $response['items'][0] ?? null;
+
+            if (!$item) {
+                return null;
+            }
+
+            return [
+                'title' => $item['snippet']['title'] ?? '',
+                'description' => $item['snippet']['description'] ?? '',
+                'thumbnail' => $item['snippet']['thumbnails']['high']['url']
+                    ?? $item['snippet']['thumbnails']['medium']['url']
+                    ?? $item['snippet']['thumbnails']['default']['url']
+                    ?? null,
+                'video_id' => $item['snippet']['resourceId']['videoId'] ?? '',
+                'embed_url' => 'https://www.youtube.com/embed/' .
+                    ($item['snippet']['resourceId']['videoId'] ?? ''),
+                'youtube_url' => 'https://www.youtube.com/watch?v=' .
+                    ($item['snippet']['resourceId']['videoId'] ?? ''),
+                'published_at' => $item['snippet']['publishedAt'] ?? null,
+            ];
+
+        } catch (\Exception $e) {
+
+            return null;
+        }
     }
 }
 
