@@ -68,6 +68,33 @@ class HomeController extends Controller
         return ThemeHelper::view('index', $data);
     }
 
+    /**
+     * Display a listing of the resource.
+     */
+    public function probashiJanalaIndex($language='')
+    {
+        $metaData = Setting::select('details')->where('event','meta')->first();
+        $metaInfo = json_decode($metaData->details);
+
+        $title = $metaInfo->title ?? 'News365';
+        $description = $metaInfo->meta_description ?? '';
+        $metaKeywords = $metaInfo->meta_tag ?? '';
+
+        SEOTools::setTitle($title);
+        SEOMeta::addKeyword($metaKeywords);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical(url()->current());
+        SEOTools::opengraph()->setUrl(url()->current());
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::twitter()->setTitle($title);
+
+        $data = $this->homeDataService->getHomePageData();
+
+        return ThemeHelper::view('probashi-janala', $data);
+    }
+
     public function handle($param)
     {
         if ($this->isLatestNewsPageSlug($param)) {
@@ -1269,6 +1296,74 @@ class HomeController extends Controller
 
         $totalNewsCount = $totalNewsQuery->count();
 
+        return response()->json([
+            'html_grid' => $htmlGrid,
+            'html_list' => $htmlList,
+            'count' => $news->count(),
+            'hasMore' => $totalNewsCount > ($offset + $news->count()),
+        ]);
+    }
+
+    public function loadMoreProbashiNewsAjax(Request $request)
+    {
+        $offset = (int) $request->get('offset', 0);
+        $limit = 4;
+
+        \Log::info($request->all());
+
+        $categoryId = (int) $request->get('category_id');
+        $isLatestNewsPage = $categoryId <= 0;
+        $languageId = get_language_id();
+
+        $newsQuery = NewsMst::select([
+                'id', 'news_id', 'encode_title', 'title', 'news', 'image',
+                'image_base_url', 'image_alt', 'image_title', 'post_by',
+                'publish_date', 'status'
+            ])
+            ->withCount('comments')
+            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1);
+
+        if ($isLatestNewsPage) {
+            $newsQuery
+                ->orderBy('publish_date', 'desc')
+                ->orderBy('id', 'desc');
+        } else {
+            $newsQuery
+                ->where('category_id', $categoryId)
+                ->latest('created_at');
+        }
+
+        $news = $newsQuery
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        $htmlGrid = '';
+        $htmlList = '';
+
+        foreach ($news as $single) {
+            $htmlGrid .= ThemeHelper::view('single-category-news-card', ['news' => $single])->render();
+            $htmlList .= ThemeHelper::view('single-category-news-list', ['news' => $single])->render();
+        }
+
+        $totalNewsQuery = NewsMst::where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1);
+
+        if (!$isLatestNewsPage) {
+            $totalNewsQuery->where('category_id', $categoryId);
+        }
+
+        $totalNewsCount = $totalNewsQuery->count();
+        \Log::info([
+            'html_grid' => $htmlGrid,
+            'html_list' => $htmlList,
+            'count' => $news->count(),
+            'hasMore' => $totalNewsCount > ($offset + $news->count()),
+        ]);
         return response()->json([
             'html_grid' => $htmlGrid,
             'html_list' => $htmlList,

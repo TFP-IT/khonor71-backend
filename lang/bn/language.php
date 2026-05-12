@@ -2037,6 +2037,7 @@
   'enter_details' => 'Enter details',
   'or_video_url' => 'Or video url',
   'data_saved_successfully' => 'Data saved successfully',
+  'probashi' => 'প্রবাসী',
   'probashi_news' => 'Probashi news',
   'add_probashi_news' => 'Add probashi news',
   'probashi_news_list' => 'Probashi news list',
@@ -2214,4 +2215,10 @@
   'category_menu_content_create_successfully' => 'Category menu content create successfully',
   'category_menu_content' => 'Category menu content',
   'menu_content_position_update_successfully' => 'Menu content position update successfully',
+  'search_here' => 'Search here',
+  'search_all' => 'Search all',
+  'no_information_found' => 'No information found',
+  'add_opinion' => 'Add opinion',
+  '150*150_and_max_size_500_kb' => '150*150 and max size 500 kb',
+  'news_image' => 'News image',
 );

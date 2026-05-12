@@ -663,7 +663,7 @@
             @endif
         </figure>
         <div class="probash-section">
-            <a href="{{ __url('প্রবাসী') }}" title="Probashi" style="height: 100px">
+            <a href="{{ __url('probashi-janala-news') }}" title="Probashi" style="height: 100px">
                 <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo"
                     loading="lazy"
                     decoding="async">
@@ -800,6 +800,7 @@
 
         const subscribeUrl = "{{ route('subscribe.ajax') }}";
         const categoryLoadMoreUrl = "{{ route('load.more.category.news') }}";
+        const probashiLoadMoreUrl = "{{ route('load.more.probashi.news') }}";
         const videoLoadMoreUrl = "{{ route('load.more.video.news') }}";
         const ajaxPollVoteUrl = "{{ route('ajax.poll.vote') }}";
         const ajaxPollResultUrl = "{{ route('ajax.poll.result', ['poll' => '__POLL_ID__']) }}";

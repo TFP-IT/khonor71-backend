@@ -103,6 +103,7 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
 
 /** Default Language Route */
 Route::get('/', [WebsiteHomeController::class, 'index'])->name('website.index');
+Route::get('/probashi-janala-news', [WebsiteHomeController::class, 'probashiJanalaIndex'])->name('website.probashi-janala-news');
 Route::get('{lang}/registration', [WebsiteHomeController::class, 'Registration']);
 Route::get('/registration', [WebsiteHomeController::class, 'Registration']);
 Route::get('{lang}/account/settings', [ProfileController::class, 'index'])->name('account.lang.setting')
@@ -144,6 +145,7 @@ Route::get('/ajax/section-five-second-news', [WebsiteHomeController::class, 'get
 Route::get('/ajax/section-five-third-news', [WebsiteHomeController::class, 'getSectionFiveThirdNewsAjax'])->name('ajax.section-five-third-news');
 Route::get('/ajax/section-five-fourth-news', [WebsiteHomeController::class, 'getSectionFiveFourthNewsAjax'])->name('ajax.section-five-fourth-news');
 Route::post('/load-more-category-news', [WebsiteHomeController::class, 'loadMoreCategoryNewsAjax'])->name('load.more.category.news');
+Route::post('/load-more-probashi-news', [WebsiteHomeController::class, 'loadMoreProbashiNewsAjax'])->name('load.more.probashi.news');
 Route::post('/ajax/vote', [WebsiteHomeController::class, 'ajaxVote'])->name('ajax.poll.vote');
 Route::get('/ajax/vote/result/{poll}', [WebsiteHomeController::class, 'ajaxVoteResult'])->name('ajax.poll.result');
 Route::post('/load-more-video-news', [WebsiteHomeController::class, 'loadMoreVideoNewsAjax'])->name('load.more.video.news');

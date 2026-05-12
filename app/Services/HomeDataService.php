@@ -31,9 +31,12 @@ class HomeDataService
         $data = [
             'breakingNews' => $this->getBreakingNews(),
             'homePageTopNews' => $this->getHomePageTopNews(),
+            'probashiJanalaPageTopNews' => $this->getProbashiJanalaPageTopNews(),
+            'probashiNews' => $this->getProbashiNewsView(),
             'sectionTwoNews' => $this->getSectionTwoNews(),
             'popularNews' => $this->getPopularNews(),
             'latestNews' => $this->getLatestNews(),
+            'latestProbashiNews' => $this->getLatestProbashiNews(),
             'followUsLinks' => $this->getFollowUsLinks(),
             'recommendedPosts' => $this->getRecommendedPosts(),
             'sectionThreeAllNews' => $this->getSectionThreeAllNews(),
@@ -545,6 +548,44 @@ class HomeDataService
         return $finalNews;
     }
 
+
+    /**
+     * Summary of getProbashiJanalaPageTopNews
+     * @return \Illuminate\Support\Collection<TKey, TValue>
+     */
+    private function getProbashiJanalaPageTopNews()
+    {
+        $languageId = get_language_id();
+
+        // Fetch news from probashi category (category_id 68) with proper relationships
+        $newsItems = NewsPositionMap::with(['news' => function ($query) use ($languageId) {
+                $query->select('id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'category_id')
+                    ->withCount('comments')
+                    ->where('language_id', $languageId)
+                    ->whereDate('publish_date', '<=', Carbon::today())
+                    ->where('status', 1)
+                    ->with(['postByUser:id,full_name', 'comments', 'category']);
+            }, 'category'])
+            ->where('category_id', 68)
+            ->where('status', 1)
+            ->whereHas('news', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+            })
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        // If found, wrap in a collection with the same structure as getHomePageTopNews
+        if ($newsItems && $newsItems->news) {
+            return collect([(object)[
+                'news' => $newsItems->news,
+                'category' => $newsItems->news->category,
+            ]]);
+        }
+
+        // Return empty collection if no news found
+        return collect();
+    }
+
     /**
      * Summary of getSectionTwoNews
      * @return array{leftNews: \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection<TKey, TValue>, rightNews: \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection<TKey, TValue>}
@@ -691,6 +732,28 @@ class HomeDataService
             ->where('status', 1)
             ->latest('created_at')
             ->take(6)
+            ->get();
+
+        return $latestNews;
+    }
+
+        /**
+     * Summary of getLatestProbashiNews
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getLatestProbashiNews()
+    {
+        $languageId = get_language_id();
+
+        // Fetch the most last news, skip first (index 0) and get next 3 (indices 1, 2, 3)
+        $latestNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'created_at'])
+            ->where('category_id', 68)
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1)
+            ->latest('created_at')
+            ->skip(1)
+            ->take(3)
             ->get();
 
         return $latestNews;
@@ -1349,6 +1412,47 @@ class HomeDataService
         $votingPoll = $this->getVotingPoll();
 
         return compact('category', 'categoryNews', 'popularNews', 'topWeekNews', 'votingPoll');
+    }
+
+    public function getProbashiNewsView(): array
+    {
+        $languageId = get_language_id();
+
+        $category = (object) [
+            'id' => 68,
+            'category_name' => localize('probashi'),
+            'slug' => 'প্রবাসী',
+            'meta_keyword' => null,
+            'meta_description' => null,
+        ];
+
+        $categoryNews = NewsMst::select([
+                'id',
+                'news_id',
+                'encode_title',
+                'title',
+                'news',
+                'image',
+                'image_base_url',
+                'image_alt',
+                'image_title',
+                'post_by',
+                'publish_date',
+                'status',
+            ])
+            ->withCount('comments')
+            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
+            ->where('language_id', $languageId)
+            ->where('category_id', 68)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1)
+            ->orderBy('publish_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->skip(4)
+            ->take(24)
+            ->get();
+
+        return compact('category', 'categoryNews');
     }
 
     public function getOpinionDetails(string $categorySlug)
