@@ -669,11 +669,19 @@
                     decoding="async">
             </a>
         </div>
-        <a href="{{ __url('probashi-news-list') }}" title="সর্বশেষ প্রবাস সংবাদ">
-            <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
-                loading="lazy"
-                decoding="async">
-        </a>
+        @if (Auth::guard('webuser')->check())
+            <a type="button" href="{{ __url('account/probashi-news') }}" title="সর্বশেষ প্রবাস সংবাদ">
+                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                    loading="lazy"
+                    decoding="async">
+            </button>
+        @else
+            <button type="button" title="সর্বশেষ প্রবাস সংবাদ" id="openModal">
+                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                    loading="lazy"
+                    decoding="async">
+            </button>
+        @endif
         @php
             $podcast = get_last_podcast();
         @endphp
