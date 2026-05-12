@@ -713,7 +713,7 @@
   'manage_transfer' => 'Manage Transfer',
   'all_warehouse' => 'All Warehouse',
   'transferred_by' => 'Transferred By',
-  'all' => 'All',
+  'all' => 'সব',
   'transfer_details' => 'Transfer Details',
   'transfer_receive' => 'Transfer Receive',
   'add_sale_return' => 'Add Sale Return',
