@@ -1,11 +1,14 @@
 const openBtn = document.getElementById("openModal");
 const openBtn_ = document.getElementById("openModal_");
+const openModalForProbashiNews = document.getElementById("openModalForProbashiNews");
+const openModalForProbashiNews_ = document.getElementById("openModalForProbashiNews_");
 const closeBtn = document.getElementById("closeModal");
 const loginRequiredBtn = document.getElementById("loginRequiredBtn");
 const loginReplyButtons = document.querySelectorAll(".loginReplyRequiredBtn");
 const modal = document.getElementById("loginModal");
 
 if (modal) { 
+    console.log("Login modal found, initializing event listeners.");
     if (openBtn) {
         openBtn.addEventListener("click", () => {
             modal.classList.remove("hidden");
@@ -16,6 +19,23 @@ if (modal) {
 
     if (openBtn_) {
         openBtn_.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.body.classList.add("overflow-hidden");
+        });
+    }
+    if (openModalForProbashiNews) {
+        console.log("Adding event listener for openModalForProbashiNews");
+        openModalForProbashiNews.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.body.classList.add("overflow-hidden");
+        });
+    }
+
+    if (openModalForProbashiNews_) {
+        console.log("Adding event listener for openModalForProbashiNews_");
+        openModalForProbashiNews_.addEventListener("click", () => {
             modal.classList.remove("hidden");
             modal.classList.add("flex");
             document.body.classList.add("overflow-hidden");

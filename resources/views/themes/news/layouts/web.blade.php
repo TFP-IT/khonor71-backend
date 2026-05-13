@@ -676,7 +676,7 @@
                     decoding="async">
             </button>
         @else
-            <button type="button" title="সর্বশেষ প্রবাস সংবাদ" id="openModal">
+            <button type="button" title="সর্বশেষ প্রবাস সংবাদ" id="openModalForProbashiNews">
                 <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
                     loading="lazy"
                     decoding="async">
