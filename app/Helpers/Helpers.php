@@ -1322,50 +1322,79 @@ if (!function_exists('get_last_podcast')) {
 
     function get_last_podcast()
     {
-        $apiKey = env('YOUTUBE_API_KEY');
-        $playlistId = env('YOUTUBE_PLAYLIST_ID');
+        return Cache::remember('latest_podcast', 3600, function () {
 
-        try {
+            $defaultVideoId = '03Kk_pGgPng';
 
-            $response = Http::get(
-                'https://www.googleapis.com/youtube/v3/playlistItems',
-                [
-                    'part' => 'snippet',
-                    'maxResults' => 1,
-                    'playlistId' => $playlistId,
-                    'key' => $apiKey,
-                ]
-            );
-
-            if (!$response->successful()) {
-                return null;
-            }
-
-            $item = $response['items'][0] ?? null;
-
-            if (!$item) {
-                return null;
-            }
-
-            return [
-                'title' => $item['snippet']['title'] ?? '',
-                'description' => $item['snippet']['description'] ?? '',
-                'thumbnail' => $item['snippet']['thumbnails']['high']['url']
-                    ?? $item['snippet']['thumbnails']['medium']['url']
-                    ?? $item['snippet']['thumbnails']['default']['url']
-                    ?? null,
-                'video_id' => $item['snippet']['resourceId']['videoId'] ?? '',
-                'embed_url' => 'https://www.youtube.com/embed/' .
-                    ($item['snippet']['resourceId']['videoId'] ?? ''),
-                'youtube_url' => 'https://www.youtube.com/watch?v=' .
-                    ($item['snippet']['resourceId']['videoId'] ?? ''),
-                'published_at' => $item['snippet']['publishedAt'] ?? null,
+            $defaultData = [
+                'title' => 'Latest Podcast',
+                'description' => '',
+                'thumbnail' => "https://i.ytimg.com/vi/{$defaultVideoId}/hqdefault.jpg",
+                'video_id' => $defaultVideoId,
+                'embed_url' => "https://www.youtube.com/embed/{$defaultVideoId}",
+                'youtube_url' => "https://www.youtube.com/watch?v={$defaultVideoId}",
+                'published_at' => null,
             ];
 
-        } catch (\Exception $e) {
+            try {
 
-            return null;
-        }
+                $apiKey = env('YOUTUBE_API_KEY');
+                $playlistId = env('YOUTUBE_PLAYLIST_ID');
+
+                $response = Http::timeout(15)->get(
+                    'https://www.googleapis.com/youtube/v3/playlistItems',
+                    [
+                        'part' => 'snippet',
+                        'maxResults' => 1,
+                        'playlistId' => $playlistId,
+                        'key' => $apiKey,
+                    ]
+                );
+
+                if (!$response->successful()) {
+
+                    \Log::error('YouTube API Error', [
+                        'response' => $response->json()
+                    ]);
+
+                    return $defaultData;
+                }
+
+                $item = $response->json('items.0');
+
+                if (!$item) {
+                    return $defaultData;
+                }
+
+                $videoId = $item['snippet']['resourceId']['videoId'] ?? $defaultVideoId;
+
+                return [
+                    'title' => $item['snippet']['title'] ?? 'Latest Podcast',
+                    'description' => $item['snippet']['description'] ?? '',
+                    'thumbnail' =>
+                        $item['snippet']['thumbnails']['high']['url']
+                        ?? $item['snippet']['thumbnails']['medium']['url']
+                        ?? $item['snippet']['thumbnails']['default']['url']
+                        ?? "https://i.ytimg.com/vi/{$videoId}/hqdefault.jpg",
+
+                    'video_id' => $videoId,
+
+                    'embed_url' => "https://www.youtube.com/embed/{$videoId}",
+
+                    'youtube_url' => "https://www.youtube.com/watch?v={$videoId}",
+
+                    'published_at' => $item['snippet']['publishedAt'] ?? null,
+                ];
+
+            } catch (\Throwable $e) {
+
+                \Log::error('YouTube Podcast Fetch Error', [
+                    'message' => $e->getMessage()
+                ]);
+
+                return $defaultData;
+            }
+        });
     }
 }
 
