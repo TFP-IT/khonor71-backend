@@ -15,7 +15,7 @@
 <link href="{{ asset('backend/assets/plugins/typicons/src/typicons.min.css') }}" rel="stylesheet">
 <link href="{{ asset('backend/assets/plugins/themify-icons/themify-icons.min.css') }}" rel="stylesheet">
 
-<link href="{{ asset('backend/assets/dist/css/flag-icon.css') }}" rel="stylesheet">
+
 <link id="dt_css" href="{{ asset('backend/assets/plugins/datatables/dataTables.bootstrap.min.css') }}"
     rel="stylesheet">
 <link href="{{ asset('backend/assets/plugins/datatables/responsive.bootstrap.min.css') }}" rel="stylesheet">
@@ -44,12 +44,12 @@
 <link href="{{ asset('backend/assets/plugins/fontawesome/css/all.min.css') }}" rel="stylesheet">
 <link href="{{ asset('backend/assets/plugins/wickedpicker.min.css') }}" rel="stylesheet" />
 @if (app_setting()->rtl_ltr == 1)
-    <link id="st_css" href="{{ asset('backend/assets/dist/css/style.css') }}" rel="stylesheet">
+    <link id="st_css" href="{{ asset('backend/assets/dist/css/style.min.css') }}" rel="stylesheet">
     <link id="st_css" href="{{ asset('backend/assets/dist/css/new_custom_style.css') }}" rel="stylesheet">
 @else
     <link id="st_css" href="{{ asset('backend/assets/dist/css/style.rtl.css') }}" rel="stylesheet">
 @endif
 
-<link href="{{ asset('backend/assets/custom-new.css') }}" rel="stylesheet" />
+<link href="{{ asset('backend/assets/custom-new.min.css') }}" rel="stylesheet" />
 
 

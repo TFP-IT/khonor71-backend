@@ -298,6 +298,10 @@ class SeoController extends Controller
                     'hotjar_id'            => '',
                     'custom_head_scripts'  => '',
                     'custom_body_scripts'  => '',
+                    'redis_host'           => '',
+                    'redis_port'           => '',
+                    'redis_password'       => '',
+                    'cdn_url'              => '',
                 ]),
             ]
         );
@@ -330,6 +334,10 @@ class SeoController extends Controller
                 'hotjar_id'            => $request->input('hotjar_id', ''),
                 'custom_head_scripts'  => $request->input('custom_head_scripts', ''),
                 'custom_body_scripts'  => $request->input('custom_body_scripts', ''),
+                'redis_host'           => $request->input('redis_host', ''),
+                'redis_port'           => $request->input('redis_port', ''),
+                'redis_password'       => $request->input('redis_password', ''),
+                'cdn_url'              => $request->input('cdn_url', ''),
             ];
 
             $script_data->update([
@@ -337,9 +345,39 @@ class SeoController extends Controller
                 'details' => json_encode($details),
             ]);
 
+            // Update .env with Redis and CDN settings
+            $envData = [
+                'REDIS_HOST' => $request->input('redis_host') ?: '127.0.0.1',
+                'REDIS_PORT' => $request->input('redis_port') ?: '6379',
+                'REDIS_PASSWORD' => empty($request->input('redis_password')) ? 'null' : $request->input('redis_password'),
+                'CACHE_DRIVER' => $request->input('enable_redis') == '1' ? 'redis' : 'file',
+                'ASSET_URL' => empty($request->input('cdn_url')) ? 'null' : $request->input('cdn_url'),
+            ];
+            $this->updateEnv($envData);
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+
             return response()->json(['error' => false, 'msg' => localize('data_updated_successfully')]);
         } catch (\Exception $e) {
             return response()->json(['error' => true, 'msg' => 'Failed to update scripts: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Update the .env file
+     */
+    private function updateEnv(array $data)
+    {
+        $path = base_path('.env');
+        if (file_exists($path)) {
+            $env = file_get_contents($path);
+            foreach ($data as $key => $value) {
+                if (preg_match('/^' . $key . '=/m', $env)) {
+                    $env = preg_replace('/^' . $key . '=.*/m', $key . '=' . $value, $env);
+                } else {
+                    $env .= "\n" . $key . '=' . $value;
+                }
+            }
+            file_put_contents($path, $env);
         }
     }
 

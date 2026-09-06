@@ -14,11 +14,16 @@
     {!! SEOTools::generate() !!}
 
     <!-- Link Swiper's CSS -->
-    <link rel="stylesheet" href="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css') }}" />
+    @php
+        $swiperCssUrl = \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css');
+    @endphp
+    <link rel="stylesheet" href="{{ $swiperCssUrl }}" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="{{ $swiperCssUrl }}" /></noscript>
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
-        <link href="{{ $font->source_url }}" rel="stylesheet">
+        <link href="{{ $font->source_url }}&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="{{ $font->source_url }}&display=swap" rel="stylesheet"></noscript>
     @endforeach
 
     {{-- Set CSS Variables --}}
@@ -217,30 +222,30 @@
         const ajaxPollVoteUrl = "{{ route('ajax.poll.vote') }}";
         const ajaxPollResultUrl = "{{ route('ajax.poll.result', ['poll' => '__POLL_ID__']) }}";
     </script>
-    <script src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
+    <script defer src="{{ asset(path: 'website/js/jquery-3.7.1.min.js') }}"></script>
 
-    <script src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
-    {{-- <script src="{{ \App\Helpers\ThemeHelper::asset('plugins/youtube-api/youtube-iframe-api.js') }}"></script> --}}
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
+    {{-- <script defer src="{{ \App\Helpers\ThemeHelper::asset('plugins/youtube-api/youtube-iframe-api.js') }}"></script> --}}
 
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/website.js?v=5') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js?v=2') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile-setting.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/global-modal.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/mega-menu-inner-tab.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/mobile-side-menu.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/top-menu.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/video-play.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/login-modal.js?v=5') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/subscribe-form.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/category-view.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
-    <script src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/website.js?v=5') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js?v=2') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/user-profile-setting.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/global-modal.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/mega-menu-inner-tab.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/mobile-side-menu.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/top-menu.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/video-play.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/login-modal.js?v=5') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/subscribe-form.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/category-view.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/poll-vote-result.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/youtube-play-alpinejs.js') }}"></script>
+    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/language-switcher-sm.js') }}"></script>
 
-    <script src="{{ asset('website/js/copy-url.js') }}"></script>
-    <script src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
+    <script defer src="{{ asset('website/js/copy-url.js') }}"></script>
+    <script defer src="{{ asset('website/js/customized-font-size.js?v=5') }}"></script>
 
     @stack('plugins-js')
     @stack('custom-js')

@@ -250,6 +250,9 @@
             <button type="button" class="sm-tab-btn tab-extras" data-tab="tab-extras">
                 <span class="sm-tab-icon"><i class="fa fa-plug"></i></span> Extras
             </button>
+            <button type="button" class="sm-tab-btn tab-redis" data-tab="tab-redis">
+                <span class="sm-tab-icon" style="background:#fef2f2; color:#ef4444;"><i class="fa fa-server"></i></span> Redis & CDN
+            </button>
             <button type="button" class="sm-tab-btn tab-custom" data-tab="tab-custom">
                 <span class="sm-tab-icon"><i class="fa fa-terminal"></i></span> Custom Scripts
             </button>
@@ -471,6 +474,90 @@
                     <div class="sm-tip">
                         <i class="fa fa-info-circle"></i>
                         Your numeric Hotjar Site ID. Find it in Hotjar → Settings → Sites &amp; Organizations.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TAB: Redis & CDN --}}
+        <div id="tab-redis" class="sm-tab-content">
+            <div class="sm-section-label">Object Caching (Redis)</div>
+            <div class="sm-card">
+                <div class="sm-card-header">
+                    <div class="sm-card-logo" style="background:#fef2f2;color:#dc2626;font-size:1.2rem;"><i class="fa fa-database"></i></div>
+                    <div>
+                        <p class="sm-card-title">
+                            Redis Object Cache
+                            <span class="sm-status-dot @if(!empty($existing_scripts->redis_host)) active @endif"></span>
+                        </p>
+                        <p class="sm-card-subtitle">Store database queries in RAM for ultra-fast response times.</p>
+                    </div>
+                </div>
+                <div class="sm-card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <span class="sm-badge sm-badge-pink"><i class="fa fa-network-wired"></i> Redis Host</span>
+                            <div class="sm-input-wrap">
+                                <i class="fa fa-server sm-input-icon"></i>
+                                <input type="text" class="form-control" id="redis_host" name="redis_host"
+                                    placeholder="127.0.0.1"
+                                    value="{{ old('redis_host', $existing_scripts->redis_host ?? env('REDIS_HOST', '127.0.0.1')) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <span class="sm-badge sm-badge-pink"><i class="fa fa-hashtag"></i> Redis Port</span>
+                            <div class="sm-input-wrap">
+                                <i class="fa fa-door-open sm-input-icon"></i>
+                                <input type="text" class="form-control" id="redis_port" name="redis_port"
+                                    placeholder="6379"
+                                    value="{{ old('redis_port', $existing_scripts->redis_port ?? env('REDIS_PORT', '6379')) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <span class="sm-badge sm-badge-pink"><i class="fa fa-key"></i> Redis Password (Optional)</span>
+                            <div class="sm-input-wrap">
+                                <i class="fa fa-lock sm-input-icon"></i>
+                                <input type="text" class="form-control" id="redis_password" name="redis_password"
+                                    placeholder="Leave blank if none"
+                                    value="{{ old('redis_password', $existing_scripts->redis_password ?? (env('REDIS_PASSWORD') === 'null' ? '' : env('REDIS_PASSWORD'))) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <span class="sm-badge sm-badge-pink"><i class="fa fa-power-off"></i> Enable Redis Caching</span>
+                            <div class="sm-input-wrap" style="padding-top:10px;">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="enable_redis" name="enable_redis" value="1" @if(env('CACHE_DRIVER') === 'redis') checked @endif style="width: 40px; height: 20px;">
+                                    <label class="form-check-label ms-2" for="enable_redis">Turn on object caching</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sm-section-label mt-4">Content Delivery Network (CDN)</div>
+            <div class="sm-card">
+                <div class="sm-card-header">
+                    <div class="sm-card-logo" style="background:#eef2ff;color:#4f46e5;font-size:1.2rem;"><i class="fa fa-globe"></i></div>
+                    <div>
+                        <p class="sm-card-title">
+                            Static Asset CDN
+                            <span class="sm-status-dot @if(!empty($existing_scripts->cdn_url)) active @endif"></span>
+                        </p>
+                        <p class="sm-card-subtitle">Serve images, CSS, and JS from a CDN edge node.</p>
+                    </div>
+                </div>
+                <div class="sm-card-body">
+                    <span class="sm-badge sm-badge-blue"><i class="fa fa-link"></i> CDN Base URL</span>
+                    <div class="sm-input-wrap">
+                        <i class="fa fa-cloud sm-input-icon"></i>
+                        <input type="text" class="form-control" id="cdn_url" name="cdn_url"
+                            placeholder="https://cdn.example.com"
+                            value="{{ old('cdn_url', $existing_scripts->cdn_url ?? (env('ASSET_URL') === 'null' ? '' : env('ASSET_URL'))) }}">
+                    </div>
+                    <div class="sm-tip">
+                        <i class="fa fa-info-circle"></i>
+                        Enter your CDN URL. E.g. <code>https://cdn.example.com</code>. Leave blank to serve assets locally.
                     </div>
                 </div>
             </div>
