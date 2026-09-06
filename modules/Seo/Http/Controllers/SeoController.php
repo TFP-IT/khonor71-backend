@@ -25,7 +25,11 @@ class SeoController extends Controller
         $this->middleware('permission:update_social_link')->only('socialLinkStore');
         $this->middleware('permission:create_social_link')->only('socialLinkStore');
 
-        $this->middleware(['demo'])->only(['store','socialSiteStore','socialLinkStore']);
+        $this->middleware('permission:read_script_manager')->only('scriptManager');
+        $this->middleware('permission:update_script_manager')->only('scriptManagerStore');
+        $this->middleware('permission:create_script_manager')->only('scriptManagerStore');
+
+        $this->middleware(['demo'])->only(['store','socialSiteStore','socialLinkStore','scriptManagerStore']);
     }
 
     /**
@@ -272,6 +276,71 @@ class SeoController extends Controller
         $languages = Language::all();
 
         return view('seo::sitemap_links', compact('languages'));
+    }
+
+    /**
+     * Display the Script Manager settings page.
+     * @return Renderable
+     */
+    public function scriptManager()
+    {
+        $script_data = Setting::firstOrCreate(
+            ['id' => 121],
+            [
+                'event'   => 'script_manager',
+                'details' => json_encode([
+                    'ga4_id'               => '',
+                    'ua_id'                => '',
+                    'gtm_id'               => '',
+                    'search_console_meta'  => '',
+                    'meta_pixel_id'        => '',
+                    'tawkto_id'            => '',
+                    'hotjar_id'            => '',
+                    'custom_head_scripts'  => '',
+                    'custom_body_scripts'  => '',
+                ]),
+            ]
+        );
+
+        $existing_scripts = json_decode($script_data->details);
+
+        return view('seo::script_manager', compact('existing_scripts'));
+    }
+
+    /**
+     * Save the Script Manager settings.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function scriptManagerStore(Request $request)
+    {
+        $script_data = Setting::firstOrCreate(
+            ['id' => 121],
+            ['event' => 'script_manager', 'details' => '{}']
+        );
+
+        try {
+            $details = [
+                'ga4_id'               => $request->input('ga4_id', ''),
+                'ua_id'                => $request->input('ua_id', ''),
+                'gtm_id'               => $request->input('gtm_id', ''),
+                'search_console_meta'  => $request->input('search_console_meta', ''),
+                'meta_pixel_id'        => $request->input('meta_pixel_id', ''),
+                'tawkto_id'            => $request->input('tawkto_id', ''),
+                'hotjar_id'            => $request->input('hotjar_id', ''),
+                'custom_head_scripts'  => $request->input('custom_head_scripts', ''),
+                'custom_body_scripts'  => $request->input('custom_body_scripts', ''),
+            ];
+
+            $script_data->update([
+                'event'   => 'script_manager',
+                'details' => json_encode($details),
+            ]);
+
+            return response()->json(['error' => false, 'msg' => localize('data_updated_successfully')]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'msg' => 'Failed to update scripts: ' . $e->getMessage()]);
+        }
     }
 
 }

@@ -2221,4 +2221,13 @@
   'add_opinion' => 'Add opinion',
   '150*150_and_max_size_500_kb' => '150*150 and max size 500 kb',
   'news_image' => 'News image',
+  'edit_cover_image' => 'Edit cover image',
+  'personal_info' => 'Personal info',
+  'voting_poll' => 'Voting poll',
+  'vote' => 'Vote',
+  'view_result' => 'View result',
+  'view_option' => 'View option',
+  'script_manager' => 'স্ক্রিপ্ট ম্যানেজার',
+  'script_manager_subtitle' => 'আপনার সংবাদপত্র ওয়েবসাইটের জন্য সমস্ত তৃতীয় পক্ষের ট্র্যাকিং স্ক্রিপ্ট, অ্যানালিটিক্স, বিজ্ঞাপন পিক্সেল এবং যাচাইকরণ ট্যাগ কনফিগার করুন।',
+  'save_changes' => 'পরিবর্তন সংরক্ষণ করুন',
 );

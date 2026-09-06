@@ -389,4 +389,7 @@
   'recent_comments' => 'Recent comments',
   'top_reporters' => 'Top reporters',
   'total' => 'Total',
+  'script_manager' => 'Script Manager',
+  'script_manager_subtitle' => 'Configure all third-party tracking scripts, analytics, advertising pixels, and verification tags for your newspaper website.',
+  'save_changes' => 'Save Changes',
 );

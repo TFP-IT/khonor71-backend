@@ -210,6 +210,12 @@ class RoleTableSeeder extends Seeder
                     'update_rss_sitemap_link',
                     'delete_rss_sitemap_link',
                 ],
+                'Script Manager' => [
+                    'create_script_manager',
+                    'read_script_manager',
+                    'update_script_manager',
+                    'delete_script_manager',
+                ],
             ],
             'Setting' => [
                 'create_setting',

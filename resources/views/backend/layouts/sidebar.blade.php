@@ -377,6 +377,12 @@
                                         href="{{ route('seo.social_link') }}">{{ ucwords(localize('social_link')) }}</a>
                                 </li>
                             @endcan
+                            @can('read_script_manager')
+                                <li class="{{ request()->is('admin/seo/script-manager') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('seo.script_manager') }}">Script Manager</a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan

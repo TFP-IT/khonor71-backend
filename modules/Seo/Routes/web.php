@@ -29,6 +29,9 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
             Route::post('/social-link-store', 'socialLinkStore')->name('social_link_store');
 
             Route::get('/sitemap-links', 'sitemapLinks')->name('sitemap_links');
+
+            Route::get('/script-manager', 'scriptManager')->name('script_manager');
+            Route::post('/script-manager-store', 'scriptManagerStore')->name('script_manager_store');
         });
 
     });
