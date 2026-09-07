@@ -27,46 +27,48 @@ class HomeDataService
 {
     public function getHomePageData()
     {
-        // Default data for all themes
-        $data = [
-            'breakingNews' => $this->getBreakingNews(),
-            'homePageTopNews' => $this->getHomePageTopNews(),
-            'probashiJanalaPageTopNews' => $this->getProbashiJanalaPageTopNews(),
-            'probashiNews' => $this->getProbashiNewsView(),
-            'sectionTwoNews' => $this->getSectionTwoNews(),
-            'popularNews' => $this->getPopularNews(),
-            'latestNews' => $this->getLatestNews(),
-            'latestProbashiNews' => $this->getLatestProbashiNews(),
-            'followUsLinks' => $this->getFollowUsLinks(),
-            'recommendedPosts' => $this->getRecommendedPosts(),
-            'sectionThreeAllNews' => $this->getSectionThreeAllNews(),
-            'sectionThreeAllSubNews' => $this->getSectionThreeAllSubNews(),
-            'sectionFourNews' => $this->getSectionFourNews(),
-            'topWeekNews' => $this->getTopWeekNews(),
-            'trendingNews' => $this->getTrendingNews(),
-            'opinions' => $this->getOpinions(),
-            'featuresNews' => $this->getFeaturesNews(),
-            'videoNews' => $this->getVideoNews(),
-            'sectionFiveNews' => $this->getSectionFiveNews(),
-            'sectionSixNews' => $this->getSectionSixNews(),
-            'commonSectionNews' => $this->getCommonSectionNews(),
-            'homeStories' => $this->getHomeStory(),
-            'themeSettings' => ThemeHelper::themeSettings(),
-        ];
-
-        // Manage Rss Feeds News
         $languageId = get_language_id();
-        $rssFeeds = RssFeed::where('status', 1)->where('paper_language', $languageId)->get();
-        if ($rssFeeds->isNotEmpty()) {
-            $data += [
-                'rssFeedNews' => $this->getRssFeedNews(),
-            ];
-        }
-
-        // Theme-specific additions
         $theme = activeTheme();
+        $cacheKey = "home_page_data_{$languageId}_{$theme}";
 
-        return $data;
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId, $theme) {
+            // Default data for all themes
+            $data = [
+                'breakingNews' => $this->getBreakingNews(),
+                'homePageTopNews' => $this->getHomePageTopNews(),
+                'probashiJanalaPageTopNews' => $this->getProbashiJanalaPageTopNews(),
+                'probashiNews' => $this->getProbashiNewsView(),
+                'sectionTwoNews' => $this->getSectionTwoNews(),
+                'popularNews' => $this->getPopularNews(),
+                'latestNews' => $this->getLatestNews(),
+                'latestProbashiNews' => $this->getLatestProbashiNews(),
+                'followUsLinks' => $this->getFollowUsLinks(),
+                'recommendedPosts' => $this->getRecommendedPosts(),
+                'sectionThreeAllNews' => $this->getSectionThreeAllNews(),
+                'sectionThreeAllSubNews' => $this->getSectionThreeAllSubNews(),
+                'sectionFourNews' => $this->getSectionFourNews(),
+                'topWeekNews' => $this->getTopWeekNews(),
+                'trendingNews' => $this->getTrendingNews(),
+                'opinions' => $this->getOpinions(),
+                'featuresNews' => $this->getFeaturesNews(),
+                'videoNews' => $this->getVideoNews(),
+                'sectionFiveNews' => $this->getSectionFiveNews(),
+                'sectionSixNews' => $this->getSectionSixNews(),
+                'commonSectionNews' => $this->getCommonSectionNews(),
+                'homeStories' => $this->getHomeStory(),
+                'themeSettings' => ThemeHelper::themeSettings(),
+            ];
+
+            // Manage Rss Feeds News
+            $rssFeeds = RssFeed::where('status', 1)->where('paper_language', $languageId)->get();
+            if ($rssFeeds->isNotEmpty()) {
+                $data += [
+                    'rssFeedNews' => $this->getRssFeedNews(),
+                ];
+            }
+
+            return $data;
+        });
     }
 
     private function getHomeStory()
@@ -453,30 +455,35 @@ class HomeDataService
     public function getBreakingNews()
     {
         $languageId = get_language_id();
-        $limit = app_setting()->breaking_news_limit;
+        $theme = activeTheme();
+        $cacheKey = "breaking_news_{$languageId}_{$theme}";
 
-        if (activeTheme() == 'magazine') {
-            $limit = 6;
-        }
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId, $theme) {
+            $limit = app_setting()->breaking_news_limit;
 
-        // Fetch and decode the news titles
-        $breakingNews = BreakingNews::select(['id', 'title', 'time_stamp'])
-            ->where('language_id', $languageId)
-            ->where('status', 1)
-            ->latest('created_at')
-            ->take($limit)
-            ->get()
-            ->map(function ($news) {
-                $titleData = json_decode($news->title, true);
-                return [
-                    'id' => $news->id,
-                    'title' => $titleData['news_title'] ?? 'Untitled',
-                    'url' => $titleData['url'] ?? '',
-                    'date' => Carbon::parse( $news->time_stamp)->toDateString()
-                ];
-            });
+            if ($theme == 'magazine') {
+                $limit = 6;
+            }
 
-        return $breakingNews;
+            // Fetch and decode the news titles
+            $breakingNews = BreakingNews::select(['id', 'title', 'time_stamp'])
+                ->where('language_id', $languageId)
+                ->where('status', 1)
+                ->latest('created_at')
+                ->take($limit)
+                ->get()
+                ->map(function ($news) {
+                    $titleData = json_decode($news->title, true);
+                    return [
+                        'id' => $news->id,
+                        'title' => $titleData['news_title'] ?? 'Untitled',
+                        'url' => $titleData['url'] ?? '',
+                        'date' => Carbon::parse( $news->time_stamp)->toDateString()
+                    ];
+                });
+
+            return $breakingNews;
+        });
     }
 
     /**
@@ -486,58 +493,61 @@ class HomeDataService
     private function getHomePageTopNews()
     {
         $languageId = get_language_id();
+        $cacheKey = "home_page_top_news_{$languageId}";
 
-        // Fetch all news positions within positions 1 to 7 and filter only active news
-        $newsPositions = NewsPositionMap::with(['news' => function ($query) use ($languageId) {
-                $query->select('id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status')
-                    ->withCount('comments')
-                    ->where('language_id', $languageId)
-                    ->whereDate('publish_date', '<=', Carbon::today())
-                    ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
-            }])
-            ->whereNotNull('home_position')
-            ->whereBetween('home_position', [1, 7])
-            ->where('status', 1)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId) {
+            // Fetch all news positions within positions 1 to 7 and filter only active news
+            $newsPositions = NewsPositionMap::with(['news' => function ($query) use ($languageId) {
+                    $query->select('id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status')
+                        ->withCount('comments')
+                        ->where('language_id', $languageId)
+                        ->whereDate('publish_date', '<=', Carbon::today())
+                        ->where('status', 1)
+                        ->with(['postByUser:id,full_name', 'comments']);
+                }])
+                ->whereNotNull('home_position')
+                ->whereBetween('home_position', [1, 7])
+                ->where('status', 1)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        // Filter out any items with missing news (status 0 or not found)
-        $newsPositions = $newsPositions->filter(function ($item) {
-            return $item->news !== null;
-        });
-
-        $finalNews = collect();
-        $usedNewsIds = [];
-
-        // Loop through positions 1 to 7
-        for ($pos = 1; $pos <= 7; $pos++) {
-            // Find the latest news for the current position
-            $currentPositionNews = $newsPositions->filter(function ($item) use ($pos, $usedNewsIds) {
-                return $item->home_position == $pos && !in_array($item->news_id, $usedNewsIds);
+            // Filter out any items with missing news (status 0 or not found)
+            $newsPositions = $newsPositions->filter(function ($item) {
+                return $item->news !== null;
             });
 
-            // If no latest news for the exact position, try lower positions
-            if ($currentPositionNews->isEmpty()) {
-                for ($fallbackPos = $pos - 1; $fallbackPos >= 1; $fallbackPos--) {
-                    $fallbackNews = $newsPositions->filter(function ($item) use ($fallbackPos, $usedNewsIds) {
-                        return $item->home_position == $fallbackPos && !in_array($item->news_id, $usedNewsIds);
-                    });
+            $finalNews = collect();
+            $usedNewsIds = [];
 
-                    if ($fallbackNews->isNotEmpty()) {
-                        $finalNews->push($fallbackNews->first());
-                        $usedNewsIds[] = $fallbackNews->first()->news_id;
-                        break;
+            // Loop through positions 1 to 7
+            for ($pos = 1; $pos <= 7; $pos++) {
+                // Find the latest news for the current position
+                $currentPositionNews = $newsPositions->filter(function ($item) use ($pos, $usedNewsIds) {
+                    return $item->home_position == $pos && !in_array($item->news_id, $usedNewsIds);
+                });
+
+                // If no latest news for the exact position, try lower positions
+                if ($currentPositionNews->isEmpty()) {
+                    for ($fallbackPos = $pos - 1; $fallbackPos >= 1; $fallbackPos--) {
+                        $fallbackNews = $newsPositions->filter(function ($item) use ($fallbackPos, $usedNewsIds) {
+                            return $item->home_position == $fallbackPos && !in_array($item->news_id, $usedNewsIds);
+                        });
+
+                        if ($fallbackNews->isNotEmpty()) {
+                            $finalNews->push($fallbackNews->first());
+                            $usedNewsIds[] = $fallbackNews->first()->news_id;
+                            break;
+                        }
                     }
+                } else {
+                    // Use the latest news for the current position
+                    $finalNews->push($currentPositionNews->first());
+                    $usedNewsIds[] = $currentPositionNews->first()->news_id;
                 }
-            } else {
-                // Use the latest news for the current position
-                $finalNews->push($currentPositionNews->first());
-                $usedNewsIds[] = $currentPositionNews->first()->news_id;
             }
-        }
 
-        return $finalNews;
+            return $finalNews;
+        });
     }
 
 
@@ -678,26 +688,29 @@ class HomeDataService
     private function getPopularNews()
     {
         $languageId = get_language_id();
+        $cacheKey = "popular_news_{$languageId}";
 
-        // Get the date 30 days ago from today
-        $oneMonthAgo = Carbon::now()->subDays(30);
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId) {
+            // Get the date 30 days ago from today
+            $oneMonthAgo = Carbon::now()->subDays(30);
 
-        // Manage news limit
-        $limit = 5;
+            // Manage news limit
+            $limit = 5;
 
-        // Fetch the most read news in the last 30 days
-        $popularNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
-            ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments'])
-            ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
-            ->where('status', 1)
-            ->where('updated_at', '>=', $oneMonthAgo)
-            ->orderByDesc('reader_hit')
-            ->take($limit)
-            ->get();
+            // Fetch the most read news in the last 30 days
+            $popularNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
+                ->withCount('comments')
+                ->with(['postByUser:id,full_name', 'comments'])
+                ->where('language_id', $languageId)
+                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('status', 1)
+                ->where('updated_at', '>=', $oneMonthAgo)
+                ->orderByDesc('reader_hit')
+                ->take($limit)
+                ->get();
 
-        return $popularNews;
+            return $popularNews;
+        });
     }
 
     /**
@@ -707,17 +720,20 @@ class HomeDataService
     private function getLatestNews()
     {
         $languageId = get_language_id();
+        $cacheKey = "latest_news_{$languageId}";
 
-        // Fetch the most last news
-        $latestNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'created_at'])
-            ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
-            ->where('status', 1)
-            ->latest('created_at')
-            ->take(6)
-            ->get();
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId) {
+            // Fetch the most last news
+            $latestNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'created_at'])
+                ->where('language_id', $languageId)
+                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('status', 1)
+                ->latest('created_at')
+                ->take(6)
+                ->get();
 
-        return $latestNews;
+            return $latestNews;
+        });
     }
 
         /**
@@ -727,19 +743,22 @@ class HomeDataService
     private function getLatestProbashiNews()
     {
         $languageId = get_language_id();
+        $cacheKey = "latest_probashi_news_{$languageId}";
 
-        // Fetch the most last news, skip first (index 0) and get next 3 (indices 1, 2, 3)
-        $latestNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'created_at'])
-            ->where('category_id', 68)
-            ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
-            ->where('status', 1)
-            ->latest('created_at')
-            ->skip(1)
-            ->take(3)
-            ->get();
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId) {
+            // Fetch the most last news, skip first (index 0) and get next 3 (indices 1, 2, 3)
+            $latestNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status', 'created_at'])
+                ->where('category_id', 68)
+                ->where('language_id', $languageId)
+                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('status', 1)
+                ->latest('created_at')
+                ->skip(1)
+                ->take(3)
+                ->get();
 
-        return $latestNews;
+            return $latestNews;
+        });
     }
 
     /**

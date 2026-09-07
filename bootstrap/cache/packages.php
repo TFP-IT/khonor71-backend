@@ -1,4 +1,11 @@
 <?php return array (
+  'akaunting/laravel-firewall' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Akaunting\\Firewall\\Provider',
+    ),
+  ),
   'artesaos/seotools' => 
   array (
     'aliases' => 
@@ -57,6 +64,17 @@
     'providers' => 
     array (
       0 => 'Intervention\\Image\\ImageServiceProvider',
+    ),
+  ),
+  'jenssegers/agent' => 
+  array (
+    'aliases' => 
+    array (
+      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
+    ),
+    'providers' => 
+    array (
+      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
     ),
   ),
   'laravel/sail' => 

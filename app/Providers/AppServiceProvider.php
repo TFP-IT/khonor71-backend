@@ -50,9 +50,6 @@ class AppServiceProvider extends ServiceProvider
 
         View::share('themeSettings', ThemeHelper::themeSettings());
 
-        // URL::forceScheme('https');
-        // $this->app['request']->server->set('HTTPS', 'on');
-
         if (app()->environment('production')) {
             URL::forceScheme('https');
             $this->app['request']->server->set('HTTPS', 'on');

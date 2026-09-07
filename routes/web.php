@@ -36,7 +36,9 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         return redirect()->route('login');
     });
 
-    Auth::routes();
+    Route::middleware('throttle:5,1')->group(function () {
+        Auth::routes();
+    });
 
     Route::get('get-localization-strings', [LocalizationController::class, 'index'])->name('get-localization-strings');
     Route::post('get-localization-strings', [LocalizationController::class, 'store']);
@@ -132,9 +134,11 @@ Route::get('google/callback', [LoginController::class, 'handleGoogleCallback'])-
 Route::get('connect-with-facebook', [LoginController::class, 'redirectToFacebook'])->name('connect-with-facebook');
 Route::get('facebook/callback', [LoginController::class, 'handleFacebookCallback'])->name('facebook-callback');
 
-Route::post('{lang}/registration/store', [RegisterController::class, 'store'])->name('webuser.lang.registration');
-Route::post('registration/store', [RegisterController::class, 'store'])->name('webuser.registration');
-Route::post('login', [LoginController::class, 'manualLogin'])->name('webuser.login');
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('{lang}/registration/store', [RegisterController::class, 'store'])->name('webuser.lang.registration');
+    Route::post('registration/store', [RegisterController::class, 'store'])->name('webuser.registration');
+    Route::post('login', [LoginController::class, 'manualLogin'])->name('webuser.login');
+});
 Route::post('{lang}/web/user/logout', [LoginController::class, 'logout'])->name('webuser.lang.logout');
 Route::post('web/user/logout', [LoginController::class, 'logout'])->name('webuser.logout');
 
@@ -213,3 +217,6 @@ Route::group(['middleware' => 'auth:webuser', 'prefix' => 'probashi-news', 'as' 
 // Add this route for DataTable AJAX calls
 // Route::get('probashi-news-data', [ProbashiNewsController::class, 'getData'])->name('web.probashi-news.data');
 // Route::get('/my-probashi-news', [ProbashiNewsController::class, 'index'])->name('my.probashi.news');
+
+// Disable XML-RPC requests (blocks WordPress scanners)
+Route::any('xmlrpc.php', function () { abort(403); });
