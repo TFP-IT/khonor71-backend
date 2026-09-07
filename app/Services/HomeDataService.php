@@ -66,14 +66,6 @@ class HomeDataService
         // Theme-specific additions
         $theme = activeTheme();
 
-        if ($theme === 'gazette') {
-            $data += [
-                'sectionTwoAllSubNews' => $this->getAllSubNews(1),
-                'sectionTwoRightAllSubNews' => $this->getAllSubNews(2, 6),
-                'sectionFourAllSubNews' => $this->getAllSubNews(4, 6),
-            ];
-        }
-
         return $data;
     }
 
@@ -610,18 +602,12 @@ class HomeDataService
         if (activeTheme() == 'news') {
             $limitLeft = 4;
             $limitRight = 5;
-        } elseif (activeTheme() == 'gazette') {
-            $limitLeft = 16;
-            $limitRight = 6;
         } elseif (activeTheme() == 'magazine') {
             $limitLeft = 1;
             $limitRight = 1;
         } elseif (activeTheme() == 'times') {
             $limitLeft = 4;
             $limitRight = 12;
-        } elseif (activeTheme() == 'fashion') {
-            $limitLeft = 5;
-            $limitRight = 5;
         }
 
         // Initialize as empty collections
@@ -698,9 +684,6 @@ class HomeDataService
 
         // Manage news limit
         $limit = 5;
-        if (activeTheme() == 'fashion') {
-            $limit = 6;
-        }
 
         // Fetch the most read news in the last 30 days
         $popularNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
@@ -778,9 +761,7 @@ class HomeDataService
 
         // Manage news limit
         $limit = 5;
-        if (activeTheme() == 'fashion') {
-            $limit = 6;
-        } elseif (activeTheme() == 'news') {
+        if (activeTheme() == 'news') {
             $limit = 8;
         }
 
@@ -812,8 +793,6 @@ class HomeDataService
         $limit = 12;
         if (activeTheme() == 'news') {
             $position = 1;
-        } elseif (activeTheme() == 'gazette') {
-            $limit = 6;
         } elseif (activeTheme() == 'magazine') {
             $limit = 5;
         } elseif (activeTheme() == 'times') {
@@ -869,8 +848,6 @@ class HomeDataService
         $limit = 12;
         if (activeTheme() == 'news') {
             $position = 1;
-        } elseif (activeTheme() == 'gazette') {
-            $limit = 6;
         }
 
         $parentCategoryId = $this->getCategoryPositionIds($position);
@@ -1080,7 +1057,7 @@ class HomeDataService
         $limit = 5;
         if (activeTheme() == 'news') {
             $limit = 10;
-        } elseif (activeTheme() == 'gazette' || activeTheme() == 'magazine') {
+        } elseif (activeTheme() == 'magazine') {
             $limit = 4;
         }
 
@@ -1114,14 +1091,7 @@ class HomeDataService
         $thirdNewsLimit = 5;
         $fourthNewsLimit = 5;
 
-        if (activeTheme() == 'fashion') {
-            $firstNewsLimit = 8;
-        } elseif (activeTheme() == 'gazette') {
-             $firstNewsLimit = 8;
-            $secondNewsLimit = 8;
-            $thirdNewsLimit = 8;
-            $fourthNewsLimit = 8;
-        } elseif (activeTheme() == 'times') {
+        if (activeTheme() == 'times') {
             $secondNewsLimit = 4;
             $thirdNewsLimit = 6;
             $fourthNewsLimit = 6;
@@ -1250,12 +1220,10 @@ class HomeDataService
 
         // Manage news limit
         $limit = 12;
-        if (activeTheme() == 'fashion' || activeTheme() == 'times') {
+        if (activeTheme() == 'times') {
            $limit = 6;
         } elseif (activeTheme() == 'news' || activeTheme() == 'magazine') {
             $limit = 5;
-        } elseif (activeTheme() == 'gazette') {
-            $limit = 8;
         }
 
         // Initialize as empty collections
@@ -1304,12 +1272,10 @@ class HomeDataService
 
         // Manage news limit
         $limit = 16;
-        if (activeTheme() == 'fashion' || activeTheme() == 'times') {
+        if (activeTheme() == 'times') {
            $limit = 6;
         } elseif (activeTheme() == 'news' || activeTheme() == 'magazine') {
            $limit = 5;
-        } elseif (activeTheme() == 'gazette') {
-            $limit = 8;
         }
 
         // Initialize array to hold news grouped by category

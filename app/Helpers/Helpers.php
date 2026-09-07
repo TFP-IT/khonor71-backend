@@ -1104,7 +1104,7 @@ if (!function_exists('news_time_ago')) {
             'প' => 'p', 'ফ' => 'ph', 'ব' => 'b', 'ভ' => 'bh', 'ম' => 'm',
             'য' => 'j', 'র' => 'r', 'ল' => 'l', 'শ' => 'sh', 'ষ' => 'ssh', 'স' => 's', 'হ' => 'h',
             // additional/nukta-like forms
-            'ড়' => 'rr', 'ঢ়' => 'rrh',
+            'ড়' => 'rr', 'ড়' => 'rr', 'ঢ়' => 'rrh', 'ঢ়' => 'rrh',
             // both forms of ya-yaphala / y-variants
             'য়' => 'y', 'য়' => 'y',
             // the "nukta" modified consonants may appear as separate chars; keep them if present
@@ -1228,8 +1228,8 @@ if (!function_exists('news_time_ago')) {
         $slug = mb_strtolower($title, 'UTF-8');
 
         // Replace any non-alphanumeric (keep hyphen) with hyphen
-        // Keep ASCII letters, numbers, and hyphen
-        $slug = preg_replace('/[^\p{L}\p{N}\-]+/u', '-', $slug);
+        // Keep strictly ASCII English letters, numbers, and hyphen
+        $slug = preg_replace('/[^a-zA-Z0-9\-]+/u', '-', $slug);
 
         // Trim and replace multiple hyphens with single
         $slug = preg_replace('/-+/', '-', trim($slug, '-'));
@@ -1444,7 +1444,7 @@ if (!function_exists('get_tv_news')) {
 
         if (activeTheme() == 'news') {
             $limit = 10;
-        } elseif (activeTheme() == 'gazette' || activeTheme() == 'magazine') {
+        } elseif (activeTheme() == 'magazine') {
             $limit = 4;
         }
 

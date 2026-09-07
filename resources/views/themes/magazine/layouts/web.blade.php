@@ -5,6 +5,7 @@
 <html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
 <head>
+    @includeIf('sentry')
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="{{ app_setting()->favicon }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

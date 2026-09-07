@@ -28,14 +28,7 @@
                     </li>
                 @endcan
 
-                {{-- @can('read_theme')
-                    <li class="{{ request()->is('admin/theme') ? 'mm-active' : '' }}">
-                        <a href="{{ route('admin.theme.index') }}">
-                            <i class="fa fa-server"></i>
-                            <span>{{ localize('theme') }}</span>
-                        </a>
-                    </li>
-                @endcan --}}
+
 
                 @can('read_probashi_news')
                     <li class="{{ request()->is('admin/probashijanala*') ? 'mm-active' : 'XXXX' }}">
@@ -405,12 +398,18 @@
                 @endcan
 
                 @can('read_web_setup')
-                    <li class="{{ request()->is('admin/web-setup*') ? 'mm-active' : '' }}">
+                    <li class="{{ request()->is('admin/web-setup*') || request()->is('admin/theme*') ? 'mm-active' : '' }}">
                         <a class="has-arrow material-ripple" href="#">
                             <i class="fa fa-gear"></i>
                             <span> {{ ucwords(localize('web_setup')) }}</span>
                         </a>
-                        <ul class="nav-second-level {{ request()->is('admin/web-setup*') ? 'mm-show' : '' }}">
+                        <ul class="nav-second-level {{ request()->is('admin/web-setup*') || request()->is('admin/theme*') ? 'mm-show' : '' }}">
+                            {{-- @can('read_theme')
+                                <li class="{{ request()->is('admin/theme*') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('admin.theme.index') }}">{{ ucwords(localize('theme')) }}</a>
+                                </li>
+                            @endcan --}}
                             @can('read_setup_top_breaking_post')
                                 <li class="{{ request()->is('admin/web-setup/setup-top-breaking') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
