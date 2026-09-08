@@ -92,8 +92,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'bus365@soft31.bdtask.com'),
-        'name' => env('MAIL_FROM_NAME', 'bus365@soft31.bdtask.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'bus365@soft31.khobor71.com'),
+        'name' => env('MAIL_FROM_NAME', 'bus365@soft31.khobor71.com'),
     ],
 
     /*

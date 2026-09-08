@@ -182,7 +182,7 @@
 
                 <div class="alert alert-info mt-3" role="alert" id="backendCredentialsInfo">
                     <strong>{{ localize('note') }}:</strong> {{ localize('after_demo_import_your_backend_login_credentials_will_change_to') }}:<br>
-                    <strong>{{ localize('user') }}:</strong> admin@bdtask.com<br>
+                    <strong>{{ localize('user') }}:</strong> admin@khobor71.com<br>
                     <strong>{{ localize('password') }}:</strong> 123456
                 </div>
 
@@ -245,7 +245,7 @@
                 <p>This action cannot be undone!</p>
                 <p>After import, your backend login credentials will be:</p>
                 <ul style="text-align: left; margin-top: 10px;">
-                    <li><strong>User:</strong> admin@bdtask.com</li>
+                    <li><strong>User:</strong> admin@khobor71.com</li>
                     <li><strong>Password:</strong> 123456</li>
                 </ul>
                 <p>Do you want to proceed?</p>

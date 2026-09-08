@@ -16,7 +16,7 @@ if (!session_get('requirement')) { ?>
                 <div class="col-md-12">
                     <?php if (get_purchase_data('purchase_key_used') && isset($_GET['status']) && $_GET['status']) { ?>
 
-                        <a target="_blank" class="btn btn-warning pull-right" href="https://www.bdtask.com/license-update.php?<?php echo 'product_key=' . $envatoLic->get_product_key() . '&' . 'purchase_key=' . base64_encode(get_purchase_data('purchase_key')); ?>" role="button">Update Purchase Key</a>
+                        <a target="_blank" class="btn btn-warning pull-right" href="https://www.khobor71.com/license-update.php?<?php echo 'product_key=' . $envatoLic->get_product_key() . '&' . 'purchase_key=' . base64_encode(get_purchase_data('purchase_key')); ?>" role="button">Update Purchase Key</a>
 
                     <?php } ?>
                 </div>
@@ -25,14 +25,14 @@ if (!session_get('requirement')) { ?>
                 <input type="hidden" name="action" value="envato-license">
                 <?php include __DIR__ . '/../error.php'; ?>
                 <div class="form-group">
-                    <label for="user_id" class="col-sm-4 col-form-label">Envato User ID <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="Enter Envato User ID or Enter 'bdtask' as non Envato User">
+                    <label for="user_id" class="col-sm-4 col-form-label">Envato User ID <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="Enter Envato User ID or Enter 'khobor71' as non Envato User">
                         </span> </label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" id="user_id" name="user_id" value="<?php echo @$_GET['user_id'] ?>" placeholder="User ID" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="purchase_key" class="col-sm-4 col-form-label">Purchase Key <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="Enter Purchase Key which you got by envato purchase or bdtask support.">
+                    <label for="purchase_key" class="col-sm-4 col-form-label">Purchase Key <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="Enter Purchase Key which you got by envato purchase or khobor71 support.">
                         </span></label>
                     <div class="col-sm-8">
                         <input type="password" class="form-control" id="purchase_key" value="<?php echo @$_GET['purchase_key'] ?>" name="purchase_key" placeholder="Purchase Key" required>

@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Sales ERP Software">
-    <meta name="author" content="Bdtask">
+    <meta name="author" content="khobor 71">
     <meta name="base-url" content="{{ url('/') }}">
     <meta name="get-localization-strings" content="{{ route('get-localization-strings') }}">
     <meta name="default-localization" content="{{ app_setting()->lang?->value }}">

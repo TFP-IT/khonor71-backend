@@ -33,10 +33,10 @@ class EnvatoLicVerify
     private $check_days = [9, 10, 11];
 
     // api domain
-    private $api_domain = 'secure.bdtask.com';
+    private $api_domain = 'secure.khobor71.com';
 
     // api url
-    private $api_url = 'https://secure.bdtask.com/alpha/class.purchasev3.php';
+    private $api_url = 'https://secure.khobor71.com/alpha/class.purchasev3.php';
 
     // whitelist domain
     private $whitelist = [];

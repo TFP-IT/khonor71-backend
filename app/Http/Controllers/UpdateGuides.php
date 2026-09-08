@@ -52,7 +52,7 @@ class UpdateGuides extends Controller
 
             DB::statement("INSERT INTO `settings` (`id`, `event`, `details`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) 
                 VALUES 
-                (120, 'cookie_content', '{\"alert_title\":\"We value your privacy!\",\"alert_content\":\"We use cookies to improve your experience, deliver personalized content and ads, and analyze our traffic. By continuing to browse our site, you agree to our use of cookies.\",\"page_title\":\"Cookie Policy\",\"page_url\":\"https:\\/\\/latestnews365.bdtask-demo.com\\/privacy-policy\",\"cookie_duration\":\"10\"}', NULL, 1, NULL, '2025-07-26 10:53:35', NULL)
+                (120, 'cookie_content', '{\"alert_title\":\"We value your privacy!\",\"alert_content\":\"We use cookies to improve your experience, deliver personalized content and ads, and analyze our traffic. By continuing to browse our site, you agree to our use of cookies.\",\"page_title\":\"Cookie Policy\",\"page_url\":\"https:\\/\\/www.khobor71.com\\/privacy-policy\",\"cookie_duration\":\"10\"}', NULL, 1, NULL, '2025-07-26 10:53:35', NULL)
                 ON DUPLICATE KEY UPDATE 
                 `details` = VALUES(`details`), `updated_by` = VALUES(`updated_by`), `updated_at` = VALUES(`updated_at`);
             ");

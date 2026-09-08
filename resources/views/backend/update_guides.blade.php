@@ -36,12 +36,12 @@
                     </div>
                     <h5 class="mb-3">Update Instructions</h5>
                     <ul>
-                        <li>First, download the latest version from your <strong>CodeCanyon <a
-                                    class="text-decoration-underline" href="https://codecanyon.net/downloads"
+                        <li>First, download the latest version from your <strong>Marketplace <a
+                                    class="text-decoration-underline" href="#"
                                     target="_blank">Downloads</a></strong> page.</li>
                         <li>Backup your database and all application files before proceeding.</li>
                         <li>
-                            After downloading from CodeCanyon, unzip the package on your local PC and navigate to
+                            After downloading from Marketplace, unzip the package on your local PC and navigate to
                             <code>storage/app/versions</code>
                             There you will find multiple version zip files. Choose the zip file for the version you want to
                             update to, upload it to your main project root folder, and unzip/extract it. This will

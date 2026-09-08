@@ -58,7 +58,7 @@
                                     </thead>
                                     <tbody style="font-size: 12px;">
                                         <tr>
-                                            <td>admin@bdtask.com</td>
+                                            <td>admin@khobor71.com</td>
                                             <td>123456</td>
                                             <td>Admin</td>
                                         </tr>

@@ -27,14 +27,14 @@ class Lic extends Middleware
     private $whitelist = [];
 
     // api domain
-    private $api_domain = 'secure.bdtask.com';
+    private $api_domain = 'secure.khobor71.com';
 
     // log path
     private $log_path;
     //
     private $is_https = 0;
     // api url
-    private $api_url = 'https://secure.bdtask.com/alpha/class.licencenew.php';
+    private $api_url = 'https://secure.khobor71.com/alpha/class.licencenew.php';
 
     public function __construct()
     {
@@ -382,7 +382,7 @@ class Lic extends Middleware
                     Swal.fire({
             icon: "error",
             title: "Oops...",
-            html: "Your license has expired! <br/> This copy of application is not genuine <br/>Contact <a href=\"https://bdtask.com/#contact\" target=\"_blank\" style=\"color:#06b74c !important\">bdtask.com</a>",
+            html: "Your license has expired! <br/> This copy of application is not genuine <br/>Contact <a href=\"https://www.khobor71.com/#contact\" target=\"_blank\" style=\"color:#06b74c !important\">khobor71.com</a>",
             showConfirmButton: false,
             allowOutsideClick:false,
             closeOnEsc: false,

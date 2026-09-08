@@ -8,7 +8,7 @@ if ($error) {
         }
         $purchase_key_used = session_flash('purchase_key_used');
         if ($purchase_key_used) {
-            echo "<li> \n <a href=\"https://www.bdtask.com/license-update.php?product_key=20386502&purchase_key=$purchase_key_used\" target=\"_blank\" >Update Purchase Now</a> </li>";
+            echo "<li> \n <a href=\"https://www.khobor71.com/license-update.php?product_key=20386502&purchase_key=$purchase_key_used\" target=\"_blank\" >Update Purchase Now</a> </li>";
         }
         echo '</ul>
         </div>';
@@ -20,7 +20,7 @@ if ($error) {
             <?php
             $purchase_key_used = session_flash('purchase_key_used');
             if ($purchase_key_used) {
-                echo "<li> \n <a href=\"https://www.bdtask.com/license-update.php?product_key=20386502&purchase_key=$purchase_key_used\" target=\"_blank\" >Update Purchase Now</a> </li>";
+                echo "<li> \n <a href=\"https://www.khobor71.com/license-update.php?product_key=20386502&purchase_key=$purchase_key_used\" target=\"_blank\" >Update Purchase Now</a> </li>";
             } ?>
             </ul>
         </div>

@@ -12,7 +12,7 @@ $current_link_index = array_flip(array_keys($config['menu']))[$current_link] ?? 
             <div class="row">
                 <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
                     <header class="header">
-                        <h1 class="header-title">Bdtask software installer</h1>
+                        <h1 class="header-title">khobor 71 software installer</h1>
                     </header>
                     <div class="page-content">
                         <div class="outer-container">

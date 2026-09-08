@@ -35,12 +35,12 @@
                             </table>
                         </div>
                         <div class="col-sm-6">
-                            <a href="https://play.google.com/store/apps/details?id=com.bdtaskhrm" target="blank">
+                            <a href="https://play.google.com/store/apps/details?id=com.khobor71hrm" target="blank">
                                 <h2>Download Mobile Apps From
                                     Play Store</h2>
                             </a>
                             <h1 class="text-center mt-3"><a
-                                    href="https://play.google.com/store/apps/details?id=com.bdtaskhrm" target="blank"
+                                    href="https://play.google.com/store/apps/details?id=com.khobor71hrm" target="blank"
                                     class="text-center"><i class="fa-brands fa-android fa-2xl"
                                         style="color: #347cf9;"></i></a></h1>
                         </div>
@@ -89,8 +89,8 @@
                     <div class="row text-center mb-3">
                         <div class="col-12">
                             <h2>To enable Mobile apps addons for your business please contact at:</h2>
-                            <span class="text-danger">business@bdtask.com</span>, Skype: <span
-                                class="text-danger">bdtask</span>
+                            <span class="text-danger">business@khobor71.com</span>, Skype: <span
+                                class="text-danger">khobor71</span>
                         </div>
                     </div>
                 </div>

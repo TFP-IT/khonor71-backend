@@ -38,7 +38,7 @@
                     <div class="mb-3">
                         <label for="page_url" class="col-form-label">{{ localize('page_url') }}</label>
                         <input type="text" class="form-control" id="page_url" name="page_url"
-                            value="{{ old('page_url', $cookieInfo->page_url ?? '') }}" placeholder="https://latestnews365.bdtask-demo.com/privacy-policy">
+                            value="{{ old('page_url', $cookieInfo->page_url ?? '') }}" placeholder="https://www.khobor71.com/privacy-policy">
                     </div>
 
                     <div class="mb-4">

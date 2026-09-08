@@ -17684,7 +17684,7 @@ Experts believe this is more than a passing phase. As Bangladesh&rsquo;s middle 
 
 <p data-end="910" data-start="538">&nbsp;</p>
 
-<p data-end="910" data-start="538" style="text-align: center;"><img alt="" src="https://latestnews365.bdtask-demo.com/storage/ckeditor_media/1751629230699.jpg" style="width: 640px; height: 427px;" /></p>
+<p data-end="910" data-start="538" style="text-align: center;"><img alt="" src="https://www.khobor71.com/storage/ckeditor_media/1751629230699.jpg" style="width: 640px; height: 427px;" /></p>
 
 <p data-end="910" data-start="538">&nbsp;</p>
 
@@ -19876,7 +19876,7 @@ Experts believe this is more than a passing phase. As Bangladesh&rsquo;s middle 
 
 <h2 data-end="1242" data-start="1183"><span style="font-size:22px;"><span style="font-family:Georgia,serif;">Food Inflation Snapshot: Category-Wise Price Surge</span></span></h2>
 
-<p><span style="font-family:Georgia,serif;"><span style="font-size:16px;"><img alt="" src="https://latestnews365.bdtask-demo.com/storage/ckeditor_media/1753024955884.png" style="width: 755px; height: 450px;" /></span></span></p>
+<p><span style="font-family:Georgia,serif;"><span style="font-size:16px;"><img alt="" src="https://www.khobor71.com/storage/ckeditor_media/1753024955884.png" style="width: 755px; height: 450px;" /></span></span></p>
 
 <table data-end="2020" data-start="1244">
 <thead data-end="1352" data-start="1244">
@@ -22905,7 +22905,7 @@ For many nations, the value of local currency has plummeted against the US dolla
 
 <p data-end="672" data-start="303">&nbsp;</p>
 
-<p data-end="2951" data-start="2823"><span style="font-size:12px;"><span style="font-family:Verdana,Geneva,sans-serif;"><img alt="" src="https://latestnews365.bdtask-demo.com/storage/ckeditor_media/1752648893573.png" style="width: 800px; height: 477px;" /></span></span></p>
+<p data-end="2951" data-start="2823"><span style="font-size:12px;"><span style="font-family:Verdana,Geneva,sans-serif;"><img alt="" src="https://www.khobor71.com/storage/ckeditor_media/1752648893573.png" style="width: 800px; height: 477px;" /></span></span></p>
 
 <h3 data-end="3670" data-start="3647"><span style="font-size:12px;"><span style="font-family:Verdana,Geneva,sans-serif;"><strong>Summary Insights</strong></span></span></h3>
 
@@ -23787,7 +23787,7 @@ Wikipedia Critics and fans alike praised WWE&rsquo;s strategic shift: Evolution&
 
 <p data-end="672" data-start="303">&nbsp;</p>
 
-<p data-end="2951" data-start="2823"><span style="font-size:12px;"><img alt="" src="https://latestnews365.bdtask-demo.com/storage/ckeditor_media/1752648893573.png" style="width: 800px; height: 477px;" /></span></p>
+<p data-end="2951" data-start="2823"><span style="font-size:12px;"><img alt="" src="https://www.khobor71.com/storage/ckeditor_media/1752648893573.png" style="width: 800px; height: 477px;" /></span></p>
 
 <h3 data-end="3670" data-start="3647"><span style="font-family:Verdana,Geneva,sans-serif;"><span style="font-size:12px;"><strong>Summary Insights</strong></span></span></h3>
 
