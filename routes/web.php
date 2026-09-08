@@ -96,6 +96,15 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
     });
 });
 
+// Sitemap Routes
+Route::get('/sitemap_index.xml', [\App\Http\Controllers\Website\SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap_posts_{page}.xml', [\App\Http\Controllers\Website\SitemapController::class, 'posts'])->name('sitemap.posts');
+Route::get('/sitemap_pages.xml', [\App\Http\Controllers\Website\SitemapController::class, 'pages'])->name('sitemap.pages');
+Route::get('/sitemap_categories.xml', [\App\Http\Controllers\Website\SitemapController::class, 'categories'])->name('sitemap.categories');
+Route::get('/sitemap_news.xml', [\App\Http\Controllers\Website\SitemapController::class, 'news'])->name('sitemap.news');
+Route::get('/sitemap_videos.xml', [\App\Http\Controllers\Website\SitemapController::class, 'videos'])->name('sitemap.videos');
+Route::get('/sitemap_opinions.xml', [\App\Http\Controllers\Website\SitemapController::class, 'opinions'])->name('sitemap.opinions');
+Route::get('/sitemap_probashi.xml', [\App\Http\Controllers\Website\SitemapController::class, 'probashi'])->name('sitemap.probashi');
 
 /** Website All Route
  * These all routes must be need duplicate for default language and other languages
