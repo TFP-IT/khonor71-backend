@@ -72,7 +72,75 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="category_id"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Map to Category (Optional)</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <select name="category_id" id="category_id" class="form-control select-basic-single">
+                                        <option value="">-- None --</option>
+                                        @foreach ($categories as $cat)
+                                            <option value="{{ $cat->id }}" {{ $rss->category_id == $cat->id ? 'selected' : '' }}>
+                                                {{ $cat->category_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="cache_duration"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Cache Duration (Minutes)</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <input type="number" min="1" class="form-control" id="cache_duration" name="cache_duration"
+                                        placeholder="10" value="{{ $rss->cache_duration ?? 10 }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="fallback_image"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Fallback Image URL</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <input type="text" class="form-control" id="fallback_image" name="fallback_image"
+                                        placeholder="https://example.com/logo.png" value="{{ $rss->fallback_image }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="summary_length"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Summary Length (Characters)</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <input type="number" min="0" class="form-control" id="summary_length" name="summary_length"
+                                        placeholder="150" value="{{ $rss->summary_length }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="include_keywords"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Include Keywords (Comma Separated)</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <textarea class="form-control" id="include_keywords" name="include_keywords" placeholder="sports, politics">{{ $rss->include_keywords }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <div class="row">
+                                <label for="exclude_keywords"
+                                    class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">Exclude Keywords (Comma Separated)</label>
+                                <div class="col-sm-10 col-md-12 col-xl-10">
+                                    <textarea class="form-control" id="exclude_keywords" name="exclude_keywords" placeholder="nsfw, violence">{{ $rss->exclude_keywords }}</textarea>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12 mt-3">
                             <div class="row">
                                 <label for="show_read_more_button" class="col-form-label col-sm-2 col-md-12 col-xl-2 fw-semibold">{{ localize('show_read_more_button') }}</label>

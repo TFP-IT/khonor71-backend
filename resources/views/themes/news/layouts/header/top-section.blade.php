@@ -45,7 +45,7 @@
         <section class="flex items-center gap-2 md:gap-4">
             <!-- Login / Registration -->
             @if (app_setting()->web_user_can_login == 1)
-                @include('themes.classic.components.common.login-button')
+                @include('themes.news.components.common.login-button')
             @endif
 
 

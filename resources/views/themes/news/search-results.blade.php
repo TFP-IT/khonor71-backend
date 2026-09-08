@@ -195,7 +195,7 @@
         <section>
             <div class="space-y-6 sticky top-16">
                 <!-- Popular post -->
-                @include('themes.classic.components.common.popular-post')
+                @include('themes.news.components.common.popular-post')
 
                 <!-- Ads section -->
                 <!-- TODO Uncomment for adShow -->
@@ -210,11 +210,11 @@
                 </figure> -->
 
                 <!-- Top Week -->
-                @include('themes.classic.components.common.recommended-top-week-post')
+                @include('themes.news.components.common.recommended-top-week-post')
 
                 <!-- Voting poll -->
                 @if ($votingPoll)
-                    @include('themes.classic.components.common.voting-poll')
+                    @include('themes.news.components.common.voting-poll')
                 @endif
 
                 <!-- Ads section -->

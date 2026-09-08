@@ -11,6 +11,7 @@ use Modules\Localize\Entities\Language;
 use Modules\Setting\Entities\Language as EntitiesLanguage;
 use Illuminate\Contracts\Support\Renderable;
 use Modules\RssFeeds\DataTables\RssFeedsDataTable;
+use Modules\Category\Entities\Category;
 
 class RssFeedsController extends Controller
 {
@@ -38,8 +39,9 @@ class RssFeedsController extends Controller
     public function create()
     {
         $languages = Language::all();
+        $categories = Category::all();
 
-        return view('rssfeeds::create', compact('languages'));
+        return view('rssfeeds::create', compact('languages', 'categories'));
     }
 
     /**
@@ -56,6 +58,12 @@ class RssFeedsController extends Controller
             'paper_language'        => 'required|exists:languages,id',
             'show_read_more_button' => 'nullable|boolean',
             'read_more_button_text' => 'nullable|string|max:255',
+            'cache_duration'        => 'nullable|integer|min:1',
+            'category_id'           => 'nullable|exists:categories,id',
+            'fallback_image'        => 'nullable|string',
+            'summary_length'        => 'nullable|integer|min:0',
+            'include_keywords'      => 'nullable|string',
+            'exclude_keywords'      => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -71,6 +79,12 @@ class RssFeedsController extends Controller
                 'slug'          => $slug,
                 'feed_url'      => $request->feed_url,
                 'posts'         => $request->number_of_posts,
+                'cache_duration'=> $request->cache_duration ?? 10,
+                'category_id'   => $request->category_id,
+                'fallback_image'=> $request->fallback_image,
+                'summary_length'=> $request->summary_length,
+                'include_keywords' => $request->include_keywords,
+                'exclude_keywords' => $request->exclude_keywords,
                 'paper_language'=> $request->paper_language,
                 'show_button'   => $request->has('show_read_more_button') ? 1 : 0,
                 'button_text'   => $request->read_more_button_text,
@@ -109,7 +123,8 @@ class RssFeedsController extends Controller
     public function edit(RssFeed $rss)
     {
         $languages = Language::all();
-        return view('rssfeeds::edit', compact('rss', 'languages'));
+        $categories = Category::all();
+        return view('rssfeeds::edit', compact('rss', 'languages', 'categories'));
     }
 
     /**
@@ -127,6 +142,12 @@ class RssFeedsController extends Controller
             'paper_language'        => 'required|exists:languages,id',
             'show_read_more_button' => 'nullable|boolean',
             'read_more_button_text' => 'nullable|string|max:255',
+            'cache_duration'        => 'nullable|integer|min:1',
+            'category_id'           => 'nullable|exists:categories,id',
+            'fallback_image'        => 'nullable|string',
+            'summary_length'        => 'nullable|integer|min:0',
+            'include_keywords'      => 'nullable|string',
+            'exclude_keywords'      => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -141,6 +162,12 @@ class RssFeedsController extends Controller
                 'slug'          => $slug,
                 'feed_url'      => $request->feed_url,
                 'posts'         => $request->number_of_posts,
+                'cache_duration'=> $request->cache_duration ?? 10,
+                'category_id'   => $request->category_id,
+                'fallback_image'=> $request->fallback_image,
+                'summary_length'=> $request->summary_length,
+                'include_keywords' => $request->include_keywords,
+                'exclude_keywords' => $request->exclude_keywords,
                 'paper_language'=> $request->paper_language,
                 'show_button'   => $request->has('show_read_more_button') ? 1 : 0,
                 'button_text'   => $request->read_more_button_text,

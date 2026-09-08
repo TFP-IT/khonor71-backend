@@ -55,10 +55,10 @@
                     </div>
                 @endif
                 {{-- update profile --}}
-                @include('themes.classic.components.home.setting.update-profile')
+                @include('themes.news.components.home.setting.update-profile')
 
                 {{-- delete account --}}
-                @include('themes.classic.components.home.setting.delete-account')
+                @include('themes.news.components.home.setting.delete-account')
 
             </div>
         </div>

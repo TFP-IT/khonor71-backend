@@ -1793,8 +1793,45 @@ class HomeDataService
             try {
                 $items = FeedsFacade::make($feed->feed_url)->get_items();
 
-                $newsItems = collect($items)->take($feed->posts)->map(function ($item) use ($feed) {
+                $itemsCollection = collect($items);
+                
+                // 1. Keyword Filtering
+                if (!empty($feed->include_keywords)) {
+                    $includes = array_map('trim', explode(',', strtolower($feed->include_keywords)));
+                    $itemsCollection = $itemsCollection->filter(function ($item) use ($includes) {
+                        $text = strtolower($item->get_title() . ' ' . $item->get_description());
+                        foreach ($includes as $keyword) {
+                            if (str_contains($text, $keyword)) return true;
+                        }
+                        return false;
+                    });
+                }
+
+                if (!empty($feed->exclude_keywords)) {
+                    $excludes = array_map('trim', explode(',', strtolower($feed->exclude_keywords)));
+                    $itemsCollection = $itemsCollection->reject(function ($item) use ($excludes) {
+                        $text = strtolower($item->get_title() . ' ' . $item->get_description());
+                        foreach ($excludes as $keyword) {
+                            if (str_contains($text, $keyword)) return true;
+                        }
+                        return false;
+                    });
+                }
+
+                $newsItems = $itemsCollection->take($feed->posts)->map(function ($item) use ($feed) {
                     $dcCreator = $item->get_item_tags('http://purl.org/dc/elements/1.1/', 'creator');
+                    
+                    // 2. Fallback Image
+                    $image = $this->extractImageFromRssItem($item);
+                    if (!$image && !empty($feed->fallback_image)) {
+                        $image = asset($feed->fallback_image);
+                    }
+
+                    // 3. Content Truncation
+                    $description = strip_tags($item->get_description());
+                    if ($feed->summary_length > 0) {
+                        $description = \Illuminate\Support\Str::limit($description, $feed->summary_length);
+                    }
 
                     return [
                         'title'       => $item->get_title(),
@@ -1802,21 +1839,25 @@ class HomeDataService
                         'link'        => $item->get_link(),
                         'guid'        => $item->get_id(),
                         'author'      => $dcCreator[0]['data'] ?? '',
-                        'description' => $item->get_description(),
+                        'description' => $description,
                         'pubDate'     => $item->get_date('Y-m-d H:i:s'),
                         'categories'  => collect($item->get_categories())->pluck('term')->toArray(),
-                        'image'       => $this->extractImageFromRssItem($item),
+                        'image'       => $image,
 
                         'show_button'  => $feed->show_button,
                         'button_text'  => $feed->button_text,
                         'feed_name'    => $feed->feed_name,
                         'feed_slug'    => $feed->slug,
+                        'category_id'  => $feed->category_id,
                     ];
                 })->toArray();
 
-                Cache::put($cacheKey, $newsItems, now()->addMinutes(10));
+                // 4. Custom Cache Duration
+                $cacheTTL = $feed->cache_duration > 0 ? $feed->cache_duration : 10;
+                Cache::put($cacheKey, $newsItems, now()->addMinutes($cacheTTL));
             } catch (\Exception $e) {
                 $newsItems = [];
+                // \Log::error('RSS Fetch Error: ' . $e->getMessage());
             }
         } else {
             $newsItems = Cache::get($cacheKey);

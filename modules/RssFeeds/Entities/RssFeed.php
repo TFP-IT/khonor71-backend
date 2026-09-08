@@ -16,6 +16,12 @@ class RssFeed extends Model
         'slug',
         'feed_url',
         'posts',
+        'cache_duration',
+        'category_id',
+        'fallback_image',
+        'summary_length',
+        'include_keywords',
+        'exclude_keywords',
         'paper_language',
         'show_button',
         'button_text',
@@ -27,6 +33,12 @@ class RssFeed extends Model
         'slug'=> 'string',
         'feed_url'=> 'string',
         'posts'=> 'integer',
+        'cache_duration' => 'integer',
+        'category_id' => 'integer',
+        'fallback_image' => 'string',
+        'summary_length' => 'integer',
+        'include_keywords' => 'string',
+        'exclude_keywords' => 'string',
         'paper_language'=> 'integer',
         'show_button'=> 'integer',
         'button_text' => 'string',
@@ -54,5 +66,10 @@ class RssFeed extends Model
     public function language()
     {
         return $this->belongsTo(Language::class, 'paper_language');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(\Modules\Category\Entities\Category::class, 'category_id');
     }
 }

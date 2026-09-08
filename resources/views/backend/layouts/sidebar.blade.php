@@ -404,12 +404,12 @@
                             <span> {{ ucwords(localize('web_setup')) }}</span>
                         </a>
                         <ul class="nav-second-level {{ request()->is('admin/web-setup*') || request()->is('admin/theme*') ? 'mm-show' : '' }}">
-                            @can('read_theme')
+                            {{-- @can('read_theme')
                                 <li class="{{ request()->is('admin/theme*') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
                                         href="{{ route('admin.theme.index') }}">{{ ucwords(localize('theme')) }}</a>
                                 </li>
-                            @endcan
+                            @endcan --}}
                             @can('read_setup_top_breaking_post')
                                 <li class="{{ request()->is('admin/web-setup/setup-top-breaking') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
