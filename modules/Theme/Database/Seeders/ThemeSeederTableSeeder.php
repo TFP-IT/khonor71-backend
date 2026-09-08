@@ -18,10 +18,7 @@ class ThemeSeederTableSeeder extends Seeder
         Model::unguard();
 
         DB::table('themes')->insert([
-            ['name' => 'Classic', 'image_path' => 'backend/img/themes/1.png', 'is_active' => false],
-            ['name' => 'News', 'image_path' => 'backend/img/themes/2.png', 'is_active' => false],
-            ['name' => 'Magazine', 'image_path' => 'backend/img/themes/3.png', 'is_active' => false],
-            ['name' => 'Times', 'image_path' => 'backend/img/themes/4.png', 'is_active' => true],
+            ['name' => 'News', 'image_path' => 'backend/img/themes/2.png', 'is_active' => true],
         ]);
     }
 }
