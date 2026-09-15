@@ -32,4 +32,14 @@ class Upazila extends Model
         'bn_name'     => 'string',
         'url'         => 'string',
     ];
+
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function news()
+    {
+        return $this->hasMany(NewsMst::class, 'upazila_id');
+    }
 }

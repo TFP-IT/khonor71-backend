@@ -36,4 +36,19 @@ class District extends Model
         'lon'         => 'string',
         'url'         => 'string',
     ];
+
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
+    }
+
+    public function upazilas()
+    {
+        return $this->hasMany(Upazila::class);
+    }
+
+    public function news()
+    {
+        return $this->hasMany(NewsMst::class, 'district_id');
+    }
 }

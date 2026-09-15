@@ -2267,4 +2267,12 @@
   'deactivate_ticker' => 'Deactivate ticker',
   'news_ticker_deactivated' => 'News ticker deactivated',
   'news_ticker_activated' => 'News ticker activated',
+  'সারাদেশ' => 'সারাদেশ',
+  'জেলার_খবর' => 'জেলার খবর',
+  'division' => 'Division',
+  'select_division' => 'Select division',
+  'district' => 'District',
+  'select_district' => 'Select district',
+  'upazila' => 'Upazila',
+  'select_upazila' => 'Select upazila',
 );

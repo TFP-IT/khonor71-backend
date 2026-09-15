@@ -4,6 +4,9 @@ namespace Modules\News\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\NewsMst;
+use App\Models\Division;
+use App\Models\District;
+use App\Models\Upazila;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -98,6 +101,7 @@ class NewsController extends Controller
         $data['newsMst'] = $this->newsService->newsMstData($id);
         $data['categories'] = Category::onlyParents()->where('language_id', $data['newsMst']->language_id)->get();
         $data['subCategories'] = $this->newsService->getSubCategory($data['newsMst']->category_id);
+        $data['districts'] = $data['newsMst']->division_id ? District::where('division_id', $data['newsMst']->division_id)->get() : collect();
 
         return view('news::edit', $data);
     }
@@ -244,6 +248,21 @@ class NewsController extends Controller
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Unable to fetch categories'], 500);
+        }
+    }
+
+    /**
+     * Get districts by division ID
+     * @param int $divisionId
+     * @return JsonResponse
+     */
+    public function getDistrictsByDivision($divisionId): JsonResponse
+    {
+        try {
+            $districts = District::where('division_id', $divisionId)->orderBy('name')->get(['id', 'name', 'bn_name']);
+            return response()->json($districts);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to fetch districts'], 500);
         }
     }
 

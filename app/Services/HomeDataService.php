@@ -55,6 +55,8 @@ class HomeDataService
                 'sectionFiveNews' => $this->getSectionFiveNews(),
                 'sectionSixNews' => $this->getSectionSixNews(),
                 'commonSectionNews' => $this->getCommonSectionNews(),
+                'districtNews' => $this->getDistrictNews(),
+                'divisions' => $this->getDivisionsWithDistricts(),
                 'homeStories' => $this->getHomeStory(),
                 'themeSettings' => ThemeHelper::themeSettings(),
             ];
@@ -1940,6 +1942,117 @@ class HomeDataService
         $votingPoll = $this->getVotingPoll();
 
         return compact('popularNews', 'newsDetail', 'relatedNews', 'votingPoll');
+    }
+
+    public function getDistrictNews($divisionId = null, $districtId = null, $limit = 8)
+    {
+        $languageId = get_language_id();
+        $query = NewsMst::with(['category', 'district', 'division', 'postByUser:id,full_name', 'photoLibrary'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1);
+
+        if ($districtId) {
+            $query->where('district_id', $districtId);
+        } elseif ($divisionId) {
+            $query->where('division_id', $divisionId);
+        } else {
+            $query->where(function ($q) {
+                $q->whereNotNull('district_id')
+                  ->orWhereNotNull('division_id')
+                  ->orWhereHas('category', function ($cq) {
+                      $cq->where('slug', 'সারাদেশ')->orWhere('category_name', 'like', '%সারাদেশ%');
+                  });
+            });
+        }
+
+        return $query->orderBy('publish_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->take($limit)
+            ->get();
+    }
+
+    public function getDivisionsWithDistricts()
+    {
+        return \App\Models\Division::with(['districts' => function ($q) {
+            $q->orderBy('name');
+        }])->orderBy('name')->get();
+    }
+
+    public function getDistrictNewsView(string $slug)
+    {
+        $languageId = get_language_id();
+
+        $district = \App\Models\District::where('url', $slug)->first();
+        $division = null;
+        if (!$district) {
+            $division = \App\Models\Division::where('url', $slug)->first();
+        }
+
+        if (!$district && !$division && $slug !== 'all') {
+            return null;
+        }
+
+        $title = 'সারাদেশের খবর';
+        if ($district) {
+            $title = $district->bn_name . ' (' . $district->name . ')';
+        } elseif ($division) {
+            $title = $division->bn_name . ' (' . $division->name . ' বিভাগ)';
+        }
+
+        $category = (object) [
+            'id' => 0,
+            'category_name' => $title,
+            'slug' => 'district/' . $slug,
+            'meta_keyword' => $title,
+            'meta_description' => $title . ' - জেলা সংবাদ ও সর্বশেষ খবর',
+        ];
+
+        $query = NewsMst::select([
+                'id',
+                'news_id',
+                'encode_title',
+                'title',
+                'news',
+                'image',
+                'image_base_url',
+                'image_alt',
+                'image_title',
+                'post_by',
+                'publish_date',
+                'status',
+                'district_id',
+                'division_id',
+            ])
+            ->withCount('comments')
+            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary', 'district', 'division'])
+            ->where('language_id', $languageId)
+            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('status', 1);
+
+        if ($district) {
+            $query->where('district_id', $district->id);
+        } elseif ($division) {
+            $query->where('division_id', $division->id);
+        } else {
+            $query->where(function ($q) {
+                $q->whereNotNull('district_id')
+                  ->orWhereNotNull('division_id')
+                  ->orWhereHas('category', function ($cq) {
+                      $cq->where('slug', 'সারাদেশ')->orWhere('category_name', 'like', '%সারাদেশ%');
+                  });
+            });
+        }
+
+        $categoryNews = $query->orderBy('publish_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(12);
+
+        $popularNews = $this->getPopularNews();
+        $topWeekNews = $this->getTopWeekNews();
+        $votingPoll = $this->getVotingPoll();
+
+        return compact('category', 'categoryNews', 'popularNews', 'topWeekNews', 'votingPoll');
     }
 
 }

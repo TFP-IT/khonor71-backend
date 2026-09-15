@@ -204,4 +204,31 @@ $(document).ready(function () {
         }
     });
 
+    /** District by Division */
+    $(document).on("change", "#division_id", function () {
+        let divisionId = $(this).val();
+        $("#district_id").html('<option value="">Select District</option>');
+        if (divisionId) {
+            axios
+                .get(`${baseUrl}/admin/news/districts-by-division/${divisionId}`)
+                .then(function (response) {
+                    let data = response.data;
+                    let optionHtml = `<option value="">Select District</option>`;
+                    $.each(data, function (key, value) {
+                        let label = value.bn_name ? `${value.bn_name} (${value.name})` : value.name;
+                        optionHtml += `<option value="${value.id}">${label}</option>`;
+                    });
+
+                    $("#district_id").html(optionHtml);
+                    $("#district_id").select2({
+                        placeholder: "Select District",
+                        allowClear: true,
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    });
+
 });

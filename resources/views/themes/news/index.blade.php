@@ -124,6 +124,11 @@
         </section>
     </section>
 
+    {{-- District News (সারাদেশ / জেলার খবর) --}}
+    @if(isset($districtNews))
+        @include('themes.news.components.home.district-news')
+    @endif
+
     {{-- Video Section --}}
     @if ($videoNews->isNotEmpty())
         <section class="bg-neutral-100 dark:bg-neutral-800 py-6">

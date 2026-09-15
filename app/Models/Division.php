@@ -31,4 +31,13 @@ class Division extends Model
         'url'     => 'string',
     ];
 
+    public function districts()
+    {
+        return $this->hasMany(District::class);
+    }
+
+    public function news()
+    {
+        return $this->hasMany(NewsMst::class, 'division_id');
+    }
 }

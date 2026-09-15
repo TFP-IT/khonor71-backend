@@ -202,6 +202,9 @@ Route::get('{lang}/probashi-news-list', [WebsiteHomeController::class, 'probashi
     ->where(['lang' => '[a-zA-Z]{2}'])
     ->name('website.lang.probashi-news');
 
+Route::get('district-news-filter', [WebsiteHomeController::class, 'filterDistrictNews'])->name('website.district.filter');
+Route::get('district/{slug}', [WebsiteHomeController::class, 'districtNews'])->name('website.district.news');
+Route::get('{lang}/district/{slug}', [WebsiteHomeController::class, 'districtNews'])->where(['lang' => '[a-zA-Z]{2}'])->name('website.lang.district.news');
 
 Route::get('/{param}', [WebsiteHomeController::class, 'handle'])
 ->where('param', '[\p{L}\p{M}\p{N}_\-]+')->name('website.handle');

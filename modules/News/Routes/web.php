@@ -38,6 +38,7 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         Route::resource('news', NewsController::class);
         Route::get('/news/sub-category/{categoryId}', [NewsController::class, 'getSubCategories'])->name('admin.news.sub_category.details');
         Route::get('/news/category-by-language/{languageId}', [NewsController::class, 'getCategoriesByLanguage']);
+        Route::get('/news/districts-by-division/{divisionId}', [NewsController::class, 'getDistrictsByDivision'])->name('admin.news.districts_by_division');
         // routes/web.php or routes/admin.php
         Route::post('/admin/ai/generate', [AIController::class, 'generateText'])->name('admin.ai.generate');
         Route::resource('bulk/post/upload', BulkPostController::class)->names('bulk.post.upload');

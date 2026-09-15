@@ -433,6 +433,48 @@ class HomeController extends Controller
         return ThemeHelper::view('category_news', $data);
     }
 
+    public function districtNews(string $slug, $lang = '')
+    {
+        $data = $this->homeDataService->getDistrictNewsView($slug);
+        if (!$data) {
+            return redirect('/');
+        }
+
+        $title = $data['category']->category_name;
+        $description = $data['category']->meta_description ?? '';
+        $metaKeywords = $data['category']->meta_keyword ?? '';
+
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        if (isset($metaKeywords) && !empty($metaKeywords)) {
+            SEOMeta::addKeyword(explode(',', $metaKeywords));
+        }
+        SEOTools::setCanonical(url()->current());
+        SEOTools::opengraph()->setUrl(url()->current());
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::twitter()->setTitle($title);
+
+        return ThemeHelper::view('category_news', $data);
+    }
+
+    public function filterDistrictNews(Request $request)
+    {
+        $divisionId = $request->division_id;
+        $districtId = $request->district_id;
+
+        $districtNews = $this->homeDataService->getDistrictNews($divisionId, $districtId, 8);
+
+        $html = view('themes.news.components.home.district-news-items', compact('districtNews'))->render();
+
+        return response()->json([
+            'success' => true,
+            'count'   => $districtNews->count(),
+            'html'    => $html,
+        ]);
+    }
+
     private function latestNewsList()
     {
         $data = $this->homeDataService->getLatestNewsView();

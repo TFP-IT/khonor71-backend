@@ -29,6 +29,9 @@ class NewsMst extends Model
         'language_id',
         'category_id',
         'sub_category_id',
+        'division_id',
+        'district_id',
+        'upazila_id',
         'encode_title',
         'seo_title',
         'stitle',
@@ -262,5 +265,36 @@ class NewsMst extends Model
     public function seoOnpage()
     {
         return $this->hasOne(PostSeoOnpage::class, 'news_id', 'id');
+    }
+
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class, 'division_id');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'district_id');
+    }
+
+    public function upazila(): BelongsTo
+    {
+        return $this->belongsTo(Upazila::class, 'upazila_id');
+    }
+
+    public function scopeDivision($query, $divisionId)
+    {
+        if ($divisionId) {
+            return $query->where('division_id', $divisionId);
+        }
+        return $query;
+    }
+
+    public function scopeDistrict($query, $districtId)
+    {
+        if ($districtId) {
+            return $query->where('district_id', $districtId);
+        }
+        return $query;
     }
 }

@@ -99,6 +99,54 @@
 
         <div class="row">
 
+            <div class="col-lg-6 col-md-6">
+                <div class="row form-group">
+                    <label for="division_id" class="col-form-label fw-semibold">{{ localize_uc('division') }} (বিভাগ)</label>
+                    <select name="division_id" id="division_id" class="form-control select-basic-single"
+                        data-allow-clear="true" data-placeholder="{{ localize_uc('select_division') }}">
+                        <option value=""></option>
+                        @if (isset($divisions))
+                        @foreach ($divisions as $division)
+                        <option value="{{ $division->id }}" @selected(old('division_id', $newsMst->division_id ?? null) == $division->id)>
+                            {{ $division->bn_name }} ({{ $division->name }})
+                        </option>
+                        @endforeach
+                        @endif
+                    </select>
+                    <div class="invalid-feedback error text-danger m-2 d-block">
+                        @error('division_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6">
+                <div class="row form-group">
+                    <label for="district_id" class="col-form-label fw-semibold">{{ localize_uc('district') }} (জেলা)</label>
+                    <select name="district_id" id="district_id" class="form-control select-basic-single"
+                        data-allow-clear="true" data-placeholder="{{ localize_uc('select_district') }}">
+                        <option value=""></option>
+                        @if (isset($districts))
+                        @foreach ($districts as $district)
+                        <option value="{{ $district->id }}" @selected(old('district_id', $newsMst->district_id ?? null) == $district->id)>
+                            {{ $district->bn_name }} ({{ $district->name }})
+                        </option>
+                        @endforeach
+                        @endif
+                    </select>
+                    <div class="invalid-feedback error text-danger m-2 d-block">
+                        @error('district_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
             <div class="col-lg-3 col-md-6">
                 <div class="row form-group">
                     <label for="home_page"

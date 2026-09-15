@@ -5,6 +5,7 @@ namespace Modules\News\Services;
 use Exception;
 use Carbon\Carbon;
 use App\Models\NewsMst;
+use App\Models\Division;
 use App\Models\PostTag;
 use App\Models\SchemaPost;
 use Illuminate\Support\Str;
@@ -47,8 +48,9 @@ class NewsService
         $homeSliderPositions = generate_positions(1, 7);
         $auth_user           = auth()->user();
         $languages = Language::all();
+        $divisions = Division::orderBy('name')->get();
 
-        return compact('reporters', 'categoryPositions', 'homeSliderPositions', 'auth_user', 'languages');
+        return compact('reporters', 'categoryPositions', 'homeSliderPositions', 'auth_user', 'languages', 'divisions');
     }
 
     /**
@@ -107,6 +109,9 @@ class NewsService
                 'language_id'      => $attributes['language_id'],
                 'category_id'      => $other_page ?? null,
                 'sub_category_id'  => $attributes['sub_category_id'] ?? null,
+                'division_id'      => $attributes['division_id'] ?? null,
+                'district_id'      => $attributes['district_id'] ?? null,
+                'upazila_id'       => $attributes['upazila_id'] ?? null,
                 'encode_title'     => strtolower($encode_title),
                 'seo_title'        => $attributes['seo_title'] ?? null,
                 'stitle'           => $attributes['short_head'] ?? null,
@@ -462,6 +467,9 @@ class NewsService
                 'language_id'      => $attributes['language_id'],
                 'category_id'      => $attributes['other_page'] ?? null,
                 'sub_category_id'  => $attributes['sub_category_id'] ?? null,
+                'division_id'      => $attributes['division_id'] ?? null,
+                'district_id'      => $attributes['district_id'] ?? null,
+                'upazila_id'       => $attributes['upazila_id'] ?? null,
                 'encode_title'     => strtolower($encode_title),
                 'seo_title'        => $attributes['seo_title'] ?? null,
                 'stitle'           => $attributes['short_head'] ?? null,
