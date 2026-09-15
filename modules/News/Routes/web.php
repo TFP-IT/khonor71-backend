@@ -25,7 +25,9 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         Route::patch('news/position/update', [NewsPositionController::class, 'update'])->name('news.position.update');
         Route::delete('news/position/{news_position}/destroy', [NewsPositionController::class, 'destroy'])->name('news.position.destroy');
 
+        Route::post('news/breaking-news/toggle-ticker', [BreakingNewsController::class, 'toggleTicker'])->name('news.breaking-news.toggle-ticker');
         Route::resource('news/breaking-news', BreakingNewsController::class)->names('news.breaking-news')->except(['create', 'show']);
+        Route::post('news/breaking-news/{breaking_news}/status', [BreakingNewsController::class, 'updateStatus'])->name('news.breaking-news.update-status');
 
         Route::resource('news/post', NewsPostController::class)->names('news.post')->except(['show']);
         Route::get('ai/ai_settings', [AIController::class, 'index'])->name('ai.ai_settings');

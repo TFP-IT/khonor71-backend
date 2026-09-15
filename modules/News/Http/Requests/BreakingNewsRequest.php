@@ -17,8 +17,13 @@ class BreakingNewsRequest extends FormRequest
     public function rules()
     {
         return [
-            'language_id' => 'required|exists:languages,id',
+            'language_id'   => 'required|exists:languages,id',
             'breaking_news' => 'required|string',
+            'url'           => 'nullable|string|max:500',
+            'start_time'    => 'nullable|date',
+            'end_time'      => 'nullable|date|after_or_equal:start_time',
+            'priority'      => 'nullable|integer',
+            'status'        => 'nullable|in:0,1',
         ];
     }
 
@@ -26,8 +31,13 @@ class BreakingNewsRequest extends FormRequest
     public function attributes()
     {
         return [
-            'language_id' => 'language',
-            'breaking_news' => 'your post',
+            'language_id'   => 'language',
+            'breaking_news' => 'breaking headline',
+            'url'           => 'article URL',
+            'start_time'    => 'start date/time',
+            'end_time'      => 'end date/time',
+            'priority'      => 'priority',
+            'status'        => 'status',
         ];
     }
 

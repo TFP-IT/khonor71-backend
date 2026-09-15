@@ -178,7 +178,7 @@
   'click_here_to_change_the_footer_background_image' => 'Click here to change the footer background image',
   'header_font_color' => 'Header font color',
   'choose_your_font_color' => 'Choose your font color',
-  'save_changes' => 'Save changes',
+  'save_changes' => 'Save Changes',
   'reset_to_default' => 'Reset to default',
   'home_page_view_setting' => 'Home page view setting',
   'language' => 'Language',
@@ -391,5 +391,5 @@
   'total' => 'Total',
   'script_manager' => 'Script Manager',
   'script_manager_subtitle' => 'Configure all third-party tracking scripts, analytics, advertising pixels, and verification tags for your newspaper website.',
-  'save_changes' => 'Save Changes',
+  'probashi' => 'Probashi',
 );

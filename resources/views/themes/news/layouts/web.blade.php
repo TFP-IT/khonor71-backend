@@ -67,7 +67,7 @@
             font-family: var(--font-supplementary) !important;
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('assets/css/news.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/news.min.css') }}?v={{ filemtime(public_path('assets/css/news.min.css')) }}">
 
     <!-- Tailwind css -->
     @vite(['resources/css/app.css'])

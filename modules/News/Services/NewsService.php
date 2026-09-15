@@ -172,11 +172,15 @@ class NewsService
                     'language_id'=> $attributes['language_id'],
                     'news_id'    => $newsMst->id,
                     'title'      => $JSON_format_breaking_news,
+                    'url'        => strtolower($encode_title),
                     'time_stamp' => $time_stamp,
+                    'start_time' => now(),
+                    'priority'   => 1,
                     'status'     => 1,
                 ];
 
                 $breakingNews = BreakingNews::create($breakingNewsData);
+                app(\Modules\News\Services\BreakingNewsService::class)->clearCache();
             }
 
             /**
@@ -533,6 +537,7 @@ class NewsService
                     'language_id'=> $attributes['language_id'],
                     'news_id'    => $newsMst->id,
                     'title'      => $JSON_format_breaking_news,
+                    'url'        => strtolower($encode_title),
                     'time_stamp' => time(),
                     'status'     => 1,
                 ];
@@ -541,12 +546,14 @@ class NewsService
                     ['news_id' => $newsMst->id],
                     $breakingNewsData
                 );
+                app(\Modules\News\Services\BreakingNewsService::class)->clearCache();
 
             } else {
                 $existingBreakingNews = BreakingNews::where('news_id', $newsMst->id)->first();
         
                 if ($existingBreakingNews) {
                     $existingBreakingNews->update(['status' => 0]);
+                    app(\Modules\News\Services\BreakingNewsService::class)->clearCache();
                 }
             }
 

@@ -21,7 +21,7 @@
     $heroImageSrcset = implode(', ', array_unique($heroImageSrcsetParts));
     $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66vw, 50vw';
 @endphp
-<section class="container grid md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 mt-4">
+<section class="container grid md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 mt-2 md:mt-3">
     <!-- Left Section -->
     <section class="order-2 md:col-span-3 xl:col-auto xl:order-1">
         @if ($latestNews->isNotEmpty())

@@ -1,8 +1,7 @@
 <x-web-layout>
-    <div class="hidden lg:block h-8"></div>
     <!-- News Ticker Section -->
-    @if ($breakingNews->isNotEmpty())
-        <div class="container">
+    @if ((app_setting()->newstriker_status ?? 1) == 1 && $breakingNews->isNotEmpty())
+        <div class="container my-2">
             <div class="news-ticker">
                 <div class="ticker-label">
                     <span class="breaking-badge">{{ localize('breaking') }}</span>
@@ -18,8 +17,6 @@
             </div>
         </div>
     @endif
-
-    <div class="h-1 md:h-8"></div>
 
     @if ($homePageTopNews->slice(3)->isNotEmpty())
         @include('themes.news.components.home.top-category-news')

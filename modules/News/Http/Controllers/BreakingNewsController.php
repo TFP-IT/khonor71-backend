@@ -18,10 +18,10 @@ class BreakingNewsController extends Controller
     ) {
         $this->middleware('permission:read_breaking_news')->only(['index']);
         $this->middleware('permission:create_breaking_news')->only(['store']);
-        $this->middleware('permission:update_breaking_news')->only(['edit', 'update']);
+        $this->middleware('permission:update_breaking_news')->only(['edit', 'update', 'updateStatus', 'toggleTicker']);
         $this->middleware('permission:delete_breaking_news')->only(['destroy']);
 
-        $this->middleware('demo')->only(['store', 'update', 'destroy']);
+        $this->middleware('demo')->only(['store', 'update', 'destroy', 'updateStatus', 'toggleTicker']);
     }
 
     /**
@@ -111,6 +111,50 @@ class BreakingNewsController extends Controller
             'success' => true,
             'message' => localize("breaking_post_delete_successfully"),
             'title'   => localize("breaking_post"),
+        ]);
+    }
+
+    /**
+     * Toggle or update status of breaking news item
+     *
+     * @param Request $request
+     * @param int $breakingNewsId
+     * @return JsonResponse
+     */
+    public function updateStatus(Request $request, int $breakingNewsId): JsonResponse
+    {
+        $status = $request->has('status') ? (int) $request->input('status') : null;
+        $breakingNews = $this->breakingNewsService->toggleStatus([
+            'id'     => $breakingNewsId,
+            'status' => $status,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => localize("breaking_post_update_successfully"),
+            'title'   => localize("breaking_post"),
+            'data'    => $breakingNews,
+        ]);
+    }
+
+    /**
+     * Toggle frontend breaking news-ticker section
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function toggleTicker(Request $request): JsonResponse
+    {
+        $status = $request->has('status') ? (int) $request->input('status') : null;
+        $newStatus = $this->breakingNewsService->toggleTickerSection($status);
+
+        return response()->json([
+            'success' => true,
+            'message' => $newStatus === 1
+                ? (localize('news_ticker_activated') ?: 'Frontend Breaking News Ticker activated successfully.')
+                : (localize('news_ticker_deactivated') ?: 'Frontend Breaking News Ticker deactivated successfully.'),
+            'title'   => localize("breaking_post"),
+            'status'  => $newStatus,
         ]);
     }
 

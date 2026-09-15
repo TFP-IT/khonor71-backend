@@ -454,31 +454,50 @@ class HomeDataService
      */
     public function getBreakingNews()
     {
+        $appSetting = app_setting();
+        if (isset($appSetting->newstriker_status) && (int) $appSetting->newstriker_status !== 1) {
+            return collect();
+        }
+
         $languageId = get_language_id();
         $theme = activeTheme();
         $cacheKey = "breaking_news_{$languageId}_{$theme}";
 
         return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId, $theme) {
-            $limit = app_setting()->breaking_news_limit;
+            $limit = app_setting()->breaking_news_limit ?: 10;
 
             if ($theme == 'magazine') {
                 $limit = 6;
             }
 
-            // Fetch and decode the news titles
-            $breakingNews = BreakingNews::select(['id', 'title', 'time_stamp'])
-                ->where('language_id', $languageId)
+            $now = now();
+
+            // Fetch active, scheduled news ordered by priority and recency
+            $breakingNews = BreakingNews::where('language_id', $languageId)
                 ->where('status', 1)
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('start_time')->orWhere('start_time', '<=', $now);
+                })
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('end_time')->orWhere('end_time', '>=', $now);
+                })
+                ->orderBy('priority', 'desc')
                 ->latest('created_at')
                 ->take($limit)
                 ->get()
                 ->map(function ($news) {
-                    $titleData = json_decode($news->title, true);
+                    $url = $news->resolved_url;
+                    $formattedUrl = $url;
+                    if ($url && !str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
+                        $formattedUrl = __url(ltrim($url, '/'));
+                    }
+
                     return [
-                        'id' => $news->id,
-                        'title' => $titleData['news_title'] ?? 'Untitled',
-                        'url' => $titleData['url'] ?? '',
-                        'date' => Carbon::parse( $news->time_stamp)->toDateString()
+                        'id'       => $news->id,
+                        'title'    => $news->headline ?: 'Untitled',
+                        'url'      => $formattedUrl,
+                        'priority' => $news->priority,
+                        'date'     => $news->time_stamp ? Carbon::parse($news->time_stamp)->toDateString() : ($news->created_at ? $news->created_at->toDateString() : '')
                     ];
                 });
 
