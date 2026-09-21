@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Models\NewsMst;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use App\Models\AutoPostSetting;
+use Modules\AutoPost\Entities\AutoPostSetting;
 use App\Services\AutoSocialPostService;
 
 class PublishScheduledNewsCommand extends Command
@@ -51,10 +51,9 @@ class PublishScheduledNewsCommand extends Command
             // Trigger auto social post if enabled
             if ($news->is_auto_post && !$news->is_posted_to_social) {
                 try {
-                    $fb = AutoPostSetting::where('platform', 'facebook')->where('is_active', true)->first();
-                    $tw = AutoPostSetting::where('platform', 'twitter')->where('is_active', true)->first();
+                    $hasActivePlatforms = AutoPostSetting::where('is_active', true)->exists();
 
-                    if ($fb || $tw) {
+                    if ($hasActivePlatforms) {
                         $result = AutoSocialPostService::autoPost($news);
 
                         if ($result['success']) {

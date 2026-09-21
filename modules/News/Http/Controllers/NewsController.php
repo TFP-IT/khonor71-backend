@@ -72,6 +72,22 @@ class NewsController extends Controller
 
         $news = $this->newsService->create($data);
 
+        // Auto post to social media if active, published immediately, and requested
+        if ($news && $news->status === 1 && $news->is_auto_post && !$news->is_posted_to_social) {
+            if ($news->publish_date && $news->publish_date <= Carbon::now()) {
+                if (AutoPostSetting::where('is_active', true)->exists()) {
+                    try {
+                        $result = AutoSocialPostService::autoPost($news);
+                        if ($result['success']) {
+                            $news->update(['is_posted_to_social' => true]);
+                        }
+                    } catch (\Throwable $e) {
+                        \Log::error('Auto post failed on create: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => localize("post_create_successfully"),
@@ -118,6 +134,22 @@ class NewsController extends Controller
         $data                = $request->validated();
         $data['news_mst_id'] = $id;
         $news                = $this->newsService->update($data);
+
+        // Auto post to social media if active, published immediately, and not yet posted
+        if ($news && $news->status === 1 && $news->is_auto_post && !$news->is_posted_to_social) {
+            if ($news->publish_date && $news->publish_date <= Carbon::now()) {
+                if (AutoPostSetting::where('is_active', true)->exists()) {
+                    try {
+                        $result = AutoSocialPostService::autoPost($news);
+                        if ($result['success']) {
+                            $news->update(['is_posted_to_social' => true]);
+                        }
+                    } catch (\Throwable $e) {
+                        \Log::error('Auto post failed on update: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -184,13 +216,12 @@ class NewsController extends Controller
             ->first();
 
         if ($news) {
-            $fb = AutoPostSetting::where('platform', 'facebook')->where('is_active', true)->first();
-            $tw = AutoPostSetting::where('platform', 'twitter')->where('is_active', true)->first();
+            $hasActivePlatforms = AutoPostSetting::where('is_active', true)->exists();
 
             $socialPostError = null;
 
             // Trigger Auto Post if status is "published"
-            if (($fb || $tw) && $news->status === 1 && !$news->is_posted_to_social) {
+            if ($hasActivePlatforms && $news->status === 1 && !$news->is_posted_to_social) {
 
                 $result = AutoSocialPostService::autoPost($news);
 
@@ -286,10 +317,9 @@ class NewsController extends Controller
             ]);
 
         } else {
-            $fb = AutoPostSetting::where('platform', 'facebook')->where('is_active', true)->first();
-            $tw = AutoPostSetting::where('platform', 'twitter')->where('is_active', true)->first();
+            $hasActivePlatforms = AutoPostSetting::where('is_active', true)->exists();
 
-            if (($fb || $tw) && $news->status === 1 && !$news->is_posted_to_social) {
+            if ($hasActivePlatforms && $news->status === 1 && !$news->is_posted_to_social) {
 
                 $result = AutoSocialPostService::autoPost($news);
 
