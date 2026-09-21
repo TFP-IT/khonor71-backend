@@ -2,6 +2,7 @@
 
 namespace Modules\News\DataTables;
 
+use Carbon\Carbon;
 use App\Models\NewsMst;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
@@ -56,7 +57,10 @@ class NewsDataTable extends DataTable
                     $className = "update-status-button";
                 }
 
-                if ($row->status == 1) {
+                // Scheduled: status=1 but publish_date is in the future
+                if ($row->status == 1 && $row->publish_date && $row->publish_date->isFuture()) {
+                    $html .= '<span class="btn btn-labeled btn-info" title="' . (localize('scheduled') ?: 'Scheduled') . '"><i class="fas fa-clock me-1"></i>' . (localize('scheduled') ?: 'Scheduled') . '</span>';
+                } elseif ($row->status == 1) {
                     $html .= '<span class="btn btn-labeled btn-success '.$className.'" title="' . localize('publish') . '" data-action="' . route('news.update-status', ['news' => $row->id]) . '" data-update_status="0" >' . localize('publish') . '</span>';
                 } else {
                     $html .= '<span class="btn btn-labeled btn-warning '.$className.'" title="' . localize('unpublish') . '" data-action="' . route('news.update-status', ['news' => $row->id]) . '" data-update_status="1" >' . localize('unpublish') . '</span>';
@@ -66,11 +70,13 @@ class NewsDataTable extends DataTable
             })
 
             ->editColumn('publish_date', function ($row) {
-
                 if ($row->publish_date) {
-                    return $row->publish_date->format('Y-m-d');
+                    $formatted = $row->publish_date->format('d M Y, h:i A');
+                    if ($row->status == 1 && $row->publish_date->isFuture()) {
+                        return '<span class="text-info"><i class="fas fa-clock me-1"></i>' . $formatted . '</span>';
+                    }
+                    return $formatted;
                 }
-
                 return null;
             })
             ->editColumn('post_date', function ($row) {
@@ -135,7 +141,7 @@ class NewsDataTable extends DataTable
                 return $button;
             })
 
-            ->rawColumns(['category_name', 'sub_category', 'news_image_path', 'action', 'status', 'is_posted_to_social']);
+            ->rawColumns(['category_name', 'sub_category', 'news_image_path', 'action', 'status', 'publish_date', 'is_posted_to_social']);
     }
 
     /**
@@ -155,11 +161,23 @@ class NewsDataTable extends DataTable
                 }
 
                 if (!empty($this->request()->input('from_date'))) {
-                    $query->where('publish_date', '>=', $this->request()->input('from_date'));
+                    $query->where('publish_date', '>=', $this->request()->input('from_date') . ' 00:00:00');
                 }
 
                 if (!empty($this->request()->input('to_date'))) {
-                    $query->where('publish_date', '<=', $this->request()->input('to_date'));
+                    $query->where('publish_date', '<=', $this->request()->input('to_date') . ' 23:59:59');
+                }
+
+                // Schedule status filter
+                if (!empty($this->request()->input('schedule_status'))) {
+                    $scheduleStatus = $this->request()->input('schedule_status');
+                    if ($scheduleStatus === 'published') {
+                        $query->where('status', 1)->where('publish_date', '<=', Carbon::now());
+                    } elseif ($scheduleStatus === 'scheduled') {
+                        $query->where('status', 1)->where('publish_date', '>', Carbon::now());
+                    } elseif ($scheduleStatus === 'draft') {
+                        $query->where('status', 0);
+                    }
                 }
 
                 if (!empty($this->request()->input('other_page'))) {

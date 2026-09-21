@@ -147,7 +147,7 @@
 
         <div class="row">
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-6 col-md-6">
                 <div class="row form-group">
                     <label for="home_page"
                         class="col-form-label fw-semibold">{{ localize_uc('home_position') }}</label>
@@ -168,25 +168,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="publish_date" class="col-form-label fw-semibold">{{ localize_uc('release_date') }}
-                            <span class="text-danger">*</span></label>
-                        <input type="text" name="publish_date" id="publish_date"
-                            class="form-control date_picker_val @error('publish_date') is-invalid @enderror"
-                            value="{{ old('publish_date', !empty($newsMst) && $newsMst->publish_date ? $newsMst->publish_date->format('Y-m-d') : null) }}"
-                            autocomplete="off" required>
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('publish_date')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-6 col-md-6">
                 <div class="row form-group">
                     <div class="col-sm-12 col-md-12 col-xl-12">
                         <label for="short_head" class="col-form-label fw-semibold">{{ localize_uc('short_head') }}
@@ -487,6 +469,94 @@
                             @error('meta_description')
                             {{ $message }}
                             @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-3">
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <label class="col-form-label fw-semibold">
+                            <i class="fas fa-calendar-alt text-primary me-1"></i>
+                            {{ localize_uc('publication_schedule') ?: 'Publication Schedule' }}
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        {{-- Scheduling Mode Toggle --}}
+                        <div class="d-flex gap-2 mb-3">
+                            <label class="btn btn-sm px-3 py-2 rounded-pill schedule-mode-btn {{ !isset($newsMst) || (isset($newsMst) && $newsMst->publish_date && !$newsMst->publish_date->isFuture()) ? 'btn-primary' : 'btn-outline-primary' }}"
+                                   for="publish_type_immediate" id="btn_publish_immediate">
+                                <input type="radio" name="publish_type" id="publish_type_immediate"
+                                       value="immediate" class="d-none"
+                                       {{ !isset($newsMst) || (isset($newsMst) && $newsMst->publish_date && !$newsMst->publish_date->isFuture()) ? 'checked' : '' }}>
+                                <i class="fas fa-bolt me-1"></i> {{ localize('publish_immediately') ?: 'Publish Immediately' }}
+                            </label>
+                            <label class="btn btn-sm px-3 py-2 rounded-pill schedule-mode-btn {{ isset($newsMst) && $newsMst->publish_date && $newsMst->publish_date->isFuture() ? 'btn-info' : 'btn-outline-info' }}"
+                                   for="publish_type_schedule" id="btn_publish_schedule">
+                                <input type="radio" name="publish_type" id="publish_type_schedule"
+                                       value="schedule" class="d-none"
+                                       {{ isset($newsMst) && $newsMst->publish_date && $newsMst->publish_date->isFuture() ? 'checked' : '' }}>
+                                <i class="fas fa-clock me-1"></i> {{ localize('schedule_publication') ?: 'Schedule Publication' }}
+                            </label>
+                        </div>
+
+                        {{-- Scheduled Post Banner (Edit Mode) --}}
+                        @if(isset($newsMst) && $newsMst->publish_date && $newsMst->publish_date->isFuture())
+                        <div class="alert alert-info d-flex align-items-center py-2 px-3 mb-3" id="scheduled_banner" role="alert">
+                            <i class="fas fa-clock fa-lg me-2"></i>
+                            <div class="flex-grow-1">
+                                <strong>{{ localize('scheduled') ?: 'Scheduled' }}:</strong>
+                                {{ $newsMst->publish_date->format('d F Y, h:i A') }}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-success ms-2" id="btn_publish_now"
+                                    title="{{ localize('publish_now') ?: 'Publish Now' }}">
+                                <i class="fas fa-bolt me-1"></i> {{ localize('publish_now') ?: 'Publish Now' }}
+                            </button>
+                        </div>
+                        @endif
+
+                        {{-- Date & Time Inputs --}}
+                        <div class="row" id="schedule_fields"
+                             style="{{ isset($newsMst) && $newsMst->publish_date && $newsMst->publish_date->isFuture() ? '' : 'display:none;' }}">
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <label for="publish_date" class="form-label small text-muted mb-1">
+                                    <i class="fas fa-calendar-day me-1"></i>
+                                    {{ localize('publication_date') ?: 'Publication Date' }}
+                                </label>
+                                <input type="text" name="publish_date" id="publish_date"
+                                    class="form-control date_picker_val @error('publish_date') is-invalid @enderror"
+                                    value="{{ old('publish_date', !empty($newsMst) && $newsMst->publish_date ? $newsMst->publish_date->format('Y-m-d') : date('Y-m-d')) }}"
+                                    autocomplete="off" required>
+                                <div class="invalid-feedback error text-danger m-2">
+                                    @error('publish_date')
+                                    {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-2">
+                                <label for="publish_time" class="form-label small text-muted mb-1">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ localize('publication_time') ?: 'Publication Time' }}
+                                </label>
+                                <input type="time" name="publish_time" id="publish_time"
+                                    class="form-control @error('publish_time') is-invalid @enderror"
+                                    value="{{ old('publish_time', !empty($newsMst) && $newsMst->publish_date ? $newsMst->publish_date->format('H:i') : date('H:i')) }}"
+                                    autocomplete="off">
+                                <div class="invalid-feedback error text-danger m-2">
+                                    @error('publish_time')
+                                    {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Live Schedule Preview Badge --}}
+                        <div id="schedule_preview" class="mt-2" style="display:none;">
+                            <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 py-2 fs-12">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                <span id="schedule_preview_text"></span>
+                            </span>
                         </div>
                     </div>
                 </div>

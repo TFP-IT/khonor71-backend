@@ -112,7 +112,7 @@ class HomeController extends Controller
             return $this->index($language);
         }
 
-        $news = NewsMst::where('encode_title', $param)->whereDate('publish_date', '<=', Carbon::today())->where('status', 1)->first();
+        $news = NewsMst::where('encode_title', $param)->where('publish_date', '<=', Carbon::now())->where('status', 1)->first();
         if ($news) {
             return $this->detailNews($param);
         }
@@ -176,7 +176,7 @@ class HomeController extends Controller
                 return $this->latestNewsList();
             }
 
-            $news = NewsMst::where('encode_title', $param)->whereDate('publish_date', '<=', Carbon::today())->where('status', 1)->first();
+            $news = NewsMst::where('encode_title', $param)->where('publish_date', '<=', Carbon::now())->where('status', 1)->first();
             if ($news) {
                 return $this->detailNews($param, $language);
             }
@@ -846,7 +846,7 @@ class HomeController extends Controller
                 'publish_date',
             ])
             ->where('language_id', get_language_id())
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', ActivationStatusEnum::ACTIVE->value);
 
         if ($search !== '') {
@@ -886,7 +886,7 @@ class HomeController extends Controller
 
         $tvBaseQuery = VideoNews::with(['postByUser:id,full_name'])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->where('is_tv_news', 1);
 
@@ -903,7 +903,7 @@ class HomeController extends Controller
                 'total_view',
             ])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', ActivationStatusEnum::ACTIVE->value);
 
         $tvVideoNews = (clone $tvBaseQuery)->where('encode_title', $slug)->first();
@@ -1034,7 +1034,7 @@ class HomeController extends Controller
             ->whereNotNull('category_position')
             ->where('status', 1)
             ->whereHas('news', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+                $query->where('language_id', $languageId)->where('status', 1)->where('publish_date', '<=', Carbon::now());
             });
 
         // Count total matching records (for calculating max pages)
@@ -1050,7 +1050,7 @@ class HomeController extends Controller
                 )
                 ->withCount('comments')
                 ->where('language_id', $languageId)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
                 ->with(['postByUser:id,full_name', 'comments']);
             }])
@@ -1080,7 +1080,7 @@ class HomeController extends Controller
             ->whereNotNull('category_position')
             ->where('status', 1)
             ->whereHas('news', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+                $query->where('language_id', $languageId)->where('status', 1)->where('publish_date', '<=', Carbon::now());
             });
 
         // Count total matching records (for calculating max pages)
@@ -1096,7 +1096,7 @@ class HomeController extends Controller
                 )
                 ->withCount('comments')
                 ->where('language_id', $languageId)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
                 ->with(['postByUser:id,full_name', 'comments']);
             }])
@@ -1126,7 +1126,7 @@ class HomeController extends Controller
             ->whereNotNull('category_position')
             ->where('status', 1)
             ->whereHas('news', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+                $query->where('language_id', $languageId)->where('status', 1)->where('publish_date', '<=', Carbon::now());
             });
 
         // Count total matching records (for calculating max pages)
@@ -1142,7 +1142,7 @@ class HomeController extends Controller
                 )
                 ->withCount('comments')
                 ->where('language_id', $languageId)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
                 ->with(['postByUser:id,full_name', 'comments']);
             }])
@@ -1172,7 +1172,7 @@ class HomeController extends Controller
             ->whereNotNull('category_position')
             ->where('status', 1)
             ->whereHas('news', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+                $query->where('language_id', $languageId)->where('status', 1)->where('publish_date', '<=', Carbon::now());
             });
 
         // Count total matching records (for calculating max pages)
@@ -1188,7 +1188,7 @@ class HomeController extends Controller
                 )
                 ->withCount('comments')
                 ->where('language_id', $languageId)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
                 ->with(['postByUser:id,full_name', 'comments']);
             }])
@@ -1218,7 +1218,7 @@ class HomeController extends Controller
             ->whereNotNull('category_position')
             ->where('status', 1)
             ->whereHas('news', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId)->where('status', 1)->whereDate('publish_date', '<=', Carbon::today());
+                $query->where('language_id', $languageId)->where('status', 1)->where('publish_date', '<=', Carbon::now());
             });
 
         // Count total matching records (for calculating max pages)
@@ -1234,7 +1234,7 @@ class HomeController extends Controller
                 )
                 ->withCount('comments')
                 ->where('language_id', $languageId)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
                 ->with(['postByUser:id,full_name', 'comments']);
             }])
@@ -1302,7 +1302,7 @@ class HomeController extends Controller
             ->withCount('comments')
             ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1);
 
         if ($isLatestNewsPage) {
@@ -1329,7 +1329,7 @@ class HomeController extends Controller
         }
 
         $totalNewsQuery = NewsMst::where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1);
 
         if (!$isLatestNewsPage) {
@@ -1365,7 +1365,7 @@ class HomeController extends Controller
             ->withCount('comments')
             ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1);
 
         if ($isLatestNewsPage) {
@@ -1392,7 +1392,7 @@ class HomeController extends Controller
         }
 
         $totalNewsQuery = NewsMst::where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1);
 
         if (!$isLatestNewsPage) {
@@ -1423,7 +1423,7 @@ class HomeController extends Controller
         $news = VideoNews::with(['postByUser:id,full_name'])
             ->select(['id', 'publish_date', 'total_view', 'encode_title', 'title', 'details', 'thumbnail_image', 'image_alt', 'image_title', 'created_by'])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->latest('created_at')
             ->skip($offset)
@@ -1439,7 +1439,7 @@ class HomeController extends Controller
         }
 
         $totalNewsCount = NewsMst::where('language_id', $languageId)
-                            ->whereDate('publish_date', '<=', Carbon::today())
+                            ->where('publish_date', '<=', Carbon::now())
                             ->where('status', 1)
                             ->count();
 

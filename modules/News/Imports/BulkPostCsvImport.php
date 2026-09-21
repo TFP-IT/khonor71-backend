@@ -36,6 +36,7 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
         $categoryPosition = $row['category_position'] ?? null;
         $homePosition = $row['home_position'] ?? null;
         $publishDate = $row['publish_date'] ?? null;
+        $publishTime = $row['publish_time'] ?? null;
         $shortHead = $row['short_head'] ?? null;
         $headLine = $row['head_line'] ?? null;
         $detailsPost = $row['details_post'] ?? null;
@@ -103,10 +104,17 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
 
             $page                   = $categoryData->slug ?? 'home';
             $post_by                = auth()->user()->id ?? null;
-            $publish_date           = $publishDate;
+
+            // Build publish datetime — support optional publish_time column
+            if ($publishTime) {
+                $publish_date = Carbon::parse($publishDate . ' ' . $publishTime);
+            } else {
+                $publish_date = Carbon::parse($publishDate);
+            }
+
             $other_position         = $categoryPosition ?? 1;
             $breaking_confirmed     = $breakingPost ?? null;
-            $time_stamp             = time();
+            $time_stamp             = $publish_date->timestamp;
 
             $newsMstData = [
                 'news_id'          => $generate_id,

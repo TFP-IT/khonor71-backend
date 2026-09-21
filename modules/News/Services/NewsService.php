@@ -96,13 +96,23 @@ class NewsService
 
             $page                   = $categoryData->slug ?? 'home';
             $post_by                = $auth_user->id;
-            $publish_date           = $attributes['publish_date'] ?? $attributes['ref_date'] ?? null;
+
+            // Build publish datetime based on publish_type
+            $publishType = $attributes['publish_type'] ?? 'immediate';
+            if ($publishType === 'schedule' && !empty($attributes['publish_date'])) {
+                $dateStr = $attributes['publish_date'];
+                $timeStr = $attributes['publish_time'] ?? '00:00';
+                $publish_date = Carbon::parse($dateStr . ' ' . $timeStr);
+            } else {
+                $publish_date = Carbon::now();
+            }
+
             $other_position         = $attributes['other_position'] ?? 1;
             $confirm_dynamic_static = $attributes['confirm_dynamic_static'] ?? null;
             $breaking_confirmed     = $attributes['breaking_confirmed'] ?? null;
             $home_page              = $attributes['home_page'] ?? null;
             $total_news             = 14;
-            $time_stamp             = time();
+            $time_stamp             = $publish_date->timestamp;
 
             $newsMstData = [
                 'news_id'          => $generate_id,
@@ -456,7 +466,18 @@ class NewsService
             $categoryData           = Category::where('id', $other_page)->first();
             $page                   = $categoryData->slug ?? 'home';
             $post_by                = $auth_user->id;
-            $publish_date           = $attributes['publish_date'] ?? $attributes['ref_date'] ?? null;
+
+            // Build publish datetime based on publish_type
+            $publishType = $attributes['publish_type'] ?? 'immediate';
+            if ($publishType === 'schedule' && !empty($attributes['publish_date'])) {
+                $dateStr = $attributes['publish_date'];
+                $timeStr = $attributes['publish_time'] ?? '00:00';
+                $publish_date = Carbon::parse($dateStr . ' ' . $timeStr);
+            } else {
+                // Immediate: use current datetime
+                $publish_date = Carbon::now();
+            }
+
             $other_position         = $attributes['other_position'] ?? 1;
             $confirm_dynamic_static = $attributes['confirm_dynamic_static'] ?? null;
             $breaking_confirmed     = $attributes['breaking_confirmed'] ?? null;
@@ -492,10 +513,10 @@ class NewsService
                 'reporter_message' => $attributes['reporter_message'] ?? null,
                 'post_by'          => $post_by,
                 'update_by'        => null,
-                'time_stamp'       => time(),
+                'time_stamp'       => $publish_date->timestamp,
                 'post_date'        => Carbon::now(),
                 'publish_date'     => $publish_date,
-                'last_update'      => Carbon::now()->format('Y-m-d h:i:s'),
+                'last_update'      => Carbon::now()->format('Y-m-d H:i:s'),
                 'is_latest'        => $attributes['latest_confirmed'] ?? null,
                 'is_featured'      => $attributes['feature_news'] ?? 0,
                 'is_recommanded'   => $attributes['recommanded_news'] ?? 0,

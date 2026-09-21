@@ -111,7 +111,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
 
                 if ($menu->submenus->isEmpty()) {
                     $newsQuery = NewsMst::where('status', 1)
-                        ->whereDate('publish_date', '<=', $today)
+                        ->where('publish_date', '<=', Carbon::now())
                         ->withCount('comments')
                         ->with(['postByUser:id,full_name', 'comments']);
 
@@ -131,7 +131,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
                 } else {
                     if ($isLatestMenu) {
                         $latestNews = NewsMst::where('status', 1)
-                            ->whereDate('publish_date', '<=', $today)
+                            ->where('publish_date', '<=', Carbon::now())
                             ->withCount('comments')
                             ->with(['postByUser:id,full_name', 'comments'])
                             ->orderBy('publish_date', 'desc')
@@ -153,7 +153,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
                     $submenuIds = $menu->submenus->pluck('content_id')->toArray();
                     $menu->submenus->transform(function ($submenu) use ($today) {
                         $news = NewsMst::where('sub_category_id', $submenu->content_id)->where('status', 1)
-                            ->whereDate('publish_date', '<=', $today)
+                            ->where('publish_date', '<=', Carbon::now())
                             ->withCount('comments')
                             ->with(['postByUser:id,full_name', 'comments'])
                             ->orderBy('created_at', 'desc')
@@ -167,7 +167,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
 
                     $combinedNews = NewsMst::whereIn('sub_category_id', $submenuIds)
                         ->where('status', 1)
-                        ->whereDate('publish_date', '<=', $today)
+                        ->where('publish_date', '<=', Carbon::now())
                         ->withCount('comments')
                         ->with(['postByUser:id,full_name', 'comments'])
                         ->orderBy('created_at', 'desc')

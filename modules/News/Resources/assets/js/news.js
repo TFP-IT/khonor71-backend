@@ -231,4 +231,100 @@ $(document).ready(function () {
         }
     });
 
+    /**
+     * ==============================
+     * Article Scheduling System
+     * ==============================
+     */
+
+    // Toggle between Publish Immediately and Schedule Publication
+    $('input[name="publish_type"]').on("change", function () {
+        var mode = $(this).val();
+
+        // Update button styles
+        $(".schedule-mode-btn").removeClass("btn-primary btn-info").addClass(function () {
+            return $(this).attr("for") === "publish_type_immediate"
+                ? "btn-outline-primary"
+                : "btn-outline-info";
+        });
+
+        if (mode === "schedule") {
+            $("#btn_publish_schedule").removeClass("btn-outline-info").addClass("btn-info");
+            $("#schedule_fields").slideDown(200);
+            updateSchedulePreview();
+        } else {
+            $("#btn_publish_immediate").removeClass("btn-outline-primary").addClass("btn-primary");
+            $("#schedule_fields").slideUp(200);
+            $("#schedule_preview").hide();
+
+            // Set current date/time for immediate
+            var now = new Date();
+            var dateStr = now.getFullYear() + "-" +
+                String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                String(now.getDate()).padStart(2, "0");
+            var timeStr = String(now.getHours()).padStart(2, "0") + ":" +
+                String(now.getMinutes()).padStart(2, "0");
+            $("#publish_date").val(dateStr);
+            $("#publish_time").val(timeStr);
+        }
+    });
+
+    // Publish Now button (edit mode: switch from scheduled to immediate)
+    $(document).on("click", "#btn_publish_now", function (e) {
+        e.preventDefault();
+        $("#publish_type_immediate").prop("checked", true).trigger("change");
+        $("#scheduled_banner").slideUp(200);
+    });
+
+    // Live preview update when date or time changes
+    $("#publish_date, #publish_time").on("change keyup", function () {
+        if ($("#publish_type_schedule").is(":checked")) {
+            updateSchedulePreview();
+        }
+    });
+
+    function updateSchedulePreview() {
+        var dateVal = $("#publish_date").val();
+        var timeVal = $("#publish_time").val();
+
+        if (dateVal) {
+            try {
+                var dateTimeStr = dateVal + (timeVal ? " " + timeVal : " 00:00");
+                var dt = new Date(dateTimeStr);
+
+                if (!isNaN(dt.getTime())) {
+                    var months = [
+                        "January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"
+                    ];
+                    var hours = dt.getHours();
+                    var ampm = hours >= 12 ? "PM" : "AM";
+                    var displayHours = hours % 12 || 12;
+                    var minutes = String(dt.getMinutes()).padStart(2, "0");
+
+                    var formatted =
+                        String(dt.getDate()).padStart(2, "0") + " " +
+                        months[dt.getMonth()] + " " +
+                        dt.getFullYear() + ", " +
+                        String(displayHours).padStart(2, "0") + ":" +
+                        minutes + " " + ampm;
+
+                    $("#schedule_preview_text").text("Scheduled for: " + formatted);
+                    $("#schedule_preview").show();
+                } else {
+                    $("#schedule_preview").hide();
+                }
+            } catch (e) {
+                $("#schedule_preview").hide();
+            }
+        } else {
+            $("#schedule_preview").hide();
+        }
+    }
+
+    // Initialize: if schedule mode is pre-selected (edit mode), show preview
+    if ($("#publish_type_schedule").is(":checked")) {
+        updateSchedulePreview();
+    }
+
 });

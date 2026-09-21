@@ -56,7 +56,7 @@ class SitemapService
             }
 
             // Post chunks
-            $totalPosts = NewsMst::where('status', 1)->whereDate('publish_date', '<=', Carbon::today())->count();
+            $totalPosts = NewsMst::where('status', 1)->where('publish_date', '<=', Carbon::now())->count();
             $pages = ceil($totalPosts / self::PER_PAGE);
             if ($pages == 0) $pages = 1;
 
@@ -84,7 +84,7 @@ class SitemapService
             
             $posts = NewsMst::with('photoLibrary')
                 ->where('status', 1)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->orderBy('id', 'desc')
                 ->offset($offset)
                 ->limit(self::PER_PAGE)
@@ -174,7 +174,7 @@ class SitemapService
             $twoDaysAgo = Carbon::now()->subDays(2);
             
             $posts = NewsMst::where('status', 1)
-                ->whereDate('publish_date', '<=', Carbon::today())
+                ->where('publish_date', '<=', Carbon::now())
                 ->where('created_at', '>=', $twoDaysAgo)
                 ->orderBy('id', 'desc')
                 ->limit(1000)
@@ -318,7 +318,7 @@ class SitemapService
         Cache::forget('sitemap_opinions');
         Cache::forget('sitemap_probashi');
         
-        $totalPosts = NewsMst::where('status', 1)->whereDate('publish_date', '<=', Carbon::today())->count();
+        $totalPosts = NewsMst::where('status', 1)->where('publish_date', '<=', Carbon::now())->count();
         $pages = ceil($totalPosts / self::PER_PAGE);
 
         for ($i = 1; $i <= $pages; $i++) {

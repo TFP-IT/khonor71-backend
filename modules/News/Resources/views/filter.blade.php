@@ -51,6 +51,16 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-xl-2 col-md-6 col-12">
+                <label><i class="fas fa-clock me-1"></i>{{ localize('schedule_status') ?: 'Schedule Status' }}</label>
+                <select name="schedule_status" id="schedule_status" class="form-control select-basic-single"
+                    data-placeholder="{{ localize_uc('select_status') ?: 'Select Status' }}" data-allow-clear="true">
+                    <option value="">{{ localize('all') ?: 'All' }}</option>
+                    <option value="published">{{ localize('published') ?: 'Published' }}</option>
+                    <option value="scheduled">{{ localize('scheduled') ?: 'Scheduled' }}</option>
+                    <option value="draft">{{ localize('draft') ?: 'Draft' }}</option>
+                </select>
+            </div>
 
             <div class="col-xl-2 col-md-2 align-self-end d-flex mt-2 mt-lg-0">
                 <button type="submit" class="btn btn-success me-1">{{ localize('find') }}</button>

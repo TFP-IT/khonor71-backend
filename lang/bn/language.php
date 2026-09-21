@@ -2275,4 +2275,9 @@
   'select_district' => 'Select district',
   'upazila' => 'Upazila',
   'select_upazila' => 'Select upazila',
+  'publication_schedule' => 'Publication schedule',
+  'publish_immediately' => 'Publish immediately',
+  'schedule_publication' => 'Schedule publication',
+  'publication_date' => 'Publication date',
+  'publication_time' => 'Publication time',
 );

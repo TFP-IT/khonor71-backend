@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         Commands\ImportAttnData::class,
+        Commands\PublishScheduledNewsCommand::class,
     ];
     
     /**
@@ -19,7 +20,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Publish scheduled articles every minute
+        $schedule->command('news:publish-scheduled')->everyMinute();
     }
 
     /**

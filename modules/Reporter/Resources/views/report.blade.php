@@ -216,7 +216,7 @@
                                         <td>{!! $news->title !!}</td>
                                         <td>{{ $news->category?->category_name ?? '-' }}</td>
                                         <td>{{ $news->language?->langname ?? '-' }}</td>
-                                        <td>{{ $news->publish_date?->format('Y-m-d') ?? '-' }}</td>
+                                        <td>{{ $news->publish_date?->format('Y-m-d h:i A') ?? '-' }}</td>
                                         <td>
                                             @if ($news->status == 1)
                                                 <span class="badge bg-success">{{ localize('publish') }}</span>

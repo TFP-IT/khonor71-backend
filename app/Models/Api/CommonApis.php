@@ -33,7 +33,7 @@ class CommonApis extends Model
         $result = DB::table('news_msts')->select('news_msts.news_id', 'news_msts.encode_title', 'news_msts.title', 'news_msts.stitle', 'news_msts.image', 'news_msts.videos', 'news_msts.page', 'news_msts.time_stamp', 'news_msts.post_date', 'news_msts.news', 'news_msts.post_by', 'news_msts.image_alt', 'news_msts.image_base_url', 'news_msts.podcust_id', 'users.id', 'users.profile_image as photo', 'users.full_name as name', 'users.id as user_id', 'categories.category_name')
             ->Join('users', 'users.id', '=', 'news_msts.post_by')
             ->Join('categories', 'categories.slug', '=', 'news_msts.page')
-            ->where('news_msts.publish_date', '<=', date("Y-m-d"))
+            ->where('news_msts.publish_date', '<=', now())
             ->where('news_msts.is_latest', 1)
             ->where('news_msts.status', 0)
             ->orderBy('news_msts.id', 'DESC')

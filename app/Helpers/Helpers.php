@@ -883,9 +883,10 @@ if (!function_exists('news_publish_date_format')) {
      *
      * @param  string|null  $date
      * @param  string  $format
+     * @param  bool    $showTime
      * @return string|null
      */
-    function news_publish_date_format(?string $date, string $format = 'F d, Y'): ?string
+    function news_publish_date_format(?string $date, string $format = 'F d, Y', bool $showTime = false): ?string
     {
         if (!$date) {
             return null;
@@ -894,6 +895,10 @@ if (!function_exists('news_publish_date_format')) {
         $locale = app()->getLocale();
         Carbon::setLocale($locale);
         $carbonDate = Carbon::parse($date);
+
+        if ($showTime) {
+            $format .= ', h:i A';
+        }
 
         $formatted = $carbonDate->translatedFormat($format);
 
@@ -1425,7 +1430,7 @@ if (!function_exists('get_probash_category_news')) {
         $featuresNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
             ->select(['id', 'news_id', 'encode_title', 'title', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('category_id', $categoryId)
             ->where('status', 1)
             ->orderByDesc('publish_date')
@@ -1463,7 +1468,7 @@ if (!function_exists('get_tv_news')) {
                 'qr_code',
             ])
             ->where('language_id', $languageId)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->where('status', ActivationStatusEnum::ACTIVE)
             ->where('is_tv_news', 1)
             ->latest('created_at')

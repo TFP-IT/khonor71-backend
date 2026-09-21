@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\NewsComment;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\BreakingNews;
 use App\Models\NewsPositionMap;
@@ -97,7 +98,7 @@ class NewsMst extends Model
         'update_by'      => 'string',
         'time_stamp'     => 'integer',
         'post_date'      => 'date',
-        'publish_date'   => 'date',
+        'publish_date'   => 'datetime',
         'last_update'    => 'datetime',
         'is_latest'      => 'integer',
         'reader_hit'     => 'integer',
@@ -296,5 +297,53 @@ class NewsMst extends Model
             return $query->where('district_id', $districtId);
         }
         return $query;
+    }
+
+    /**
+     * Check if the article is scheduled for future publication.
+     *
+     * @return bool
+     */
+    public function isScheduled(): bool
+    {
+        return $this->status == 1
+            && $this->publish_date
+            && $this->publish_date->isFuture();
+    }
+
+    /**
+     * Check if the article is currently published (live).
+     *
+     * @return bool
+     */
+    public function isPublished(): bool
+    {
+        return $this->status == 1
+            && $this->publish_date
+            && $this->publish_date->isPast();
+    }
+
+    /**
+     * Scope: only articles that are live (status=1 and publish_date <= now).
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('status', 1)
+            ->where('publish_date', '<=', Carbon::now());
+    }
+
+    /**
+     * Scope: only articles that are scheduled for the future.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeScheduled($query)
+    {
+        return $query->where('status', 1)
+            ->where('publish_date', '>', Carbon::now());
     }
 }

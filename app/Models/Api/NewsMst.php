@@ -27,7 +27,7 @@ class NewsMst extends Model
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
             ->Join('categories as t4', 't4.slug', '=', 't1.page')
-            ->where('t1.publish_date', '<=', date("Y-m-d"))
+            ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t1.status', 0)
             ->limit(12)
@@ -167,7 +167,7 @@ class NewsMst extends Model
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
             ->leftJoin('reporters', 'reporters.id', '=', 't1.reporter_id')
             ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
-            ->where('t1.publish_date', '<=', date("Y-m-d"))
+            ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
             ->orderBy('t2.position', 'ASC')
@@ -217,7 +217,7 @@ class NewsMst extends Model
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
             ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
-            ->where('t1.publish_date', '<=', date("Y-m-d"))
+            ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
             ->count();
@@ -306,7 +306,7 @@ class NewsMst extends Model
                 't1.image_base_url', 't4.category_name')
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
-            ->where('t1.publish_date', '<=', date("Y-m-d"))
+            ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
             ->where('t2.news_id', '!=', $news_id)
@@ -362,7 +362,7 @@ class NewsMst extends Model
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
             ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
             ->whereIn('t1.news_id', $news_ids)
-            ->where('t1.publish_date', '<=', date("Y-m-d"))
+            ->where('t1.publish_date', '<=', now())
             ->offset($offset)
             ->limit($limit)
             ->get();
@@ -493,7 +493,7 @@ class NewsMst extends Model
 
         $query = DB::table('news_msts');
         $query->select('news_msts.*');
-        $query->where('publish_date', '<=', date("Y-m-d"));
+        $query->where('publish_date', '<=', now());
         $query->where('status', '0');
         $query->orderBy('news_id', 'DESC');
 

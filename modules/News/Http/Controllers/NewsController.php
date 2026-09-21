@@ -180,7 +180,7 @@ class NewsController extends Controller
         $news = NewsMst::select(['id', 'status', 'stitle', 'title', 'news', 'encode_title', 'publish_date', 'is_auto_post', 'is_posted_to_social'])
             ->where('id', $id)
             ->where('is_auto_post', 1)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->first();
 
         if ($news) {
@@ -275,7 +275,7 @@ class NewsController extends Controller
     {
         $news = NewsMst::select(['id', 'status', 'stitle', 'title', 'news', 'encode_title', 'publish_date', 'is_posted_to_social'])
             ->where('id', $id)
-            ->whereDate('publish_date', '<=', Carbon::today())
+            ->where('publish_date', '<=', Carbon::now())
             ->first();
 
         if (!$news) {

@@ -72,7 +72,7 @@ class HomeController extends Controller
         $totalPosts = (clone $postRangeQuery)->count();
         $publishedPosts = (clone $postRangeQuery)->where('status', 1)->count();
         $draftPosts = (clone $postRangeQuery)->where('status', 0)->count();
-        $scheduledPosts = (clone $postBaseQuery)->where('status', 1)->where('publish_date', '>', Carbon::today())->count();
+        $scheduledPosts = (clone $postBaseQuery)->where('status', 1)->where('publish_date', '>', Carbon::now())->count();
         $totalViews = (clone $postRangeQuery)->sum('reader_hit');
         $avgViews = $totalPosts ? round($totalViews / $totalPosts, 1) : 0;
 
