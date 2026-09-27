@@ -9,7 +9,7 @@
 @endphp
 <html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @includeIf('sentry')
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="{{ app_setting()->favicon }}" />

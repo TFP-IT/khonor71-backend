@@ -52,6 +52,10 @@ class HomeController extends Controller
         $title = $metaInfo->title ?? 'News365';
         $description = $metaInfo->meta_description ?? '';
         $metaKeywords = $metaInfo->meta_tag ?? '';
+        $siteName = app_setting()->title ?? config('app.name', 'Khobor71');
+        $image = !empty($metaInfo->default_image) && file_exists(storage_path('app/public/' . $metaInfo->default_image))
+            ? asset('storage/' . $metaInfo->default_image)
+            : (app_setting()->logo ?? asset('assets/logo.png'));
 
         SEOTools::setTitle($title);
         SEOMeta::addKeyword($metaKeywords);
@@ -59,8 +63,12 @@ class HomeController extends Controller
         SEOTools::setCanonical(url()->current());
         SEOTools::opengraph()->setUrl(url()->current());
         SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setSiteName($siteName);
         SEOTools::opengraph()->setTitle($title);
         SEOTools::opengraph()->setDescription($description);
+        if ($image) {
+            SEOTools::opengraph()->addImage($image);
+        }
         SEOTools::twitter()->setTitle($title);
 
         $data = $this->homeDataService->getHomePageData();
@@ -79,6 +87,10 @@ class HomeController extends Controller
         $title = $metaInfo->title ?? 'News365';
         $description = $metaInfo->meta_description ?? '';
         $metaKeywords = $metaInfo->meta_tag ?? '';
+        $siteName = app_setting()->title ?? config('app.name', 'Khobor71');
+        $image = !empty($metaInfo->default_image) && file_exists(storage_path('app/public/' . $metaInfo->default_image))
+            ? asset('storage/' . $metaInfo->default_image)
+            : (app_setting()->logo ?? asset('assets/logo.png'));
 
         SEOTools::setTitle($title);
         SEOMeta::addKeyword($metaKeywords);
@@ -86,8 +98,12 @@ class HomeController extends Controller
         SEOTools::setCanonical(url()->current());
         SEOTools::opengraph()->setUrl(url()->current());
         SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::opengraph()->setSiteName($siteName);
         SEOTools::opengraph()->setTitle($title);
         SEOTools::opengraph()->setDescription($description);
+        if ($image) {
+            SEOTools::opengraph()->addImage($image);
+        }
         SEOTools::twitter()->setTitle($title);
 
         $data = $this->homeDataService->getHomePageData();
@@ -292,12 +308,119 @@ class HomeController extends Controller
         //
     }
 
+    /**
+     * Set comprehensive Open Graph, Twitter, and SEO metadata for an article/post.
+     *
+     * @param string $title
+     * @param string $description
+     * @param string $url
+     * @param string|null $image
+     * @param mixed $published
+     * @param mixed $updated
+     * @param string|null $author
+     * @param string|array|null $metaKeywords
+     * @return void
+     */
+    private function setArticleSeoMeta(
+        string $title,
+        string $description,
+        string $url,
+        ?string $image = null,
+        $published = null,
+        $updated = null,
+        ?string $author = null,
+        $metaKeywords = null
+    ): void {
+        $siteName = app_setting()->title ?? config('app.name', 'Khobor71');
+
+        $publishedW3c = $published ? (is_string($published) ? Carbon::parse($published)->toW3cString() : $published->toW3cString()) : null;
+        $updatedW3c = $updated ? (is_string($updated) ? Carbon::parse($updated)->toW3cString() : $updated->toW3cString()) : null;
+
+        // -- Basic Meta & Canonical
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical($url);
+
+        if ($publishedW3c) {
+            SEOTools::metatags()->addMeta('article:published_time', $publishedW3c, 'property');
+        }
+        if ($updatedW3c) {
+            SEOTools::metatags()->addMeta('article:modified_time', $updatedW3c, 'property');
+        }
+        if ($author) {
+            SEOTools::metatags()->addMeta('article:author', $author, 'property');
+        }
+
+        if (!empty($metaKeywords)) {
+            $keywords = is_array($metaKeywords) ? $metaKeywords : explode(',', $metaKeywords);
+            SEOMeta::addKeyword(array_map('trim', array_filter($keywords)));
+        }
+
+        // -- OpenGraph (Facebook, WhatsApp, LinkedIn, etc.)
+        SEOTools::opengraph()->setTitle($title);
+        SEOTools::opengraph()->setDescription($description);
+        SEOTools::opengraph()->setUrl($url);
+        if ($image) {
+            SEOTools::opengraph()->addImage($image);
+        }
+        SEOTools::opengraph()->setType('article');
+        SEOTools::opengraph()->setSiteName($siteName);
+        SEOTools::opengraph()->addProperty('locale', app()->getLocale() == 'bn' ? 'bn_BD' : 'en_US');
+
+        if ($publishedW3c) {
+            SEOTools::opengraph()->addProperty('article:published_time', $publishedW3c);
+        }
+        if ($updatedW3c) {
+            SEOTools::opengraph()->addProperty('article:modified_time', $updatedW3c);
+        }
+        if ($author) {
+            SEOTools::opengraph()->addProperty('article:author', $author);
+        }
+
+        // -- Twitter Card
+        SEOTools::twitter()->setTitle($title);
+        SEOTools::twitter()->setDescription($description);
+        if ($image) {
+            SEOTools::twitter()->setImage($image);
+        }
+        SEOTools::twitter()->setType('summary_large_image');
+
+        // -- JSON-LD Structured Data
+        SEOTools::jsonLd()->setTitle($title);
+        SEOTools::jsonLd()->setDescription($description);
+        SEOTools::jsonLd()->setType('article');
+        SEOTools::jsonLd()->setUrl($url);
+        if ($image) {
+            SEOTools::jsonLd()->addImage($image);
+        }
+        if ($publishedW3c) {
+            SEOTools::jsonLd()->addValue('datePublished', $publishedW3c);
+        }
+        if ($updatedW3c) {
+            SEOTools::jsonLd()->addValue('dateModified', $updatedW3c);
+        }
+        if ($author) {
+            SEOTools::jsonLd()->addValue('author', [
+                '@type' => 'Person',
+                'name'  => $author,
+            ]);
+        }
+        SEOTools::jsonLd()->addValue('publisher', [
+            '@type' => 'Organization',
+            'name'  => $siteName,
+            'logo'  => [
+                '@type' => 'ImageObject',
+                'url'   => app_setting()->logo ?? asset('assets/logo.png'),
+            ],
+        ]);
+    }
+
     public function detailNews($param, $lang = '')
     {
         $data = $this->homeDataService->getNewsDetails($param);
         $news = $data['newsDetail'];
 
-        $title = $news->seo_title ?? $news->title;
+        $title = $news->seoOnpage->seo_title ?? $news->seo_title ?? $news->title;
         $rawContent = $news->seoOnpage->meta_description ?? $news->news;
         $description = Str::limit(
             preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($rawContent))),
@@ -308,42 +431,10 @@ class HomeController extends Controller
         $image = isset($news->photoLibrary->image_base_url) ? $news->photoLibrary->image_base_url : asset('/assets/details-lg-image.png');
         $published = $news->publish_date;
         $updated = $news->last_update;
+        $author = $news->reporterBy->name ?? $news->postByUser->full_name ?? $news->reporter ?? null;
+        $keywords = $news->seoOnpage->meta_keyword ?? null;
 
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        if (isset($news->seoOnpage->meta_keyword) && !empty($news->seoOnpage->meta_keyword)) {
-            SEOMeta::addKeyword(explode(',', $news->seoOnpage->meta_keyword));
-        }
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('details', $data);
     }
@@ -364,42 +455,10 @@ class HomeController extends Controller
         $image = isset($news->photoLibrary->image_base_url) ? $news->photoLibrary->image_base_url : asset('/assets/details-lg-image.png');
         $published = $news->publish_date;
         $updated = $news->last_update;
+        $author = $news->reporterBy->name ?? $news->postByUser->full_name ?? $news->reporter ?? null;
+        $keywords = $news->seoOnpage->meta_keyword ?? null;
 
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        if (isset($news->seoOnpage->meta_keyword) && !empty($news->seoOnpage->meta_keyword)) {
-            SEOMeta::addKeyword(explode(',', $news->seoOnpage->meta_keyword));
-        }
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('details', $data);
     }
@@ -559,42 +618,10 @@ class HomeController extends Controller
         $image = isset($opinion->news_image) ? asset('storage/' . $opinion->news_image) : asset('/assets/details-lg-image.png');
         $published = $opinion->created_at;
         $updated = $opinion->updated_at;
+        $author = $opinion->name ?? null;
+        $keywords = $opinion->meta_keyword ?? null;
 
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        if (isset($opinion->meta_keyword) && !empty($opinion->meta_keyword)) {
-            SEOMeta::addKeyword(explode(',', $opinion->meta_keyword));
-        }
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('opinion-details', $data);
     }
@@ -694,42 +721,10 @@ class HomeController extends Controller
                     : asset('/assets/thumbnail-image.jpg');
         $published = $vedio->publish_date;
         $updated = $vedio->updated_at;
+        $author = $vedio->reporter->name ?? $vedio->postByUser->full_name ?? null;
+        $keywords = $vedio->meta_keyword ?? null;
 
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        if (isset($opinion->meta_keyword)) {
-            SEOMeta::addKeyword(explode(',', $vedio->meta_keyword));
-        }
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('video-details', $data);
     }
@@ -757,42 +752,10 @@ class HomeController extends Controller
                     : asset('/assets/thumbnail-image.jpg');
         $published = $vedio->publish_date;
         $updated = $vedio->updated_at;
+        $author = $vedio->webUser->name ?? $vedio->postByUser->full_name ?? null;
+        $keywords = $vedio->meta_keyword ?? null;
 
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        if (isset($opinion->meta_keyword)) {
-            SEOMeta::addKeyword(explode(',', $vedio->meta_keyword));
-        }
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('video-details', $data);
     }
@@ -953,15 +916,16 @@ class HomeController extends Controller
             160
         );
 
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::setCanonical(url()->current());
-        SEOTools::opengraph()->setUrl(url()->current());
-        SEOTools::opengraph()->addProperty('type', 'article');
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
+        $url = url()->current();
+        $image = !empty($titleSource->thumbnail_image)
+            ? asset('storage/' . $titleSource->thumbnail_image)
+            : asset('/assets/thumbnail-image.jpg');
+        $published = $titleSource->publish_date ?? $titleSource->created_at;
+        $updated = $titleSource->updated_at ?? $titleSource->created_at;
+        $author = $titleSource->reporter->name ?? $titleSource->webUser->name ?? $titleSource->postByUser->full_name ?? null;
+        $keywords = $titleSource->meta_keyword ?? null;
+
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
 
         return ThemeHelper::view('probash-news-tv-details', compact('tvVideoNews', 'rightCategoryNews', 'activeType', 'recentProbashCategoryNews'));
     }
@@ -1620,41 +1584,11 @@ class HomeController extends Controller
         $description = $data['newsDetail']['description'];
         $url = __url($data['newsDetail']['encode_title']);
         $image = $data['newsDetail']['image'];
-        $published =  Carbon::parse($data['newsDetail']['pubDate']);
-        $updated =  Carbon::parse($data['newsDetail']['pubDate']);
+        $published = Carbon::parse($data['newsDetail']['pubDate']);
+        $updated = Carbon::parse($data['newsDetail']['pubDate']);
+        $author = $data['newsDetail']['author'] ?? null;
 
-
-        // -- Basic Meta
-        SEOTools::setTitle($title);
-        SEOTools::setDescription($description);
-        SEOTools::metatags()->addMeta('article:published_time', $published->toW3cString(), 'property');
-        SEOTools::metatags()->addMeta('article:modified_time', $updated->toW3cString(), 'property');
-        SEOTools::setCanonical($url);
-
-        // -- OpenGraph (Facebook, etc.)
-        SEOTools::opengraph()->setTitle($title);
-        SEOTools::opengraph()->setDescription($description);
-        SEOTools::opengraph()->setUrl($url);
-        SEOTools::opengraph()->addImage($image);
-        SEOTools::opengraph()->setType('article');
-        SEOTools::opengraph()->addProperty('locale', 'en_US');
-        SEOTools::opengraph()->addProperty('article:published_time', $published->toW3cString());
-        SEOTools::opengraph()->addProperty('article:modified_time', $updated->toW3cString());
-
-        // -- Twitter Card
-        SEOTools::twitter()->setTitle($title);
-        SEOTools::twitter()->setDescription($description);
-        SEOTools::twitter()->setImage($image);
-        SEOTools::twitter()->setType('summary_large_image');
-
-        // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
-        SEOTools::jsonLd()->addImage($image);
-        SEOTools::jsonLd()->addValue('datePublished', $published->toW3cString());
-        SEOTools::jsonLd()->addValue('dateModified', $updated->toW3cString());
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author);
 
         return ThemeHelper::view('rss_details', $data);
     }
