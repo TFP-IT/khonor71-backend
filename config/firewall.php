@@ -84,7 +84,7 @@ return [
         ],
 
         'agent' => [
-            'enabled' => env('FIREWALL_MIDDLEWARE_AGENT_ENABLED', env('FIREWALL_ENABLED', true)),
+            'enabled' => env('FIREWALL_MIDDLEWARE_AGENT_ENABLED', false),
 
             'methods' => ['all'],
 

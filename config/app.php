@@ -181,7 +181,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
+        LaravelLux\Html\HtmlServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -206,7 +206,7 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Yajra\DataTables\ButtonsServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
-
+        App\Support\Feeds\FeedsServiceProvider::class,
 
     ],
 
@@ -219,7 +219,7 @@ return [
     | is started. However, feel free to register as many as you wish as
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
-     */
+    */
 
     'aliases'         => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
@@ -233,8 +233,9 @@ return [
         'Twitter'    => Artesaos\SEOTools\Facades\TwitterCard::class,
         'JsonLd'     => Artesaos\SEOTools\Facades\JsonLd::class,
         'SEOTools'   => Artesaos\SEOTools\Facades\SEOTools::class,
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
+        'Form' => LaravelLux\Html\FormFacade::class,
+        'Html' => LaravelLux\Html\HtmlFacade::class,
+        'Feeds' => App\Support\Feeds\Facades\FeedsFacade::class,
     ])->toArray(),
 
 ];
