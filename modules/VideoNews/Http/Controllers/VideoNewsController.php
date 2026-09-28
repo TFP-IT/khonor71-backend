@@ -81,11 +81,12 @@ class VideoNewsController extends Controller
 
         
         // Ensure APP_URL is set
-        if (!env('APP_URL')) {
-            \Log::error('APP_URL not set in .env');
+        $appUrl = config('app.url');
+        if (!$appUrl) {
+            \Log::error('app.url is not set in config');
             return redirect()->back()->with('fail', 'APP_URL not configured');
         }
-        $qr_code_link = env('APP_URL') . '/' . $encode_title;
+        $qr_code_link = rtrim($appUrl, '/') . '/' . $encode_title;
         \Log::info('QR code link generated: ' . $qr_code_link);
 
         // Handle image upload
@@ -295,11 +296,12 @@ class VideoNewsController extends Controller
         $qrCodePath = $videonews->qr_code;
         if ($videonews->encode_title !== $encode_title || empty($videonews->qr_code)) {
             // Ensure APP_URL is set
-            if (!env('APP_URL')) {
-                \Log::error('APP_URL not set in .env');
+            $appUrl = config('app.url');
+            if (!$appUrl) {
+                \Log::error('app.url is not set in config');
                 return redirect()->back()->with('fail', 'APP_URL not configured');
             }
-            $qr_code_link = env('APP_URL') . '/' . $encode_title;
+            $qr_code_link = rtrim($appUrl, '/') . '/' . $encode_title;
             \Log::info('QR code link generated: ' . $qr_code_link);
 
             // Delete old QR code if it exists

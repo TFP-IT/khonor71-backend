@@ -15,23 +15,31 @@ class MailServiceConfigProvider extends ServiceProvider
      */
     public function register()
     {
-        if (\Schema::hasTable('email_configs')) {
-            $mail = DB::table('email_configs')->first();
-            if ($mail)
-            {
-                $config = array(
-                    'driver'     => $mail->protocol,
-                    'host'       => $mail->smtp_host,
-                    'port'       => $mail->smtp_port,
-                    'from'       => array('address' => env('MAIL_FROM_ADDRESS', 'hello@hello.com'), 'name' => env('MAIL_FROM_NAME', 'testApp')),
-                    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-                    'username'   => $mail->smtp_user,
-                    'password'   => $mail->smtp_pass,
-                    'sendmail'   => '/usr/sbin/sendmail -bs',
-                    'pretend'    => false,
-                );
-                Config::set('mail', $config);
+        try {
+            if (\Schema::hasTable('email_configs')) {
+                $mail = DB::table('email_configs')->first();
+                if ($mail)
+                {
+                    $config = array(
+                        'driver'     => $mail->protocol,
+                        'host'       => $mail->smtp_host,
+                        'port'       => $mail->smtp_port,
+                        'from'       => array('address' => config('mail.from.address', 'hello@hello.com'), 'name' => config('mail.from.name', 'testApp')),
+                        'encryption' => config('mail.mailers.smtp.encryption', 'tls'),
+                        'username'   => $mail->smtp_user,
+                        'password'   => $mail->smtp_pass,
+                        'sendmail'   => '/usr/sbin/sendmail -bs',
+                        'pretend'    => false,
+                    );
+                    Config::set('mail', $config);
+                    Config::set('mail.mailers.smtp.host', $mail->smtp_host);
+                    Config::set('mail.mailers.smtp.port', $mail->smtp_port);
+                    Config::set('mail.mailers.smtp.username', $mail->smtp_user);
+                    Config::set('mail.mailers.smtp.password', $mail->smtp_pass);
+                }
             }
+        } catch (\Throwable $e) {
+            // Failsafe during CLI commands or bootstrap without DB
         }
     }
 

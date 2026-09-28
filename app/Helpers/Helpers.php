@@ -716,7 +716,7 @@ if (!function_exists('storage_exist')) {
      */
     function storage_exist(string $filename = null): bool
     {
-        $uploadDisk = env('FILESYSTEM_DISK', 'local');
+        $uploadDisk = config('filesystems.default', 'local');
 
         return !empty($filename) && Storage::disk($uploadDisk)->exists($filename);
     }
@@ -740,7 +740,7 @@ if (!function_exists('current_file_system_disk')) {
      */
     function current_file_system_disk(string $filename = null): string
     {
-        return $file_system_disk ?? env('FILESYSTEM_DISK', 'local');
+        return $file_system_disk ?? config('filesystems.default', 'local');
     }
 
 }
@@ -1343,8 +1343,8 @@ if (!function_exists('get_last_podcast')) {
 
             try {
 
-                $apiKey = env('YOUTUBE_API_KEY');
-                $playlistId = env('YOUTUBE_PLAYLIST_ID');
+                $apiKey = config('services.youtube.api_key');
+                $playlistId = config('services.youtube.playlist_id');
 
                 $response = Http::timeout(15)->get(
                     'https://www.googleapis.com/youtube/v3/playlistItems',

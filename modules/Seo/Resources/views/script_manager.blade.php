@@ -501,7 +501,7 @@
                                 <i class="fa fa-server sm-input-icon"></i>
                                 <input type="text" class="form-control" id="redis_host" name="redis_host"
                                     placeholder="127.0.0.1"
-                                    value="{{ old('redis_host', $existing_scripts->redis_host ?? env('REDIS_HOST', '127.0.0.1')) }}">
+                                    value="{{ old('redis_host', $existing_scripts->redis_host ?? config('database.redis.default.host', '127.0.0.1')) }}">
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -510,7 +510,7 @@
                                 <i class="fa fa-door-open sm-input-icon"></i>
                                 <input type="text" class="form-control" id="redis_port" name="redis_port"
                                     placeholder="6379"
-                                    value="{{ old('redis_port', $existing_scripts->redis_port ?? env('REDIS_PORT', '6379')) }}">
+                                    value="{{ old('redis_port', $existing_scripts->redis_port ?? config('database.redis.default.port', '6379')) }}">
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -519,14 +519,14 @@
                                 <i class="fa fa-lock sm-input-icon"></i>
                                 <input type="text" class="form-control" id="redis_password" name="redis_password"
                                     placeholder="Leave blank if none"
-                                    value="{{ old('redis_password', $existing_scripts->redis_password ?? (env('REDIS_PASSWORD') === 'null' ? '' : env('REDIS_PASSWORD'))) }}">
+                                    value="{{ old('redis_password', $existing_scripts->redis_password ?? (config('database.redis.default.password') === 'null' ? '' : config('database.redis.default.password'))) }}">
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <span class="sm-badge sm-badge-pink"><i class="fa fa-power-off"></i> Enable Redis Caching</span>
                             <div class="sm-input-wrap" style="padding-top:10px;">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="enable_redis" name="enable_redis" value="1" @if(env('CACHE_DRIVER') === 'redis') checked @endif style="width: 40px; height: 20px;">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="enable_redis" name="enable_redis" value="1" @if(config('cache.default') === 'redis') checked @endif style="width: 40px; height: 20px;">
                                     <label class="form-check-label ms-2" for="enable_redis">Turn on object caching</label>
                                 </div>
                             </div>
@@ -553,7 +553,7 @@
                         <i class="fa fa-cloud sm-input-icon"></i>
                         <input type="text" class="form-control" id="cdn_url" name="cdn_url"
                             placeholder="https://cdn.example.com"
-                            value="{{ old('cdn_url', $existing_scripts->cdn_url ?? (env('ASSET_URL') === 'null' ? '' : env('ASSET_URL'))) }}">
+                            value="{{ old('cdn_url', $existing_scripts->cdn_url ?? (config('app.asset_url') === 'null' ? '' : config('app.asset_url'))) }}">
                     </div>
                     <div class="sm-tip">
                         <i class="fa fa-info-circle"></i>

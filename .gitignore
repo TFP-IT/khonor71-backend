@@ -28,3 +28,5 @@ vite.config.mjs
 /public/rss
 /public/sitemap
 v1/
+rr
+.rr.yaml

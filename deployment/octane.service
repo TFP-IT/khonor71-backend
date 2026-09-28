@@ -1,0 +1,22 @@
+[Unit]
+Description=Laravel Octane (RoadRunner) for News365
+After=network.target mysql.service redis.service
+
+[Service]
+Type=simple
+User=versatilo
+Group=versatilo
+WorkingDirectory=/var/www/khonor71-backend
+ExecStart=/usr/bin/php /var/www/khonor71-backend/artisan octane:start --server=roadrunner --port=8000 --workers=auto --max-requests=500
+ExecReload=/usr/bin/php /var/www/khonor71-backend/artisan octane:reload
+Restart=always
+RestartSec=5s
+StandardOutput=append:/var/www/khonor71-backend/storage/logs/octane.log
+StandardError=append:/var/www/khonor71-backend/storage/logs/octane-error.log
+
+# Resource Limits
+LimitNOFILE=65535
+LimitNPROC=65535
+
+[Install]
+WantedBy=multi-user.target

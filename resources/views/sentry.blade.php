@@ -1,10 +1,10 @@
-@if(env('SENTRY_LARAVEL_DSN'))
+@if(config('services.sentry.dsn'))
 <script src="https://js.sentry-cdn.com/YOUR_DSN_HASH_HERE.min.js" crossorigin="anonymous"></script>
 <!-- Alternatively, using the browser CDN bundle directly: -->
 <script src="https://browser.sentry-cdn.com/7.73.0/bundle.min.js" crossorigin="anonymous"></script>
 <script>
   Sentry.init({
-    dsn: "{{ env('SENTRY_LARAVEL_DSN') }}",
+    dsn: "{{ config('services.sentry.dsn') }}",
     integrations: [
       new Sentry.BrowserTracing(),
       new Sentry.Replay(),

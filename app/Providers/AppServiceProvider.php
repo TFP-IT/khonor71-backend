@@ -48,11 +48,17 @@ class AppServiceProvider extends ServiceProvider
         Blade::include('backend.layouts.forms.image-with-preview', 'imageWithPreview');
         Blade::include('backend.layouts.forms.image-with-preview', 'imageWithPreview2');
 
-        View::share('themeSettings', ThemeHelper::themeSettings());
+        // Use a view composer instead of View::share so the theme
+        // settings query runs per-request, not once at boot. This
+        // is required for Octane's long-running worker model.
+        View::composer('*', function ($view) {
+            if (! $view->offsetExists('themeSettings')) {
+                $view->with('themeSettings', ThemeHelper::themeSettings());
+            }
+        });
 
         if (app()->environment('production')) {
             URL::forceScheme('https');
-            $this->app['request']->server->set('HTTPS', 'on');
         }
     }
 

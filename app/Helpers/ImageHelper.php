@@ -90,7 +90,7 @@ class ImageHelper
      */
     public static function delete_file(string $file, $disk = 'local', ): bool
     {
-        $uploadDisk = env('FILESYSTEM_DISK', 'local');
+        $uploadDisk = config('filesystems.default', 'local');
 
         if ($uploadDisk == 's3') {
             $spaceCredential = SpaceCredential::where('status', 1)->first();

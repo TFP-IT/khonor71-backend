@@ -115,8 +115,8 @@ public function store(Request $request)
         // Extract 5 thumbnails from the video
         try {
             $ffmpeg = FFMpeg::create([
-                'ffmpeg.binaries'  => env('FFMPEG_PATH', '/usr/local/bin/ffmpeg'),
-                'ffprobe.binaries' => env('FFPROBE_PATH', '/usr/local/bin/ffprobe'),
+                'ffmpeg.binaries'  => config('services.ffmpeg.path', '/usr/local/bin/ffmpeg'),
+                'ffprobe.binaries' => config('services.ffmpeg.ffprobe_path', '/usr/local/bin/ffprobe'),
                 'timeout'          => 3600,
                 'ffmpeg.threads'   => 12,
             ]);

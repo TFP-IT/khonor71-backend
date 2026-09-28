@@ -42,4 +42,18 @@ return [
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env('FACEBOOK_REDIRECT_URI'),
     ],
+
+    'youtube' => [
+        'api_key' => env('YOUTUBE_API_KEY'),
+        'playlist_id' => env('YOUTUBE_PLAYLIST_ID'),
+    ],
+
+    'ffmpeg' => [
+        'path' => env('FFMPEG_PATH', '/usr/local/bin/ffmpeg'),
+        'ffprobe_path' => env('FFPROBE_PATH', '/usr/local/bin/ffprobe'),
+    ],
+
+    'sentry' => [
+        'dsn' => env('SENTRY_LARAVEL_DSN'),
+    ],
 ];
