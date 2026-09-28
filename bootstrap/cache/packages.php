@@ -25,11 +25,11 @@
   array (
     'aliases' => 
     array (
-      'Debugbar' => 'Barryvdh\\Debugbar\\Facades\\Debugbar',
+      'Debugbar' => 'Fruitcake\\LaravelDebugbar\\Facades\\Debugbar',
     ),
     'providers' => 
     array (
-      0 => 'Barryvdh\\Debugbar\\ServiceProvider',
+      0 => 'Fruitcake\\LaravelDebugbar\\ServiceProvider',
     ),
   ),
   'barryvdh/laravel-dompdf' => 
@@ -116,18 +116,6 @@
       0 => 'Laravel\\Ui\\UiServiceProvider',
     ),
   ),
-  'laravelcollective/html' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Collective\\Html\\HtmlServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Form' => 'Collective\\Html\\FormFacade',
-      'Html' => 'Collective\\Html\\HtmlFacade',
-    ),
-  ),
   'laravellux/html' => 
   array (
     'aliases' => 
@@ -138,6 +126,17 @@
     'providers' => 
     array (
       0 => 'LaravelLux\\Html\\HtmlServiceProvider',
+    ),
+  ),
+  'livewire/livewire' => 
+  array (
+    'aliases' => 
+    array (
+      'Livewire' => 'Livewire\\Livewire',
+    ),
+    'providers' => 
+    array (
+      0 => 'Livewire\\LivewireServiceProvider',
     ),
   ),
   'maatwebsite/excel' => 
@@ -272,17 +271,6 @@
       0 => 'Spatie\\SignalAwareCommand\\SignalAwareCommandServiceProvider',
     ),
   ),
-  'willvincent/feeds' => 
-  array (
-    'aliases' => 
-    array (
-      'Feeds' => 'willvincent\\Feeds\\Facades\\FeedsFacade',
-    ),
-    'providers' => 
-    array (
-      0 => 'willvincent\\Feeds\\FeedsServiceProvider',
-    ),
-  ),
   'yajra/laravel-datatables-buttons' => 
   array (
     'providers' => 
@@ -295,6 +283,13 @@
     'providers' => 
     array (
       0 => 'Yajra\\DataTables\\EditorServiceProvider',
+    ),
+  ),
+  'yajra/laravel-datatables-export' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Yajra\\DataTables\\ExportServiceProvider',
     ),
   ),
   'yajra/laravel-datatables-fractal' => 
