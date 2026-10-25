@@ -207,7 +207,7 @@
             <div class="text-white lg:px-4 2xl:px-6 flex flex-col items-center justify-center h-full gap-2">
                 <!-- Logo -->
                 <a class="w-44 md:w-64 h-11 flex justify-center items-center" href="{{ __url('/') }}">
-                    <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" class="max-w-full object-contain" />
+                    <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" class="max-w-full object-contain" width="256" height="44" loading="lazy" decoding="async" />
                 </a>
 
                 <p class="text-center mt-12">

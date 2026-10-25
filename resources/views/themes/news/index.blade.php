@@ -51,7 +51,7 @@
         @include('themes.news.components.home.stories-news')
     @endif --}}
 
-    <section class="container my-8 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 4xl:grid-cols-4 gap-4">
+    <section class="container my-8 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 4xl:grid-cols-4 gap-4 content-visibility-auto">
         <!-- Left section -->
         <div class="lg:col-span-2 xl:col-span-2 4xl:col-span-3 gap-6">
             <!-- SPORTS CATAGORY NEWS -->
@@ -81,7 +81,7 @@
     </section> -->
 
     <!-- Opinion Section Start -->
-    <section class="container grid grid-cols-1 xl:grid-cols-6 2xl:grid-cols-4 gap-8 my-6">
+    <section class="container grid grid-cols-1 xl:grid-cols-6 2xl:grid-cols-4 gap-8 my-6 content-visibility-auto">
         <!-- Left Section -->
         <section class="xl:col-span-4 2xl:col-span-3 space-y-8">
             <div>
@@ -131,7 +131,7 @@
 
     {{-- Video Section --}}
     @if ($videoNews->isNotEmpty())
-        <section class="bg-neutral-100 dark:bg-neutral-800 py-6">
+        <section class="bg-neutral-100 dark:bg-neutral-800 py-6 content-visibility-auto">
             <section class="container">
                 <div
                     class="flex justify-between gap-2 items-center mb-4 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700">
@@ -179,7 +179,7 @@
     </section> -->
 
     <!-- TECH NEWS START -->
-    <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
+    <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8 content-visibility-auto">
         <!-- Tech News Slider Section -->
         @if ($sectionTwoNews['rightNews']->isNotEmpty())
             @include('themes.news.components.common.tech-news-card', [
@@ -259,7 +259,7 @@
 
     <!-- common section -->
     @foreach ($chunkedNewsGroups as $newsGroupChunk)
-        <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8">
+        <section class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-0 mt-8 content-visibility-auto">
             @foreach ($newsGroupChunk as $newsCards)
                 @if ($newsCards->isNotEmpty())
                     @include('themes.news.components.common.tech-news-card', ['newsCards' => $newsCards])

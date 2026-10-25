@@ -1,8 +1,13 @@
 <!-- Top Category News section -->
 @php
     $heroPhotoLibrary = $homePageTopNews[0]->news->photoLibrary ?? null;
+    $imageBaseHost = '';
+    if (!empty($heroPhotoLibrary?->image_base_url) && preg_match('#^https?://[^/]+#', $heroPhotoLibrary->image_base_url, $m)) {
+        $imageBaseHost = $m[0];
+    }
+
     $heroLargeImage = !empty($heroPhotoLibrary?->large_image)
-        ? asset('storage/' . $heroPhotoLibrary->large_image)
+        ? ($imageBaseHost ? $imageBaseHost . '/storage/' . ltrim($heroPhotoLibrary->large_image, '/') : asset('storage/' . $heroPhotoLibrary->large_image))
         : asset('/assets/news-details-view.png');
 
     $heroThumbImage = '';

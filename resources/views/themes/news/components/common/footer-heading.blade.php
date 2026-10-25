@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between gap-4 py-8">
     <a class="w-44 md:w-64 h-11 flex_center" href="{{ __url('/') }}">
-        <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" />
+        <img src="{{ app_setting()->footer_logo }}" alt="Brand Logo" width="256" height="44" loading="lazy" decoding="async" />
     </a>
     <!-- {/* Social Link */} -->
     <div class="flex gap-2 md:gap-4">

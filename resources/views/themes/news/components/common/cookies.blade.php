@@ -109,7 +109,14 @@
 
         const consent = getCookie(COOKIE_NAME);
         if (!consent) {
-            banner.style.display = 'block';
+            const showBanner = function() {
+                banner.style.display = 'block';
+            };
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(showBanner, { timeout: 2000 });
+            } else {
+                setTimeout(showBanner, 1000);
+            }
         } else {
             try {
                 const parsed = JSON.parse(consent);

@@ -22,6 +22,8 @@
     <link rel="preconnect" href="https://khobor71.com">
     <link rel="dns-prefetch" href="https://khobor71.com">
     <link rel="dns-prefetch" href="https://www.khobor71.com">
+    <link rel="preconnect" href="https://fonts.maateen.me" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.maateen.me">
 
     {!! SEOTools::generate() !!}
 
@@ -189,14 +191,14 @@
             <a class="flex_center" href="{{ __url('/') }}">
                 <img src="{{ $desktopHeaderLogo }}" alt="Khobor71 Logo" class="w-auto"
                     width="216" height="64"
-                    fetchpriority="high"
+                    loading="eager"
                     decoding="async"
                     style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
             </a>
         </div>
         <!-- Ad Banner Section -->
         <figure class="w-[660px] h-20 object-cover overflow-hidden" style="margin-left: 20px">
-            @if ($ad = get_advertisements(1, 1))
+            @if (($ad = get_advertisements(1, 1)) && !empty(trim($ad->embed_code ?? '')))
                 {!! $ad->embed_code !!}
             @else
                 <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"

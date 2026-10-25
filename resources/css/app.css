@@ -461,3 +461,10 @@ td {
 [x-cloak] {
     display: none !important;
 }
+
+/* Modern Web Performance: Defer rendering offscreen heavy layout blocks */
+.content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+}
+
