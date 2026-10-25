@@ -1,6 +1,6 @@
 <section 
     class="cookies_section bg-neutral-100 fixed left-0 bottom-0 z-20 w-full shadow-inner shadow-black/5"
-    x-cloak
+    style="display: none;"
     id="cookie-banner">
     <div class="space-y-4 xl:grid items-center grid-cols-7 gap-12 p-6 md:mx-2 lg:mx-12 4xl:container 4xl:mx-auto">
         <div class="col-span-5">
@@ -109,7 +109,7 @@
 
         const consent = getCookie(COOKIE_NAME);
         if (!consent) {
-            banner.removeAttribute('x-cloak');
+            banner.style.display = 'block';
         } else {
             try {
                 const parsed = JSON.parse(consent);

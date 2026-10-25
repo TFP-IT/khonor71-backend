@@ -37,7 +37,7 @@
                 $mobileHeaderLogoAlt = mode() ? 'Brand logo dark' : 'Brand logo light';
             @endphp
             <a class="w-44 sm:w-48 flex_center overflow-hidden" href="{{ __url('/') }}">
-                <img class="w-full h-14 sm:h-16 object-contain" src="{{ $mobileHeaderLogo }}" alt="{{ $mobileHeaderLogoAlt }}" loading="eager" decoding="async" fetchpriority="high" />
+                <img class="w-full h-14 sm:h-16 object-contain" src="{{ $mobileHeaderLogo }}" alt="{{ $mobileHeaderLogoAlt }}" width="180" height="56" loading="eager" decoding="async" fetchpriority="high" />
             </a>
         </div>
 

@@ -19,6 +19,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://khobor71.com">
+    <link rel="dns-prefetch" href="https://khobor71.com">
+    <link rel="dns-prefetch" href="https://www.khobor71.com">
 
     {!! SEOTools::generate() !!}
 
@@ -37,6 +40,10 @@
 
     {{-- Set CSS Variables --}}
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         :root {
             @if ($principalFont)
                 --font-principal: {{ $principalFont->font_family }};
@@ -180,7 +187,8 @@
                 $desktopHeaderLogo = mode() ? app_setting()->footer_logo : app_setting()->logo;
             @endphp
             <a class="flex_center" href="{{ __url('/') }}">
-                <img src="{{ $desktopHeaderLogo }}" alt="" class="w-auto"
+                <img src="{{ $desktopHeaderLogo }}" alt="Khobor71 Logo" class="w-auto"
+                    width="216" height="64"
                     fetchpriority="high"
                     decoding="async"
                     style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
@@ -192,14 +200,16 @@
                 {!! $ad->embed_code !!}
             @else
                 <img class="w-full h-full object-cover" src="{{ asset('assets/top-header-banner.png') }}"
+                    width="660" height="80"
                     loading="lazy"
                     decoding="async"
-                    alt="" />
+                    alt="Advertisement" />
             @endif
         </figure>
         <div class="probash-section">
             <a href="{{ __url('probashi-janala-news') }}" title="Probashi" style="height: 100px">
                 <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo"
+                    width="100" height="90"
                     loading="lazy"
                     decoding="async">
             </a>
@@ -207,12 +217,14 @@
         @if (Auth::guard('webuser')->check())
             <a type="button" href="{{ __url('account/probashi-news') }}" title="সর্বশেষ প্রবাস সংবাদ">
                 <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                    width="100" height="90"
                     loading="lazy"
                     decoding="async">
-            </button>
+            </a>
         @else
             <button type="button" title="সর্বশেষ প্রবাস সংবাদ" id="openModalForProbashiNews">
                 <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                    width="100" height="90"
                     loading="lazy"
                     decoding="async">
             </button>
@@ -270,9 +282,11 @@
                                                 alt="Sangbadik News">
                                         </a>
                                     @else
-                                        <img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+                                        <img src="{{ asset('assets/news-details-view.png') }}"
                                             loading="lazy"
                                             decoding="async"
+                                            width="120"
+                                            height="90"
                                             alt="Default Report">
                                     @endif
                                 </div>
