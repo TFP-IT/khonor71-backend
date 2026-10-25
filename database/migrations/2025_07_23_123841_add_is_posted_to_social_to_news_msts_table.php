@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('news_msts', function (Blueprint $table) {
-            $table->boolean('is_auto_post')->default(true)->after('reader_hit');
-            $table->boolean('is_posted_to_social')->default(false)->after('is_auto_post');
+            if (!Schema::hasColumn('news_msts', 'is_auto_post')) {
+                $table->boolean('is_auto_post')->default(true)->after('reader_hit');
+            }
+            if (!Schema::hasColumn('news_msts', 'is_posted_to_social')) {
+                $table->boolean('is_posted_to_social')->default(false)->after('is_auto_post');
+            }
         });
     }
 
@@ -23,8 +27,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('news_msts', function (Blueprint $table) {
-            $table->dropColumn('is_auto_post');
-            $table->dropColumn('is_posted_to_social');
+            if (Schema::hasColumn('news_msts', 'is_posted_to_social')) {
+                $table->dropColumn('is_posted_to_social');
+            }
+            if (Schema::hasColumn('news_msts', 'is_auto_post')) {
+                $table->dropColumn('is_auto_post');
+            }
         });
     }
 };

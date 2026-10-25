@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('languages', function (Blueprint $table) {
-            $table->boolean('status')->default(true)->after('value');
+            if (!Schema::hasColumn('languages', 'status')) {
+                $table->boolean('status')->default(true)->after('value');
+            }
         });
     }
 
@@ -26,7 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('languages', function (Blueprint $table) {
-            $table->dropColumn('status');
+            if (Schema::hasColumn('languages', 'status')) {
+                $table->dropColumn('status');
+            }
         });
     }
 };

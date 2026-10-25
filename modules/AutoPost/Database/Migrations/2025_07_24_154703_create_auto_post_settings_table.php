@@ -13,27 +13,29 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('auto_post_settings', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('auto_post_settings')) {
+            Schema::create('auto_post_settings', function (Blueprint $table) {
+                $table->id();
 
-            // Platform: facebook, twitter, etc.
-            $table->string('platform'); // 'facebook' or 'twitter'
+                // Platform: facebook, twitter, etc.
+                $table->string('platform'); // 'facebook' or 'twitter'
 
-            // Facebook
-            $table->string('page_id')->nullable();
+                // Facebook
+                $table->string('page_id')->nullable();
 
-            // Twitter (X)
-            $table->string('api_key')->nullable();
-            $table->string('api_secret')->nullable();
-            $table->string('access_token_secret')->nullable();
+                // Twitter (X)
+                $table->string('api_key')->nullable();
+                $table->string('api_secret')->nullable();
+                $table->string('access_token_secret')->nullable();
 
-            // Common
-            $table->text('access_token')->nullable();
-            $table->boolean('is_test_mode')->default(false); // it define which version use is sendbox, paid, free etc.
-            $table->boolean('is_active')->default(false);
+                // Common
+                $table->text('access_token')->nullable();
+                $table->boolean('is_test_mode')->default(false); // it define which version use is sendbox, paid, free etc.
+                $table->boolean('is_active')->default(false);
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**
