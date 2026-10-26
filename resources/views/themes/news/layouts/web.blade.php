@@ -16,15 +16,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="base-url" content="{{ url('/') }}">
     <meta name="google-site-verification" content="F_Q9nuMHlFCzzIgz2Ow-5bJM2ZVqoAYYIIVDwbsjOTI" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-    <link rel="preconnect" href="https://khobor71.com">
-    <link rel="dns-prefetch" href="https://khobor71.com">
-    <link rel="dns-prefetch" href="https://www.khobor71.com">
-    <link rel="preconnect" href="https://fonts.maateen.me" crossorigin>
-    <link rel="dns-prefetch" href="https://fonts.maateen.me">
-
     {!! SEOTools::generate() !!}
 
     <!-- Link Swiper's CSS -->
@@ -36,7 +27,7 @@
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
-        <link href="{{ $font->source_url }}" rel="stylesheet" media="print" onload="this.media='all'">
+        <link href="{{ $font->source_url }}" rel="stylesheet" media="print" onload="this.onload=null;this.media='all'">
         <noscript><link href="{{ $font->source_url }}" rel="stylesheet"></noscript>
     @endforeach
 

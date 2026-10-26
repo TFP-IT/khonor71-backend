@@ -30,3 +30,4 @@ vite.config.mjs
 v1/
 rr
 .rr.yaml
+.getaibd/

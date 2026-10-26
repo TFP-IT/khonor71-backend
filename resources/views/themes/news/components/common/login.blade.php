@@ -86,5 +86,5 @@
     <script>
         const loginRoute = "{{ route('webuser.login') }}";
     </script>
-    <script src="{{ asset('website/js/login.js?v=4') }}"></script>
+    <script defer src="{{ asset('website/js/login.js?v=4') }}"></script>
 @endpush
