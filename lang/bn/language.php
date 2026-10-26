@@ -1843,7 +1843,7 @@
   'publish' => 'Publish',
   'social_post' => 'Social post',
   'a' => 'A',
-  'popular_post' => 'Popular post',
+  'popular_post' => 'জনপ্রিয় পোস্ট',
   'previous_article' => 'Previous article',
   'next_article' => 'Next article',
   'cancel_replay' => 'Cancel replay',
