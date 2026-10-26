@@ -14,7 +14,9 @@ return [
     |
      */
 
-    'enabled' => env('DEBUGBAR_ENABLED', null),
+    // Keep diagnostics available by default locally, but do not inject their
+    // CSS/JS assets into shared staging or production pages.
+    'enabled' => env('DEBUGBAR_ENABLED', env('APP_ENV') === 'local' ? null : false),
     'except' => [
         'telescope*',
         'horizon*',

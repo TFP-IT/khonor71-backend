@@ -86,7 +86,7 @@
         <section class="xl:col-span-4 2xl:col-span-3 space-y-8">
             <div>
                 @if ($opinions->isNotEmpty())
-                    <h1 class="text-brand-primary text-lg font-semibold uppercase">
+                    <h1 class="text-red-700 dark:text-red-400 text-lg font-semibold uppercase">
                         {{ localize('opinion') }}
                     </h1>
                     @include ('themes.news.components.slider.opinion-slider', ['opinions' => $opinions])
@@ -97,11 +97,11 @@
                 @if ($sectionTwoNews['leftNews']->isNotEmpty())
                     <div
                         class="flex justify-between gap-2 items-center mb-3 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700">
-                        <h1 class="text-brand-primary text-lg font-semibold uppercase">
+                        <h1 class="text-red-700 dark:text-red-400 text-lg font-semibold uppercase">
                             {{ $sectionTwoNews['leftNews'][0]->category->category_name }}
                         </h1>
                         <a href="{{ __url($sectionTwoNews['leftNews'][0]->category->slug) }}"
-                            class="capitalize text-neutral-400 hover:text-cyan-700 hover:underline transition_3">
+                            class="capitalize text-neutral-700 dark:text-neutral-300 hover:text-cyan-700 hover:underline transition_3">
                             {{ localize('view_more') }}
                         </a>
                     </div>

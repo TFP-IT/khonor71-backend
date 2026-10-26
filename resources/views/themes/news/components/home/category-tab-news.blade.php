@@ -2,7 +2,7 @@
   <!-- section head -->
   <div
     class="flex justify-between gap-2 items-center mb-4 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700 relative before:absolute before:left-0 rtl:before:left-auto rtl:before:right-0 before:h-1 before:bg-brand-primary before:z-10 before:-bottom-[3px] before:w-20">
-    <h1 class="text-brand-primary text-lg font-semibold uppercase">
+    <h1 class="text-red-700 dark:text-red-400 text-lg font-semibold uppercase">
       {{ $sectionThreeAllNews[0]->category->category_name }}
     </h1>
     <!-- Tab button section -->

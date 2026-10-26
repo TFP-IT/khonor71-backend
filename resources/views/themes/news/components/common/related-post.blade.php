@@ -1,11 +1,11 @@
 <section class="lg:col-span-3 mt-6">
     <div
         class="flex justify-between gap-2 items-center mb-4 pb-1 border-b-2 border-neutral-300 dark:border-neutral-700 relative before:absolute before:left-0 rtl:before:left-auto rtl:before:right-0 before:h-1 before:bg-brand-primary before:z-10 before:-bottom-[3px] before:w-20">
-        <h1 class="text-brand-primary text-lg font-semibold uppercase">
+        <h1 class="text-red-700 dark:text-red-400 text-lg font-semibold uppercase">
             {{ $sectionSixNews[0]->category->category_name }}
         </h1>
         <a href="{{ __url($sectionSixNews[0]->category->slug) }}"
-            class="capitalize text-neutral-400 hover:text-brand-primary hover:underline transition_3">
+            class="capitalize text-neutral-700 dark:text-neutral-300 hover:text-brand-primary hover:underline transition_3">
             {{ localize('view_more') }}
         </a>
     </div>
@@ -33,7 +33,7 @@
                         class="block w-full h-64 group overflow-hidden">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
                             src="{{ isset($secSixNewsChunk->first()->news->photoLibrary->image_base_url) ? $secSixNewsChunk->first()->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
-                            alt="{{ $secSixNewsChunk->first()->news->image_alt }}" />
+                            alt="{{ $secSixNewsChunk->first()->news->image_alt ?: $secSixNewsChunk->first()->news->title }}" />
                     </a>
                     <div class="space-y-2 divide-y divide-neutral-200 dark:divide-neutral-700">
                         <div class="py-2 space-y-2">
@@ -69,7 +69,7 @@
                                         <figure class="w-full h-20">
                                             <img class="w-full h-full object-cover"
                                                 src="{{ isset($secSixNewsChunkItem->news->photoLibrary->image_base_url) ? $secSixNewsChunkItem->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
-                                                alt="{{ $secSixNewsChunkItem->news->image_alt }}" />
+                                                alt="{{ $secSixNewsChunkItem->news->image_alt ?: $secSixNewsChunkItem->news->title }}" />
                                         </figure>
                                         <h2
                                             class="col-span-2 line-clamp-3 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">

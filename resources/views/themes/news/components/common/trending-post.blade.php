@@ -6,7 +6,7 @@
     <a href="{{ __url($trendingNews[0]->encode_title) }}" class="h-60 md:h-96 lg:h-60 object-cover block">
         <img class="w-full h-full object-cover"
             src="{{ isset($trendingNews[0]->photoLibrary->image_base_url) ? $trendingNews[0]->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
-            alt="{{ $trendingNews[0]->image_alt }}" />
+            alt="{{ $trendingNews[0]->image_alt ?: $trendingNews[0]->title }}" />
     </a>
     <div class="space-y-2 mt-2">
         <a href="{{ __url($trendingNews[0]->encode_title) }}"

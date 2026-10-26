@@ -10,7 +10,7 @@
       <img
         class="w-full h-72 object-cover"
         src="{{ isset($newsCards[0]->news->photoLibrary->image_base_url) ? $newsCards[0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
-        alt="{{ $newsCards[0]->news->image_alt }}"
+        alt="{{ $newsCards[0]->news->image_alt ?: $newsCards[0]->news->title }}"
       />
       <div class="p-2 2xl:p-3 absolute z-10 bottom-0 left-0">
         <h1 class="text-white font-bold text-xl my-2">
@@ -54,7 +54,7 @@
               <img
                 class="w-full h-full object-cover"
                 src="{{ isset($newsCard->news->photoLibrary->image_base_url) ? $newsCard->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
-                alt="{{ $newsCard->news->image_alt }}"
+                alt="{{ $newsCard->news->image_alt ?: $newsCard->news->title }}"
               />
             </figure>
             <h2

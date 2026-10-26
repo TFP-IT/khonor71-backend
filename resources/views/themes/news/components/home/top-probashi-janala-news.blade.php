@@ -233,7 +233,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
         class="w-full h-full object-cover group-hover:scale-105 transition_slow"
         src="{{ $rightCategoryImage }}"
         onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
-        alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" />
+        alt="{{ $rightCategoryNews->image_alt ?: $rightCategoryNews->title }}" />
     </a>
     <div class="py-3 space-y-2">
         <a

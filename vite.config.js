@@ -7,6 +7,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/story_slider.css',
                 'resources/js/app.js',
             ],
             refresh: true,

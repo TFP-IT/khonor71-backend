@@ -13,7 +13,7 @@
               <img
                 class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                 src="{{ get_image_url('/assets/thumbnail-image.jpg', $videoNewsItem->thumbnail_image) }}"
-                alt="{{ $videoNewsItem->image_alt }}"
+                alt="{{ $videoNewsItem->image_alt ?: $videoNewsItem->title }}"
                 loading="lazy"
               />
             </a>

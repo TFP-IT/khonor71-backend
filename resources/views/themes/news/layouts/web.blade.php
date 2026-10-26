@@ -73,6 +73,7 @@
     @vite(['resources/css/app.css'])
     @stack('plugins-css')
     @stack('custom-css')
+    @stack('custom-head-js')
 
     <!-- Google Analytics (GA4) -->
     @if ($gaTrackingId)
@@ -316,7 +317,7 @@
     <div id="globalModal"
         class="fixed inset-0 flex items-center justify-center bg-black/75 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="globalModalContent">
-            <button id="globalModalClose"
+            <button id="globalModalClose" type="button" aria-label="{{ localize('close') }}"
                 class="p-2 text-white bg-red-600 hover:bg-red-800 rounded-full w-8 h-8 flex items-center justify-center absolute top-4 right-4 transition_3">
                 <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path

@@ -12,6 +12,7 @@
         <div class="flex flex-wrap items-center gap-2.5">
             <!-- Division Selector -->
             <div class="relative min-w-[140px]">
+                <label class="sr-only" for="home_division_filter">বিভাগ নির্বাচন</label>
                 <select id="home_division_filter" class="w-full text-sm bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-600 rounded-md py-1.5 px-3 focus:outline-none focus:border-brand-primary cursor-pointer">
                     <option value="">সকল বিভাগ</option>
                     @foreach($divisions as $div)
@@ -22,6 +23,7 @@
 
             <!-- District Selector -->
             <div class="relative min-w-[140px]">
+                <label class="sr-only" for="home_district_filter">জেলা নির্বাচন</label>
                 <select id="home_district_filter" class="w-full text-sm bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-600 rounded-md py-1.5 px-3 focus:outline-none focus:border-brand-primary cursor-pointer">
                     <option value="">সকল জেলা</option>
                 </select>
@@ -35,7 +37,7 @@
             </button>
 
             <!-- View Archive Link -->
-            <a id="home_district_archive_link" href="{{ route('website.district.news', ['slug' => 'all']) }}" class="text-xs font-semibold text-brand-primary dark:text-red-400 hover:underline px-2 py-1.5">
+            <a id="home_district_archive_link" href="{{ route('website.district.news', ['slug' => 'all']) }}" class="text-xs font-semibold text-red-700 dark:text-red-400 hover:underline px-2 py-1.5">
                 {{ localize('view_more') }} &raquo;
             </a>
         </div>

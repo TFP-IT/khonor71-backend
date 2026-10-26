@@ -107,7 +107,7 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                             src="{{ $rightCategoryImage }}"
                             onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
-                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
+                        alt="{{ $rightCategoryNews->image_alt ?: $rightCategoryNews->title }}"
                         />
                     </a>
                     <div class="py-3 space-y-2">
@@ -274,7 +274,7 @@
                         <img class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                             src="{{ $rightCategoryImage }}"
                             onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
-                            alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" loading="lazy"
+                            alt="{{ $rightCategoryNews->image_alt ?: $rightCategoryNews->title }}" loading="lazy"
                             decoding="async" fetchpriority="low" />
                     </a>
                     <div class="py-3 space-y-2">

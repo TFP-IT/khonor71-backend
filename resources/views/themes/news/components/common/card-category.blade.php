@@ -9,7 +9,7 @@
         <img
           class="w-full h-full object-cover group-hover:scale-105 transition_7"
           src="{{ isset($topBottomNews->news->photoLibrary->image_base_url) ? $topBottomNews->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
-          alt="{{ $topBottomNews->news->image_alt }}"
+          alt="{{ $topBottomNews->news->image_alt ?: $topBottomNews->news->title }}"
         />
       </a>
 

@@ -36,7 +36,7 @@
                                         <figure class="w-[100px] h-16 overflow-hidden">
                                           <img class="w-full h-full object-cover"
                                               src="{{ isset($prevNews->photoLibrary->image_base_url) ? $prevNews->photoLibrary->image_base_url : asset('assets/opinion-avatar.png') }}"
-                                              alt="News" />
+                                              alt="{{ $prevNews->image_alt ?: $prevNews->title }}" />
                                         </figure>
                                     </a>
                                     <!-- Message -->
@@ -54,7 +54,7 @@
                                         <figure class="w-[100px] h-16 overflow-hidden">
                                           <img class="w-full h-full object-cover"
                                               src="{{ isset($prevNews->photoLibrary->image_base_url) ? $prevNews->photoLibrary->image_base_url : asset('assets/opinion-avatar.png') }}"
-                                              alt="" />
+                                              alt="{{ $prevNews->image_alt ?: $prevNews->title }}" />
                                         </figure>
                                     </a>
 
@@ -82,7 +82,7 @@
                                         <figure class="w-[100px] h-16 overflow-hidden">
                                           <img class="w-full h-full object-cover"
                                               src="{{ isset($nextNewsData->photoLibrary->image_base_url) ? $nextNewsData->photoLibrary->image_base_url : asset('assets/opinion-avatar.png') }}"
-                                              alt="News" />
+                                              alt="{{ $nextNewsData->image_alt ?: $nextNewsData->title }}" />
                                       </figure>
                                     </a>
 
@@ -101,7 +101,7 @@
                                         <figure class="w-[100px] h-16 overflow-hidden">
                                           <img class="w-full h-full object-cover"
                                               src="{{ isset($nextNewsData->photoLibrary->image_base_url) ? $nextNewsData->photoLibrary->image_base_url : asset('assets/opinion-avatar.png') }}"
-                                              alt="" />
+                                              alt="{{ $nextNewsData->image_alt ?: $nextNewsData->title }}" />
                                         </figure>
                                     </a>
 

@@ -6,7 +6,7 @@
     <div class="lg:px-3 hidden xl:block">
       @if(isset($sectionThreeAllNews[0]))
         <a href="{{ __url($sectionThreeAllNews[0]->news->encode_title) }}" class="block w-full h-64 md:h-96 xl:h-64 group overflow-hidden">
-          <img class="w-full h-full object-cover group-hover:scale-105 transition_5" src="{{ isset($sectionThreeAllNews[0]->news->photoLibrary->image_base_url) ? $sectionThreeAllNews[0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}" alt="{{ $sectionThreeAllNews[0]->news->image_alt }}" />
+          <img class="w-full h-full object-cover group-hover:scale-105 transition_5" src="{{ isset($sectionThreeAllNews[0]->news->photoLibrary->image_base_url) ? $sectionThreeAllNews[0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}" alt="{{ $sectionThreeAllNews[0]->news->image_alt ?: $sectionThreeAllNews[0]->news->title }}" />
         </a>
         <div class="p-2">
           <a href="{{ __url($sectionThreeAllNews[0]->news->encode_title) }}" class="line-clamp-3 text-gray-600 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg transition_3">
@@ -25,7 +25,7 @@
               <figure class="w-full h-20">
                 <img class="w-full h-full object-cover" 
                   src="{{ isset($sectionThreeAllNewsLeft->news->photoLibrary->image_base_url) ? $sectionThreeAllNewsLeft->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}" 
-                  alt="{{ $sectionThreeAllNewsLeft->news->image_alt }}" />
+                  alt="{{ $sectionThreeAllNewsLeft->news->image_alt ?: $sectionThreeAllNewsLeft->news->title }}" />
               </figure>
               <h2 class="col-span-2 line-clamp-3 md:line-clamp-2 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">
                 {{ $sectionThreeAllNewsLeft->news->title }}
@@ -45,7 +45,7 @@
               <figure class="w-full h-20">
                 <img class="w-full h-full object-cover" 
                   src="{{ isset($sectionThreeAllNewsRight->news->photoLibrary->image_base_url) ? $sectionThreeAllNewsRight->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}" 
-                  alt="{{ $sectionThreeAllNewsRight->news->image_alt }}" />
+                  alt="{{ $sectionThreeAllNewsRight->news->image_alt ?: $sectionThreeAllNewsRight->news->title }}" />
               </figure>
               <h2 class="col-span-2 line-clamp-3 md:line-clamp-2 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">
                 {{ $sectionThreeAllNewsRight->news->title }}
@@ -65,7 +65,7 @@
                 <a href="{{ __url($sectionThreeAllNewsBottom->news->encode_title) }}" class="w-full h-72 relative group overflow-hidden block bg_gradient_top">
                     <img class="w-full h-full object-cover group-hover:scale-105 transition_7" 
                       src="{{ isset($sectionThreeAllNewsBottom->news->photoLibrary->image_base_url) ? $sectionThreeAllNewsBottom->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}" 
-                      alt="{{ $sectionThreeAllNewsBottom->news->image_alt }}" />
+                      alt="{{ $sectionThreeAllNewsBottom->news->image_alt ?: $sectionThreeAllNewsBottom->news->title }}" />
                     
                     <div class="p-3 space-y-2 text-white absolute z-10 bottom-0 left-0">
                         <h2 href="#" class="text-xl font-semibold leading-6 line-clamp-2">

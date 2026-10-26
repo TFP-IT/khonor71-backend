@@ -1,7 +1,12 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-B54p1z7r.css",
+    "file": "assets/app-Bzk87K4m.css",
     "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/story_slider.css": {
+    "file": "assets/story_slider-CpUe2A2g.css",
+    "src": "resources/css/story_slider.css",
     "isEntry": true
   },
   "resources/js/app.js": {

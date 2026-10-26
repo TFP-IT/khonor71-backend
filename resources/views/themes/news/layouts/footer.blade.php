@@ -233,7 +233,7 @@
 
                 <!-- Social Links -->
                 <div class="flex flex-row items-center gap-3">
-                    <a target="_blank"
+        <a target="_blank" rel="noopener noreferrer" aria-label="Facebook"
                         class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center group rounded-full p-1 hover:text-social-facebook ring-1 ring-white hover:ring-2 hover:ring-social-facebook transition-all duration-300 ease-in-out"
                         href="{{ $socialLinks->fb->link ?? 'https://www.facebook.com' }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -244,7 +244,7 @@
                         </svg>
                     </a>
 
-                    <a target="_blank"
+        <a target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"
                         class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center group rounded-full p-1 hover:text-social-twitter ring-1 ring-white hover:ring-2 hover:ring-social-twitter transition-all duration-300 ease-in-out"
                         href="{{ $socialLinks->tw->link ?? 'https://www.twitter.com/' }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -255,7 +255,7 @@
                         </svg>
                     </a>
 
-                    <a target="_blank"
+        <a target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                         class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center group rounded-full p-1 hover:text-social-instragram ring-1 ring-white hover:ring-2 hover:ring-social-instragram transition-all duration-300 ease-in-out"
                         href="{{ $socialLinks->instagram->link ?? 'https://www.instagram.com/' }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -266,7 +266,7 @@
                         </svg>
                     </a>
 
-                    <a target="_blank"
+        <a target="_blank" rel="noopener noreferrer" aria-label="YouTube"
                         class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center group rounded-full p-1 hover:text-social-youtube ring-1 ring-white hover:ring-2 hover:ring-social-youtube transition-all duration-300 ease-in-out"
                         href="{{ $socialLinks->youtube->link ?? 'https://www.youtube.com/' }}">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"

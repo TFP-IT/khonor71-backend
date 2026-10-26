@@ -1,6 +1,6 @@
 {{-- Search button  --}}
 <div class="search_wrapper relative">
-    <button type="button"
+    <button type="button" aria-label="{{ localize('search') }}"
         class="btn_search w-9 h-9 leading-[40px] flex justify-center items-center rounded-full text-neutral-600 dark:text-neutral-50 xl:text-white bg-neutral-100 dark:bg-neutral-600 xl:bg-red-800 dark:xl:bg-red-800">
         <svg width="16" height="16" class="rtl:scale-x-[-1]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <path

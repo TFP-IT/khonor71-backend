@@ -82,7 +82,7 @@
     </div>
 </div>
 
-@push('custom-js')
+@push('custom-head-js')
     <script>
         const loginRoute = "{{ route('webuser.login') }}";
     </script>

@@ -113,7 +113,7 @@
             <div class="hidden xl:flex items-center gap-2">
                 <!--  Facebook  -->
                 <div class="relative group">
-                    <a href="{{ $socialLinks->fb->link ?? 'https://www.facebook.com' }}" target="_blank"
+                    <a href="{{ $socialLinks->fb->link ?? 'https://www.facebook.com' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
                         class="w-8 h-8 rounded-full bg-social-facebook flex justify-center items-center transition-all duration-300 hover:scale-110 hover:opacity-90">
                         <!-- Your SVG here -->
                         <svg width="20" height="20" viewBox="0 0 16 16" fill="none"
@@ -143,7 +143,7 @@
                 </div>
                 <!-- Twitter -->
                 <div class="relative group">
-                    <a href="{{ $socialLinks->tw->link ?? 'https://www.twitter.com/' }}" target="_blank"
+                    <a href="{{ $socialLinks->tw->link ?? 'https://www.twitter.com/' }}" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"
                         class="w-8 h-8 rounded-full bg-social-twitter flex justify-center items-center transition-all duration-300 hover:scale-110 hover:opacity-90">
                         <!-- Your SVG here -->
                         <svg width="20" height="20" viewBox="0 0 16 16" fill="none"
@@ -174,7 +174,7 @@
                 <!-- Instragram -->
                 <div class="relative group">
                     <a href="{{ $socialLinks->instagram->link ?? 'https://www.instagram.com/' }}"
-                        target="_blank"
+                        target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                         class="w-8 h-8 rounded-full bg-social-instragram flex justify-center items-center transition-all duration-300 hover:scale-110 hover:opacity-90">
                         <!-- Your SVG here -->
                         <svg width="20" height="20" viewBox="0 0 16 16" fill="none"
@@ -204,7 +204,7 @@
                 </div>
                 <!-- Youtube -->
                 <div class="relative group">
-                    <a href="{{ $socialLinks->youtube->link ?? 'https://www.youtube.com/' }}" target="_blank"
+                    <a href="{{ $socialLinks->youtube->link ?? 'https://www.youtube.com/' }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"
                         class="w-8 h-8 rounded-full bg-social-youtube flex justify-center items-center transition-all duration-300 hover:scale-110 hover:opacity-90">
                         <!-- Your SVG here -->
                         <svg width="20" height="20" viewBox="0 0 16 16" fill="none"
