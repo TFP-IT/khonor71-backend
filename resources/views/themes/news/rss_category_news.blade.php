@@ -62,7 +62,7 @@
                                     <a href="{{ __url($item['encode_title']) }}"
                                         class="block w-full h-42 md:h-[150px] 2xl:h-40 4xl:h-52 group overflow-hidden">
                                         <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
-                                            src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.png') }}"
+                                            src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.webp') }}"
                                             alt="{{ $item['title'] }}" />
                                     </a>
                                     <div class="py-3 space-y-2">
@@ -98,7 +98,7 @@
                                 <a href="{{ __url($item['encode_title']) }}"
                                     class="block w-full h-20 xl:h-28 2xl:h-36 group overflow-hidden">
                                     <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
-                                        src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.png') }}"
+                                        src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.webp') }}"
                                         alt="{{ $item['title'] }}" />
                                 </a>
                                 <div class="col-span-3 space-y-2">

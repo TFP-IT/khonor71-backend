@@ -5,7 +5,7 @@
             <a href="{{ __url($item['encode_title']) }}"
                 class="block w-full h-64 group overflow-hidden">
                 <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
-                    src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.png') }}"
+                    src="{{ isset($item['image']) ? $item['image'] : asset('/assets/news-card-view.webp') }}"
                     alt="{{ $item['title'] }}" />
             </a>
             <div class="space-y-2 divide-y divide-neutral-200 dark:divide-neutral-700">

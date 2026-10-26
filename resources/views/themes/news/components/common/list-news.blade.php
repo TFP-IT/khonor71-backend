@@ -5,7 +5,7 @@
       <a href="{{ __url($sectionTwoNewsItem->news->encode_title) }}" class="block w-full h-24 xl:h-28 2xl:h-36 group overflow-hidden">
         <img
           class="w-full h-full object-cover group-hover:scale-105 transition_5"
-          src="{{ isset($sectionTwoNewsItem->news->photoLibrary->image_base_url) ? $sectionTwoNewsItem->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+          src="{{ isset($sectionTwoNewsItem->news->photoLibrary->image_base_url) ? $sectionTwoNewsItem->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
           alt="{{ $sectionTwoNewsItem->news->image_alt ?: $sectionTwoNewsItem->news->title }}"
         />
       </a>

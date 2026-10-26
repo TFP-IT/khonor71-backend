@@ -9,7 +9,7 @@
         };
 
         $resolveCategoryImage = function ($news): string {
-            $fallback = asset('/assets/news-card-view.png');
+            $fallback = asset('/assets/news-card-view.webp');
 
             if (empty($news)) {
                 return $fallback;
@@ -23,7 +23,7 @@
                     return $news->thumbnail_image;
                 }
 
-                return get_image_url('/assets/news-card-view.png', $news->thumbnail_image);
+                return get_image_url('/assets/news-card-view.webp', $news->thumbnail_image);
             }
 
             $photoLibraryImage = optional($news->photoLibrary)->image_base_url;
@@ -39,7 +39,7 @@
             if (!empty($news->image)) {
                 $imagePath = str_starts_with($news->image, 'images/') ? $news->image : 'images/thumb/' . $news->image;
 
-                return get_image_url('/assets/news-card-view.png', $imagePath);
+                return get_image_url('/assets/news-card-view.webp', $imagePath);
             }
 
             return $fallback;
@@ -126,7 +126,7 @@
                         <img
                             class="w-full h-full object-cover"
                             src="{{ $categoryImage }}"
-                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
                             alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}"
                         />
                     </a>
@@ -142,7 +142,7 @@
                     </p>
                 @else
                     <div class="h-64 md:h-80 lg:h-[420px] rounded-md overflow-hidden mt-3">
-                        <img class="w-full h-full object-cover" src="{{ asset('/assets/news-card-view.png') }}" alt="No Category News">
+                        <img class="w-full h-full object-cover" src="{{ asset('/assets/news-card-view.webp') }}" alt="No Category News">
                     </div>
                 @endif
             </article>
@@ -174,7 +174,7 @@
                             <img src="{{ $tvPoster }}" alt="TV Thumbnail" class="w-full h-full object-cover">
                         </a>
                     @else
-                        <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News" class="absolute w-3/5 h-3/5 object-cover rounded-sm">
+                        <img src="{{ asset('assets/no_news.webp') }}" alt="Default TV News" class="absolute w-3/5 h-3/5 object-cover rounded-sm">
                     @endif
                 </div>
 
@@ -260,7 +260,7 @@
                     <a href="{{ $combinedDetailUrl($rightCategoryNews->encode_title) }}"
                         class="block mb-4 overflow-hidden rounded-md">
                         <img class="w-full h-64 md:h-80 object-cover" src="{{ $categoryImage }}"
-                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                            onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
                             alt="{{ $rightCategoryNews->image_alt ?? $rightCategoryNews->title }}" />
                     </a>
 
@@ -292,7 +292,7 @@
                             <figure class="h-16 overflow-hidden rounded-sm">
                                 <img class="w-full h-full object-cover"
                                     src="{{ $recentCategoryImage }}"
-                                    onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                                    onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
                                     alt="{{ $recentCategoryNews->image_alt ?? $recentCategoryNews->title }}" />
                             </figure>
                             <div class="col-span-2">

@@ -7,8 +7,8 @@
     <div class="lg:px-3 hidden xl:block">
       @if(isset($secThreeSubData['news'][0]))
         <a href="{{ __url($secThreeSubData['news'][0]->news->encode_title) }}" class="block w-full h-64 md:h-96 xl:h-64 group overflow-hidden">
-          <img class="w-full h-full object-cover group-hover:scale-105 transition_5" 
-          src="{{ isset($secThreeSubData['news'][0]->news->photoLibrary->image_base_url) ? $secThreeSubData['news'][0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}" 
+          <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
+          src="{{ isset($secThreeSubData['news'][0]->news->photoLibrary->image_base_url) ? $secThreeSubData['news'][0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
           alt="{{ $secThreeSubData['news'][0]->news->image_alt ?: $secThreeSubData['news'][0]->news->title }}" />
         </a>
         <div class="p-2">
@@ -26,8 +26,8 @@
           <a href="{{ __url($secThreeSubDataLeft->news->encode_title) }}">
             <div class="grid grid-cols-3 gap-2 items-center">
               <figure class="w-full h-20">
-                <img class="w-full h-full object-cover" 
-                  src="{{ isset($secThreeSubDataLeft->news->photoLibrary->image_base_url) ? $secThreeSubDataLeft->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}" 
+                <img class="w-full h-full object-cover"
+                  src="{{ isset($secThreeSubDataLeft->news->photoLibrary->image_base_url) ? $secThreeSubDataLeft->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
                   alt="{{ $secThreeSubDataLeft->news->image_alt ?: $secThreeSubDataLeft->news->title }}" />
               </figure>
               <h2 class="col-span-2 line-clamp-3 md:line-clamp-2 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">
@@ -46,8 +46,8 @@
           <a href="{{ __url($secThreeSubDataRight->news->encode_title) }}">
             <div class="grid grid-cols-3 gap-2 items-center">
               <figure class="w-full h-20">
-                <img class="w-full h-full object-cover" 
-                  src="{{ isset($secThreeSubDataRight->news->photoLibrary->image_base_url) ? $secThreeSubDataRight->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}" 
+                <img class="w-full h-full object-cover"
+                  src="{{ isset($secThreeSubDataRight->news->photoLibrary->image_base_url) ? $secThreeSubDataRight->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
                   alt="{{ $secThreeSubDataRight->news->image_alt ?: $secThreeSubDataRight->news->title }}" />
               </figure>
               <h2 class="col-span-2 line-clamp-3 md:line-clamp-2 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">
@@ -66,8 +66,8 @@
           @foreach ($secThreeSubData['news']->slice(1, 4) as $secThreeSubDataBottom)
             <div class="overflow-hidden xl:px-3 {{ $loop->iteration > 3 ? 'xl:hidden' : '' }}">
                 <a href="{{ __url($secThreeSubDataBottom->news->encode_title) }}" class="w-full h-72 relative group overflow-hidden block bg_gradient_top">
-                    <img class="w-full h-full object-cover group-hover:scale-105 transition_7" 
-                      src="{{ isset($secThreeSubDataBottom->news->photoLibrary->image_base_url) ? $secThreeSubDataBottom->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}" 
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition_7"
+                      src="{{ isset($secThreeSubDataBottom->news->photoLibrary->image_base_url) ? $secThreeSubDataBottom->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
                       alt="{{ $secThreeSubDataBottom->news->image_alt ?: $secThreeSubDataBottom->news->title }}" />
                     <div class="p-3 space-y-2 text-white absolute z-10 bottom-0 left-0">
                         <h2 href="#" class="text-xl font-semibold leading-6 line-clamp-2">

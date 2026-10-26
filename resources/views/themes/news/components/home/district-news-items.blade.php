@@ -2,7 +2,7 @@
     <div class="group bg-white dark:bg-neutral-800 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 hover:border-brand-primary hover:shadow-sm transition duration-200 flex flex-col">
         <a href="{{ __url($news->encode_title) }}" class="relative block overflow-hidden aspect-[16/9] bg-neutral-100 dark:bg-neutral-900">
             @php
-                $imgUrl = asset('/assets/news-card-view.png');
+                $imgUrl = asset('/assets/news-card-view.webp');
                 $photoLib = $news->photoLibrary ?? null;
 
                 if (!empty($photoLib?->thumb_image) && file_exists(public_path('storage/' . $photoLib->thumb_image))) {
@@ -33,7 +33,7 @@
             <img 
                 src="{{ $imgUrl }}" 
                 alt="{{ $news->image_alt ?? $news->title }}" 
-                onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+                onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 loading="lazy"
             />

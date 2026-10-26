@@ -16,14 +16,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="base-url" content="{{ url('/') }}">
     <meta name="google-site-verification" content="F_Q9nuMHlFCzzIgz2Ow-5bJM2ZVqoAYYIIVDwbsjOTI" />
+    <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
     {!! SEOTools::generate() !!}
 
-    <!-- Link Swiper's CSS -->
     @php
         $swiperCssUrl = \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css');
     @endphp
-    <link rel="stylesheet" href="{{ $swiperCssUrl }}" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="{{ $swiperCssUrl }}" /></noscript>
 
     {{-- Load Google Fonts --}}
     @foreach ($loadedFonts as $font)
@@ -67,7 +65,7 @@
             font-family: var(--font-supplementary) !important;
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('assets/css/news.min.css') }}?v={{ filemtime(public_path('assets/css/news.min.css')) }}">
+    <style>{!! file_get_contents(public_path('assets/css/news.min.css')) !!}</style>
 
     <!-- Tailwind css -->
     @vite(['resources/css/app.css'])
@@ -202,7 +200,7 @@
         </figure>
         <div class="probash-section">
             <a href="{{ __url('probashi-janala-news') }}" title="Probashi" style="height: 100px">
-                <img src="{{ asset('assets/probash-janala.png') }}" alt="Probash Janala" class="probash-logo"
+                <img src="{{ asset('assets/probash-janala.webp') }}" alt="Probash Janala" class="probash-logo"
                     width="100" height="90"
                     loading="lazy"
                     decoding="async">
@@ -210,14 +208,14 @@
         </div>
         @if (Auth::guard('webuser')->check())
             <a type="button" href="{{ __url('account/probashi-news') }}" title="সর্বশেষ প্রবাস সংবাদ">
-                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                <img src="{{ asset('assets/ami-sangbadik.webp') }}" alt="Ami Sangbadik" class="sangbadik-logo"
                     width="100" height="90"
                     loading="lazy"
                     decoding="async">
             </a>
         @else
             <button type="button" title="সর্বশেষ প্রবাস সংবাদ" id="openModalForProbashiNews">
-                <img src="{{ asset('assets/ami-sangbadik.png') }}" alt="Ami Sangbadik" class="sangbadik-logo"
+                <img src="{{ asset('assets/ami-sangbadik.webp') }}" alt="Ami Sangbadik" class="sangbadik-logo"
                     width="100" height="90"
                     loading="lazy"
                     decoding="async">
@@ -234,7 +232,9 @@
                 <img src="{{ $podcast['thumbnail'] }}" 
                      alt="{{ $podcast['title'] }}" 
                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                     loading="lazy"
+                     width="480" height="360"
+                     loading="eager"
+                     fetchpriority="high"
                      decoding="async">
             </a>
         @endif
@@ -435,9 +435,7 @@
         });
     </script>
 
-    <script defer src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}"></script>
-    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
-    <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/swiper/breaking-news.js') }}"></script>
+    <script defer data-swiper-src="{{ \App\Helpers\ThemeHelper::asset('plugins/swiper/js/swiper-bundle.min.js') }}" data-swiper-css="{{ $swiperCssUrl }}" src="{{ \App\Helpers\ThemeHelper::asset('js/website.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/category-tab.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/global-tab.js') }}"></script>
     <script defer src="{{ \App\Helpers\ThemeHelper::asset('js/dark-light.js') }}"></script>

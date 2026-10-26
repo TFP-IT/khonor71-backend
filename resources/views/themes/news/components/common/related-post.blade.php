@@ -32,7 +32,7 @@
                     <a href="{{ __url($secSixNewsChunk->first()->news->encode_title) }}"
                         class="block w-full h-64 group overflow-hidden">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition_5"
-                            src="{{ isset($secSixNewsChunk->first()->news->photoLibrary->image_base_url) ? $secSixNewsChunk->first()->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+                            src="{{ isset($secSixNewsChunk->first()->news->photoLibrary->image_base_url) ? $secSixNewsChunk->first()->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
                             alt="{{ $secSixNewsChunk->first()->news->image_alt ?: $secSixNewsChunk->first()->news->title }}" />
                     </a>
                     <div class="space-y-2 divide-y divide-neutral-200 dark:divide-neutral-700">

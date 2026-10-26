@@ -6,60 +6,78 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("lang-toggle");
     const dropdown = document.getElementById("lang-menu");
     const langLabel = document.getElementById("lang-label");
-    let opinionSwiperInstance;
-    let storiesNewsSwiperInstance;
-    let politicsNewsSwiperInstance;
-    let techNewsSwiperInstance;
-    let foodNewsSwiperInstance;
-    let binodonNewsSwiperInstance;
-    let lifestyleNewsSwiperInstance;
-    let articleNewsSwiperInstance;
-    let videoNewsSwiperInstance;
+    let swiperLoadPromise;
+    const pendingSwiperOptions = new WeakMap();
+    const swiperObserver = "IntersectionObserver" in window
+        ? new IntersectionObserver((entries, observer) => {
+              entries.forEach((entry) => {
+                  if (!entry.isIntersecting) return;
+
+                  observer.unobserve(entry.target);
+                  loadSwiper()
+                      .then(() => {
+                          if (!entry.target.swiper) {
+                              new window.Swiper(entry.target, pendingSwiperOptions.get(entry.target));
+                          }
+                      })
+                      .catch(() => {});
+              });
+          }, { rootMargin: "400px 0px" })
+        : null;
+
+    function loadSwiper() {
+        if (window.Swiper) return Promise.resolve();
+        if (swiperLoadPromise) return swiperLoadPromise;
+
+        const source = document.querySelector("script[data-swiper-src]")?.dataset.swiperSrc;
+        if (!source) return Promise.reject(new Error("Swiper asset URL is missing"));
+        const stylesheetSource = document.querySelector("script[data-swiper-css]")?.dataset.swiperCss;
+
+        const scriptPromise = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = source;
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+
+        const stylesheetPromise = stylesheetSource
+            ? new Promise((resolve) => {
+                  const link = document.createElement("link");
+                  link.rel = "stylesheet";
+                  link.href = stylesheetSource;
+                  link.onload = resolve;
+                  link.onerror = resolve;
+                  document.head.appendChild(link);
+              })
+            : Promise.resolve();
+
+        swiperLoadPromise = Promise.all([scriptPromise, stylesheetPromise]);
+
+        return swiperLoadPromise;
+    }
 
     function createSwiper(selector, options) {
-        if (typeof Swiper === "undefined") {
-            return null;
-        }
+        document.querySelectorAll(selector).forEach((element) => {
+            pendingSwiperOptions.set(element, options);
 
-        if (!document.querySelector(selector)) {
-            return null;
-        }
+            if (swiperObserver) {
+                swiperObserver.observe(element);
+                return;
+            }
 
-        return new Swiper(selector, options);
+            loadSwiper()
+                .then(() => {
+                    if (!element.swiper) new window.Swiper(element, options);
+                })
+                .catch(() => {});
+        });
     }
 
     function initializeSwipers(direction = "ltr") {
-        // Destroy existing instances if they exist
-        if (opinionSwiperInstance) {
-            opinionSwiperInstance.destroy(true, true);
-        }
-        if (storiesNewsSwiperInstance) {
-            storiesNewsSwiperInstance.destroy(true, true);
-        }
-        if (politicsNewsSwiperInstance) {
-            politicsNewsSwiperInstance.destroy(true, true);
-        }
-        if (techNewsSwiperInstance) {
-            techNewsSwiperInstance.destroy(true, true);
-        }
-        if (foodNewsSwiperInstance) {
-            foodNewsSwiperInstance.destroy(true, true);
-        }
-        if (binodonNewsSwiperInstance) {
-            binodonNewsSwiperInstance.destroy(true, true);
-        }
-        if (lifestyleNewsSwiperInstance) {
-            lifestyleNewsSwiperInstance.destroy(true, true);
-        }
-        if (articleNewsSwiperInstance) {
-            articleNewsSwiperInstance.destroy(true, true);
-        }
-        if (videoNewsSwiperInstance) {
-            videoNewsSwiperInstance.destroy(true, true);
-        }
-
         // Initialize Opinion Swiper
-        opinionSwiperInstance = createSwiper(".OpinionSwiper", {
+        createSwiper(".OpinionSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,
@@ -76,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Stories News Swiper
-        storiesNewsSwiperInstance = createSwiper(".StoriesNewsSwiper", {
+        createSwiper(".StoriesNewsSwiper", {
             dir: direction,
             loop: false,
             slidesPerView: 2,
@@ -103,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Video News Swiper
-        videoNewsSwiperInstance = createSwiper(".VideoNesSwiper", {
+        createSwiper(".VideoNesSwiper", {
             dir: direction,
             loop: false,
             slidesPerView: 1,
@@ -129,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Politics News Swiper
-        politicsNewsSwiperInstance = createSwiper(".PoliticsSwiper", {
+        createSwiper(".PoliticsSwiper", {
             dir: direction,
             spaceBetween: 30,
             centeredSlides: true,
@@ -144,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         /* Initialize Tech News Swiper */
-        techNewsSwiperInstance = createSwiper(".TechNewsSwiper", {
+        createSwiper(".TechNewsSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,
@@ -160,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Food News Swiper
-        foodNewsSwiperInstance = createSwiper(".FoodNewsSwiper", {
+        createSwiper(".FoodNewsSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,
@@ -176,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Binodon News Swiper
-        binodonNewsSwiperInstance = createSwiper(".BinodonNewsSwiper", {
+        createSwiper(".BinodonNewsSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,
@@ -192,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Initialize Lifestyle News Swiper
-        lifestyleNewsSwiperInstance = createSwiper(".LifestyleNewsSwiper", {
+        createSwiper(".LifestyleNewsSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,
@@ -207,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
         });
         // Initialize Article News Swiper
-        articleNewsSwiperInstance = createSwiper(".ArticleSwiper", {
+        createSwiper(".ArticleSwiper", {
             dir: direction,
             spaceBetween: 30,
             slidesPerView: 1,

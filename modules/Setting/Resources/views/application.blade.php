@@ -464,8 +464,8 @@
                                         data-default_src="{{ app_setting()->footer_bg_img }}" class="img-thumbnail"
                                         alt="Footer-Background-Preview" />
                                 @else
-                                    <img id="footer_bg_image_preview" src="{{ asset('assets/footer-bg.png') }}"
-                                        data-default_src="{{ asset('assets/footer-bg.png') }}" class="img-thumbnail"
+                                    <img id="footer_bg_image_preview" src="{{ asset('assets/footer-bg.webp') }}"
+                                        data-default_src="{{ asset('assets/footer-bg.webp') }}" class="img-thumbnail"
                                         alt="Footer-Background-Preview" />
                                 @endif
 

@@ -5,7 +5,7 @@
             {{ localize('top_week') }}</h2>
         <a href="{{ __url($topWeekNews[0]->encode_title) }}" class="bg_gradient_top block h-[289px]">
             <img class="w-full h-full object-cover"
-                src="{{ isset($topWeekNews[0]->photoLibrary->image_base_url) ? $topWeekNews[0]->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+                src="{{ isset($topWeekNews[0]->photoLibrary->image_base_url) ? $topWeekNews[0]->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
                 alt="{{ $topWeekNews[0]->image_alt }}" />
 
             <div class="p-2 2xl:p-3 absolute z-10 bottom-0 left-0">

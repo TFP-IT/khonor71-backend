@@ -8,7 +8,7 @@
       <a href="{{ __url($topBottomNews->news->encode_title) }}" class="w-full h-52 group overflow-hidden block">
         <img
           class="w-full h-full object-cover group-hover:scale-105 transition_7"
-          src="{{ isset($topBottomNews->news->photoLibrary->image_base_url) ? $topBottomNews->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+          src="{{ isset($topBottomNews->news->photoLibrary->image_base_url) ? $topBottomNews->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
           alt="{{ $topBottomNews->news->image_alt ?: $topBottomNews->news->title }}"
         />
       </a>

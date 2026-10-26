@@ -81,7 +81,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
         $tvSource = '';
         $tvPlayableSource = '';
         $tvRenderType = '';
-        $tvPoster = asset('assets/no_news.jpg');
+        $tvPoster = asset('assets/no_news.webp');
 
         if (!empty($tvVideoNews)) {
         if (!empty($tvVideoNews->thumbnail_image)) {
@@ -89,7 +89,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
         str_starts_with($tvVideoNews->thumbnail_image, 'http://') ||
         str_starts_with($tvVideoNews->thumbnail_image, 'https://')
         ? $tvVideoNews->thumbnail_image
-        : get_image_url('/assets/no_news.jpg', $tvVideoNews->thumbnail_image);
+        : get_image_url('/assets/no_news.webp', $tvVideoNews->thumbnail_image);
         }
 
         if (!empty($tvVideoNews->thumbnail_video)) {
@@ -168,7 +168,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
                                 style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         </a>
                         @else
-                        <img src="{{ asset('assets/no_news.jpg') }}" alt="Default TV News"
+                        <img src="{{ asset('assets/no_news.webp') }}" alt="Default TV News"
                             class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
                             fetchpriority="low" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
@@ -212,7 +212,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
                 </div>
                 @if ($rightCategoryNews)
                     @php
-                        $rightCategoryImage = asset('/assets/news-card-view.png');
+                        $rightCategoryImage = asset('/assets/news-card-view.webp');
                         $photoLibraryImage = optional($rightCategoryNews->photoLibrary)->image_base_url;
 
                         if (!empty($photoLibraryImage)) {
@@ -223,7 +223,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
                             $imagePath = str_starts_with($rightCategoryNews->image, 'images/')
                                 ? $rightCategoryNews->image
                                 : 'images/thumb/' . $rightCategoryNews->image;
-                            $rightCategoryImage = get_image_url('/assets/news-card-view.png', $imagePath);
+                            $rightCategoryImage = get_image_url('/assets/news-card-view.webp', $imagePath);
                         }
                     @endphp
                     <a
@@ -232,7 +232,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
     <img
         class="w-full h-full object-cover group-hover:scale-105 transition_slow"
         src="{{ $rightCategoryImage }}"
-        onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.png') }}';"
+        onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
         alt="{{ $rightCategoryNews->image_alt ?: $rightCategoryNews->title }}" />
     </a>
     <div class="py-3 space-y-2">
@@ -246,7 +246,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
     <div class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 overflow-hidden">
         <img
             class="w-full h-full object-cover"
-            src="{{ asset('/assets/news-card-view.png') }}"
+            src="{{ asset('/assets/news-card-view.webp') }}"
             alt="No Category News">
     </div>
     @endif

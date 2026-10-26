@@ -66,7 +66,7 @@
                                                                 <a href="{{ __url($item->encode_title) }}"
                                                                     class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                                     <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                                        src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
+                                                                        src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.webp') }}"
                                                                         alt="" />
                                                                 </a>
                                                                 <div class="p-2 space-y-2">
@@ -106,7 +106,7 @@
                                                             <a href="{{ __url($item->encode_title) }}"
                                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                                 <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                                    src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
+                                                                    src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.webp') }}"
                                                                     alt="" />
                                                             </a>
                                                             <div class="p-2 space-y-2">
@@ -168,7 +168,7 @@
                                             <a href="{{ __url($item->encode_title) }}"
                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                 <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                    src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.png') }}"
+                                                    src="{{ $item->photoLibrary ? $item->photoLibrary->image_base_url : asset('assets/news-card-view.webp') }}"
                                                     alt="News" />
                                             </a>
                                             <div class="p-2 space-y-2">
@@ -255,7 +255,7 @@
                                                                 <a href="{{ __url($item['encode_title']) }}"
                                                                     class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                                     <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                                        src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
+                                                                        src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.webp') }}"
                                                                         alt="" />
                                                                 </a>
                                                                 <div class="p-2 space-y-2">
@@ -289,7 +289,7 @@
                                                             <a href="{{ __url($item['encode_title']) }}"
                                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                                 <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                                    src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
+                                                                    src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.webp') }}"
                                                                     alt="" />
                                                             </a>
                                                             <div class="p-2 space-y-2">
@@ -350,7 +350,7 @@
                                             <a href="{{ __url($item['encode_title']) }}"
                                                 class="w-full h-36 2xl:h-48 group overflow-hidden block">
                                                 <img class="w-full h-full object-cover group-hover:scale-105 transition_5" loading="lazy" decoding="async"
-                                                    src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.png') }}"
+                                                    src="{{ $item['image'] ? $item['image'] : asset('assets/news-card-view.webp') }}"
                                                     alt="" />
                                             </a>
                                             <div class="p-2 space-y-2">

@@ -1,7 +1,7 @@
 <footer class="relative w-full h-max isolate">
     <img class="absolute top-0 left-0 w-full h-full -z-1"
-        src="@if (app_setting()->footer_bg_img) {{ asset('storage/' . app_setting()->footer_bg_img) }} @else {{ asset('/assets/footer-bg.png') }} @endif"
-        alt="Footer Background" />
+        src="@if (app_setting()->footer_bg_img) {{ asset('storage/' . app_setting()->footer_bg_img) }} @else {{ asset('/assets/footer-bg.webp') }} @endif"
+        alt="" width="1920" height="504" loading="lazy" decoding="async" />
     <div class="container py-8">
 
         <?php /*

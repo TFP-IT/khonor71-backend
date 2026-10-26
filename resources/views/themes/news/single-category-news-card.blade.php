@@ -4,7 +4,7 @@
     class="block w-full h-42 md:h-[150px] 2xl:h-40 4xl:h-52 group overflow-hidden">
     <img
       class="w-full h-full object-cover group-hover:scale-105 transition_5"
-      src="{{ isset($news->photoLibrary->image_base_url) ? $news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+      src="{{ isset($news->photoLibrary->image_base_url) ? $news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
       alt="{{ $news->image_alt }}"
     />
   </a>

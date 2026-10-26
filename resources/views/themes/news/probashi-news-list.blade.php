@@ -55,7 +55,7 @@
                     <a href="{{ __url($news->encode_title) }}" class="block w-full h-52 md:h-44 2xl:h-52 overflow-hidden group">
                         <img
                             class="w-full h-full object-cover group-hover:scale-105 transition_5"
-                            src="{{ get_image_url('/assets/news-card-view.png', $news->thumbnail_image) }}"
+                            src="{{ get_image_url('/assets/news-card-view.webp', $news->thumbnail_image) }}"
                             alt="{{ $news->image_alt ?? $news->title }}"
                         />
                     </a>

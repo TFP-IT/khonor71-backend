@@ -9,7 +9,7 @@
     <a href="{{ __url($newsCards[0]->news->encode_title) }}" class="bg_gradient_top block">
       <img
         class="w-full h-72 object-cover"
-        src="{{ isset($newsCards[0]->news->photoLibrary->image_base_url) ? $newsCards[0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.png') }}"
+        src="{{ isset($newsCards[0]->news->photoLibrary->image_base_url) ? $newsCards[0]->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
         alt="{{ $newsCards[0]->news->image_alt ?: $newsCards[0]->news->title }}"
       />
       <div class="p-2 2xl:p-3 absolute z-10 bottom-0 left-0">
