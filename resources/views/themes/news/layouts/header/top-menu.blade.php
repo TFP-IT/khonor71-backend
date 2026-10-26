@@ -4,8 +4,8 @@
 <section class="@if (!$themeSettings->background_color) bg-red-700 @endif hidden xl:block fixed_top_menu"
     @if ($themeSettings->background_color) style="background-color: {{ $themeSettings->background_color }};" @endif>
     <div class="container flex justify-between items-center gap-6 relative py-2">
-        <div class="hidden lg:block side-bar">
-            <div class="menu flex items-center gap-2 xl:gap-4">
+        <div class="hidden lg:block side-bar" style="flex: 1 1 0%; min-width: 0;">
+            <div class="menu flex flex-wrap items-center gap-2 xl:gap-4">
                 <div class="item relative cursor-pointer py-2">
                    <a class="capitalize @if (!$themeSettings->text_color) text-white @endif flex justify-start items-center hover:transition_3 side_nav_news"
                         @if (!mode() && $themeSettings->text_color) style="color: {{ $themeSettings->text_color }};" @endif

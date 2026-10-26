@@ -102,7 +102,6 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         ->where('menu_id', 1)
         ->where('status', 1)
         ->orderBy('menu_position', 'asc')
-        ->limit(10)
         ->get();
 
         if (!$isMobileClientHint) {
@@ -228,7 +227,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
         if (!$isMobileClientHint) {
             $allRssFeeds = RssFeed::where('status', 1)->where('paper_language', $languageId)->get();
             $allRssFeedsNews = $this->homeDataService->getRssFeedNews();
-            
+
             $feedsLatest = collect($allRssFeedsNews)
                 ->map(function ($feed) {
                     return collect($feed['news'])->sortByDesc('pubDate')->first();
