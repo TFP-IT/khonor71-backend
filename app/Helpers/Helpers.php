@@ -837,6 +837,16 @@ function convertToSlug($string)
 
 if (!function_exists('__url')) {
     function __url($path = '') {
+        // Category records created before English slug generation may still
+        // contain Bengali slugs. Keep their stored values for database joins,
+        // but always publish the transliterated slug in website links.
+        if (is_string($path) && !str_contains($path, '/') && preg_match('/[\x{0980}-\x{09FF}]/u', $path)) {
+            $category = Modules\Category\Entities\Category::where('slug', $path)->first();
+            if ($category) {
+                $path = generateSlug($category->slug ?: $category->category_name);
+            }
+        }
+
         $lang = app()->getLocale();
 
         // Don't prefix default language

@@ -84,8 +84,11 @@ class Localizer
             $localizePath = $this->getLocalizePath($locale);
             // check if localize file exists
             if (! File::exists($localizePath)) {
-                // create a php file and push empty array
-                $this->createLocalizeFile($locale);
+                // Missing translation files must not be created while serving
+                // a request. Translation management can create them explicitly.
+                $this->localData[$locale] = [];
+
+                return $this->localData[$locale];
             }
             // Use include instead of require_once to ensure the file is evaluated
             $localData = include $localizePath;
@@ -127,11 +130,10 @@ class Localizer
 
         // Find the key in the localized data, or use the default value if not found.
         if (array_key_exists($formattedKey, $local) === false) {
-            // If the key is not found, store the default value in the localization file.
+            // Render a readable fallback without modifying the language file.
+            // Translation files are changed only through explicit management
+            // actions such as storeLocal() and bulkStore().
             $value = $default_value ?? $this->keyToValue($formattedKey);
-
-            // Store the default value in the localization file.
-            $this->storeLocal($key, $value, $locale);
         } else {
             // If the key is found, use the localized value.
             $value = $local[$formattedKey];

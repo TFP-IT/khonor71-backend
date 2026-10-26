@@ -4,7 +4,7 @@
         <div class="container my-2">
             <div class="news-ticker">
                 <div class="ticker-label">
-                    <span class="breaking-badge">{{ localize('breaking') }}</span>
+                    <span class="breaking-badge">শিরোনাম</span>
                 </div>
                 <div class="ticker-content-container">
                     <div class="ticker-content">

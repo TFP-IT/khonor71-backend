@@ -2300,4 +2300,9 @@
   'tiktok_note' => 'টিকটক কনটেন্ট পোস্টিং এপিআই-এর মাধ্যমে ফটো ক্যারোজেল ও ভিডিও পোস্ট সমর্থন করে।',
   'google_news_note' => 'গুগল নিউজ আপনার আরএসএস ফিডের মাধ্যমে খবর সংগ্রহ করে। খবর প্রকাশের সাথে সাথে গুগলবটকে তাৎক্ষণিক ইনডেক্সিংয়ের নির্দেশ দিতে নিচে গুগল ইনডেক্সিং এপিআই তথ্য দিন।',
   'account_id' => 'Account id',
+  'copy_link' => 'Copy link',
+  'share_on_facebook' => 'Share on facebook',
+  'share_on_x' => 'Share on x',
+  'share_on_pinterest' => 'Share on pinterest',
+  'share_on_linkedin' => 'Share on linkedin',
 );

@@ -138,9 +138,13 @@ class HomeController extends Controller
             return $this->archiveNewsDetails($param);
         }
 
-        $category = Category::where('slug', $param)->first();
+        $category = $this->findCategoryByUrlSlug($param);
         if ($category) {
-            return $this->categoryNews($param);
+            $canonicalSlug = $this->categoryUrlSlug($category);
+            if ($canonicalSlug !== $param) {
+                return redirect(__url($canonicalSlug), 301);
+            }
+            return $this->categoryNews($category->slug);
         }
 
         $pagesData = Page::where('page_slug', $param)->first();
@@ -202,9 +206,13 @@ class HomeController extends Controller
                 return $this->archiveNewsDetails($param);
             }
 
-            $category = Category::where('slug', $param)->first();
+            $category = $this->findCategoryByUrlSlug($param);
             if ($category) {
-                return $this->categoryNews($param, $language);
+                $canonicalSlug = $this->categoryUrlSlug($category);
+                if ($canonicalSlug !== $param) {
+                    return redirect(__url($canonicalSlug), 301);
+                }
+                return $this->categoryNews($category->slug, $language);
             }
 
             $pagesData = Page::where('page_slug', $param)->first();
@@ -1666,5 +1674,27 @@ class HomeController extends Controller
     public function langErrorPage($language = '')
     {
         return ThemeHelper::view('error-page');
+    }
+
+    private function findCategoryByUrlSlug(string $slug): ?Category
+    {
+        $category = Category::where('slug', $slug)->first();
+        if ($category) {
+            return $category;
+        }
+
+        $comparisonSlug = preg_match('/[\x{0980}-\x{09FF}]/u', $slug)
+            ? generateSlug($slug)
+            : $slug;
+
+        return Category::all()->first(function (Category $category) use ($comparisonSlug) {
+            return generateSlug($category->slug) === $comparisonSlug
+                || generateSlug($category->category_name) === $comparisonSlug;
+        });
+    }
+
+    private function categoryUrlSlug(Category $category): string
+    {
+        return generateSlug($category->slug ?: $category->category_name);
     }
 }
