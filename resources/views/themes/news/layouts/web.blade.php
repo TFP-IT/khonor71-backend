@@ -29,6 +29,21 @@
         <noscript><link href="{{ $font->source_url }}" rel="stylesheet"></noscript>
     @endforeach
 
+    @php
+        // CSS is raw text inside <style>, so Blade's normal HTML escaping would
+        // turn font-name quotes into literal &quot; text and break font-family.
+        $fontFamilyForCss = static function ($font) {
+            if (!$font) {
+                return null;
+            }
+
+            return trim(preg_replace('/[^\p{L}\p{N}\s,"\x27-]/u', '', $font->font_family));
+        };
+        $principalFontFamily = $fontFamilyForCss($principalFont);
+        $alternateFontFamily = $fontFamilyForCss($alternateFont);
+        $supplementaryFontFamily = $fontFamilyForCss($supplementaryFont);
+    @endphp
+
     {{-- Set CSS Variables --}}
     <style>
         [x-cloak] {
@@ -36,16 +51,14 @@
         }
 
         :root {
-            @if ($principalFont)
-                --font-principal: {{ $principalFont->font_family }};
-
+            @if ($principalFontFamily)
+                --font-principal: {!! $principalFontFamily !!};
             @endif
-            @if ($alternateFont)
-                --font-alternate: {{ $alternateFont->font_family }};
-
+            @if ($alternateFontFamily)
+                --font-alternate: {!! $alternateFontFamily !!};
             @endif
-            @if ($supplementaryFont)
-                --font-supplementary: {{ $supplementaryFont->font_family }};
+            @if ($supplementaryFontFamily)
+                --font-supplementary: {!! $supplementaryFontFamily !!};
             @endif
         }
 
@@ -53,10 +66,19 @@
             font-family: var(--font-principal) !important;
         }
 
+        button,
+        input,
+        select,
+        textarea {
+            font-family: var(--font-principal) !important;
+        }
+
         h1,
         h2,
         h3,
         h4,
+        h5,
+        h6,
         a {
             font-family: var(--font-alternate) !important;
         }

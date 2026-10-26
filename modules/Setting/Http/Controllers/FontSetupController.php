@@ -5,6 +5,7 @@ namespace Modules\Setting\Http\Controllers;
 use App\Enums\FontSetupEnum;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 use Modules\Setting\Entities\Language;
 use Modules\Setting\Entities\FontSetup;
 use Modules\Setting\Entities\FontSetting;
@@ -67,6 +68,13 @@ class FontSetupController extends Controller
                 ]
             );
         }
+
+        // Frontend HTML is page-cached. Bump its version so requests use the
+        // newly selected fonts immediately instead of serving stale markup.
+        Cache::put(
+            'page_cache_version',
+            (int) Cache::get('page_cache_version', 1) + 1
+        );
 
         return redirect()->back()->with('success', __('Font settings updated successfully.'));
     }

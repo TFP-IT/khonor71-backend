@@ -29,7 +29,8 @@ class PageCacheMiddleware
         }
 
         // 2. Generate cache key based on full URL
-        $key = "page_cache_" . md5($request->fullUrl());
+        $version = Cache::get('page_cache_version', 1);
+        $key = "page_cache_{$version}_" . md5($request->fullUrl());
 
         // 3. Return from cache if exists
         if (Cache::has($key)) {

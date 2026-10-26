@@ -381,7 +381,7 @@
                 @endif
 
 
-                @if (isset($allVedioNews) && $allVedioNews->isNotEmpty())
+                {{-- @if (isset($allVedioNews) && $allVedioNews->isNotEmpty())
                     <div class="item cursor-pointer py-2">
                         <a href="{{ __url('videos') }}"
                             class="sub-btn @if (!$themeSettings->text_color) text-white @endif flex justify-start items-center hover:transition_3 hover:text-red-600 active:text-red-600 side_nav_news"
@@ -445,7 +445,7 @@
                             </div>
                         </div>
                     </div>
-                @endif
+                @endif --}}
 
                 {{-- more menu --}}
                 <!-- <div class="item cursor-pointer py-2 relative">
