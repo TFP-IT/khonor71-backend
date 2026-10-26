@@ -709,23 +709,21 @@ class HomeDataService
     private function getPopularNews()
     {
         $languageId = get_language_id();
-        $cacheKey = "popular_news_{$languageId}";
+        $today = Carbon::today();
+        $cacheKey = "popular_news_today_{$languageId}_{$today->toDateString()}";
 
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId) {
-            // Get the date 30 days ago from today
-            $oneMonthAgo = Carbon::now()->subDays(30);
-
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($languageId, $today) {
             // Manage news limit
             $limit = 5;
 
-            // Fetch the most read news in the last 30 days
+            // Fetch today's published news, ranked by reader hits.
             $popularNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
                 ->withCount('comments')
                 ->with(['postByUser:id,full_name', 'comments'])
                 ->where('language_id', $languageId)
+                ->whereDate('publish_date', $today)
                 ->where('publish_date', '<=', Carbon::now())
                 ->where('status', 1)
-                ->where('updated_at', '>=', $oneMonthAgo)
                 ->orderByDesc('reader_hit')
                 ->take($limit)
                 ->get();
