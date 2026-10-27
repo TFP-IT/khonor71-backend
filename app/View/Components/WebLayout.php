@@ -41,6 +41,12 @@ class WebLayout extends Component
         $languageId = get_language_id();
         $social = Setting::select('details')->where('id',111)->first();
         $socialLinks = json_decode($social->details);
+        $footerSetting = Setting::where('event', 'footer_setup')->first();
+        $savedFooterContent = $footerSetting ? json_decode($footerSetting->details, true) : [];
+        $footerContent = array_replace_recursive(
+            config('footer.defaults', []),
+            is_array($savedFooterContent) ? $savedFooterContent : []
+        );
 
         $footerCategories = MenuContent::select(['content_type', 'menu_level', 'link_url', 'slug'])
             ->where('language_id', $languageId)
@@ -261,6 +267,7 @@ $formattedDate = convert_digits_to_locale($formattedDate, 'bn');
             'footerCategories' => $footerCategories,
             'footerMenus' => $footerMenus,
             'footerPages' => $footerPages,
+            'footerContent' => $footerContent,
             'formattedDate' => $formattedDate,
             'languages' => $languages,
             'activeLanguage' => $activeLanguage,

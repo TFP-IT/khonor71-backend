@@ -427,6 +427,10 @@
                                     <a class="dropdown-item"
                                         href="{{ route('view_setup.contact_page_setup') }}">{{ ucwords(localize('contact_page_setup')) }}</a>
                                 </li>
+                                <li class="{{ request()->is('admin/web-setup/footer-setup') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item"
+                                        href="{{ route('view_setup.footer_setup') }}">{{ ucwords(localize('footer_setup')) }}</a>
+                                </li>
                             @endcan
                         </ul>
                     </li>

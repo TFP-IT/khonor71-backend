@@ -7,7 +7,7 @@
         $gaTrackingId = $metaInfo->google_analytics ?? 'G-2TEHY5NY81';
     }
 @endphp
-<html lang="en" dir="{{ $direction }}" class="@if (mode()) dark @endif">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ $direction }}" class="@if (mode()) dark @endif">
 
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @includeIf('sentry')

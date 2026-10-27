@@ -16,7 +16,7 @@ class ViewSetupController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['demo'])->only(['store', 'homePageSettingsStore', 'contactPageSetupStore', 'homePageSettingsSave']);
+        $this->middleware(['demo'])->only(['store', 'homePageSettingsStore', 'contactPageSetupStore', 'homePageSettingsSave', 'footerSetupStore']);
     }
 
 
@@ -182,6 +182,58 @@ class ViewSetupController extends Controller
             // You can customize the error message based on the type of exception
             return response()->json(['error' => true, 'msg' => 'Failed to update data: ' . $e->getMessage()]);
         }
+    }
+
+    public function footerSetup()
+    {
+        $setting = Setting::where('event', 'footer_setup')->first();
+        $savedContent = $setting ? json_decode($setting->details, true) : [];
+        $footerContent = array_replace_recursive(
+            config('footer.defaults', []),
+            is_array($savedContent) ? $savedContent : []
+        );
+
+        return view('setting::web_setup.footer_setup', compact('footerContent'));
+    }
+
+    public function footerSetupStore(Request $request)
+    {
+        $contentFields = array_keys(config('footer.defaults.bn', []));
+        $allowedFields = implode(',', $contentFields);
+        $rules = [
+            'footer' => ['required', 'array:bn,en'],
+            'footer.bn' => ['required', "array:{$allowedFields}"],
+            'footer.en' => ['required', "array:{$allowedFields}"],
+        ];
+
+        foreach (['bn', 'en'] as $locale) {
+            foreach ($contentFields as $field) {
+                $rules["footer.{$locale}.{$field}"] = $field === 'email'
+                    ? ['nullable', 'email', 'max:255']
+                    : ['nullable', 'string', 'max:2000'];
+            }
+        }
+
+        $footerContent = $request->validate($rules)['footer'];
+        $setting = Setting::withTrashed()->where('event', 'footer_setup')->first();
+
+        if ($setting) {
+            if ($setting->trashed()) {
+                $setting->restore();
+            }
+            $setting->update(['details' => json_encode($footerContent, JSON_UNESCAPED_UNICODE)]);
+        } else {
+            Setting::create([
+                'id' => (Setting::withTrashed()->max('id') ?? 0) + 1,
+                'event' => 'footer_setup',
+                'details' => json_encode($footerContent, JSON_UNESCAPED_UNICODE),
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'msg' => localize('data_updated_successfully'),
+        ]);
     }
 
     /**

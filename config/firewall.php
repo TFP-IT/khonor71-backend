@@ -293,7 +293,9 @@ return [
                 '#(http|ftp){1,1}(s){0,1}://.*#i',
             ],
 
-            'exceptions' => [],
+            'exceptions' => [
+                'https://www.khobor71.com',
+            ],
 
             'auto_block' => [
                 'attempts' => 3,

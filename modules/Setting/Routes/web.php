@@ -130,6 +130,9 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
                 Route::get('/contact-page-setup', 'contactPageSetup')->name('contact_page_setup');
                 Route::post('contact-page-setup/store', 'contactPageSetupStore')->name('contact_page_setup_store');
 
+                Route::get('/footer-setup', 'footerSetup')->name('footer_setup');
+                Route::post('footer-setup/store', 'footerSetupStore')->name('footer_setup_store');
+
                 Route::get('/home-page-settings', 'homePageSettings')->name('home_page_setup');
                 Route::post('save_home_page_settings', 'homePageSettingsSave')->name('save_home_page_settings');
                 Route::post('home-page-setup/store', 'homePageSettingsStore')->name('home_page_setup_store');

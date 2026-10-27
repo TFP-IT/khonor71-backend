@@ -104,6 +104,7 @@
     'setup_top_breaking_post' => 'Setup top breaking post',
     'home_page' => 'Home page',
     'contact_page_setup' => 'Contact page setup',
+    'footer_setup' => 'Footer Setup',
     'settings' => 'Settings',
     'subscribers' => 'Subscribers',
     'cache_clear' => 'Cache clear',

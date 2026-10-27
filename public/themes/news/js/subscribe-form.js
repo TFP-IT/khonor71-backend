@@ -16,6 +16,8 @@ onReady(() => {
     const emailInput = document.getElementById("subscriber_email");
     const submitButton = document.getElementById("subscribe-btn");
     const messageBox = document.getElementById("subscribe-message");
+    const defaultButtonLabel = submitButton?.dataset.label || "Subscribe";
+    const loadingButtonLabel = submitButton?.dataset.loadingLabel || "Subscribing...";
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -29,7 +31,7 @@ onReady(() => {
             document.querySelector('input[name="_token"]')?.value || "";
 
         submitButton.disabled = true;
-        submitButton.textContent = "Subscribing...";
+        submitButton.textContent = loadingButtonLabel;
         messageBox.classList.remove("text-green-600", "text-red-600");
         messageBox.textContent = "";
 
@@ -66,7 +68,7 @@ onReady(() => {
             messageBox.textContent = "Subscription failed.";
         } finally {
             submitButton.disabled = false;
-            submitButton.textContent = "Subscribe";
+            submitButton.textContent = defaultButtonLabel;
         }
     });
 });
