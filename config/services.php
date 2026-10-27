@@ -56,4 +56,20 @@ return [
     'sentry' => [
         'dsn' => env('SENTRY_LARAVEL_DSN'),
     ],
+
+    'gemma' => [
+        'base_url' => rtrim(env('GEMMA_API_BASE_URL', 'http://127.0.0.1:11434'), '/'),
+        'model' => env('GEMMA_MODEL_NAME', 'gemma3'),
+        'api_key' => env('OLLAMA_API_KEY'),
+        'timeout' => max(30, (int) env('GEMMA_TIMEOUT', 120)),
+        'max_tokens' => max(256, (int) env('GEMMA_MAX_TOKENS', 1800)),
+    ],
+
+    'gemini' => [
+        'base_url' => rtrim(env('GEMINI_API_BASE_URL', 'https://generativelanguage.googleapis.com'), '/'),
+        'model' => env('GEMINI_MODEL_NAME', 'gemini-3.8-flash'),
+        'api_key' => env('GEMINI_API_KEY'),
+        'timeout' => max(30, (int) env('GEMINI_TIMEOUT', 120)),
+        'max_tokens' => max(256, (int) env('GEMINI_MAX_TOKENS', 1800)),
+    ],
 ];

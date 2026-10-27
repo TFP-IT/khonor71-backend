@@ -8,6 +8,7 @@ use Modules\News\Http\Controllers\NewsController;
 use Modules\News\Http\Controllers\NewsPostController;
 use Modules\News\Http\Controllers\BreakingNewsController;
 use Modules\News\Http\Controllers\NewsPositionController;
+use Modules\News\Http\Controllers\AiNewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,20 @@ use Modules\News\Http\Controllers\NewsPositionController;
  */
 Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
     Route::group(['middleware' => ['auth']], function () {
+        Route::prefix('ai-news')->as('ai-news.')->controller(AiNewsController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/sources', 'sources')->name('sources');
+            Route::post('/sources', 'storeSource')->name('sources.store');
+            Route::patch('/sources/{source}/toggle', 'toggleSource')->name('sources.toggle');
+            Route::delete('/sources/{source}', 'deleteSource')->name('sources.destroy');
+            Route::post('/run', 'runNow')->name('run');
+            Route::post('/candidates/{candidate}/retry', 'retry')->name('retry');
+            Route::get('/candidates/{candidate}', 'edit')->name('edit');
+            Route::patch('/candidates/{candidate}', 'updateReview')->name('review.update');
+            Route::post('/candidates/{candidate}/reject', 'reject')->name('reject');
+            Route::post('/candidates/{candidate}/cms-draft', 'createCmsDraft')->name('cms-draft');
+        });
+
         Route::get('news/position', [NewsPositionController::class, 'index'])->name('news.position.index');
         Route::patch('news/position/update', [NewsPositionController::class, 'update'])->name('news.position.update');
         Route::delete('news/position/{news_position}/destroy', [NewsPositionController::class, 'destroy'])->name('news.position.destroy');

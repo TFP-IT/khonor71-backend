@@ -10,6 +10,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\ImportAttnData::class,
         Commands\PublishScheduledNewsCommand::class,
+        Commands\IngestAiNewsFeedsCommand::class,
     ];
     
     /**
@@ -22,6 +23,11 @@ class Kernel extends ConsoleKernel
     {
         // Publish scheduled articles every minute
         $schedule->command('news:publish-scheduled')->everyMinute();
+
+        $schedule->command('ai-news:ingest')
+            ->everyTenMinutes()
+            ->withoutOverlapping(20)
+            ->when(fn () => config('ai_news.enabled'));
     }
 
     /**

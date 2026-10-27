@@ -39,6 +39,8 @@ class XmlService
 
             $posts = NewsMst::with(['postByUser', 'photoLibrary', 'category', 'subCategory'])
                 ->where('language_id', $languageId)
+                ->where('status', 1)
+                ->where('publish_date', '<=', Carbon::now())
                 ->orderByDesc('id')
                 ->take(20)
                 ->get();
@@ -125,7 +127,10 @@ class XmlService
         $file_location = public_path('sitemap.xml');
 
         $info = MenuContent::get();
-        $news = NewsMst::select('encode_title', 'updated_at')->orderBy('news_id', 'DESC')->take(120)->get();
+        $news = NewsMst::select('encode_title', 'updated_at')
+            ->where('status', 1)
+            ->where('publish_date', '<=', Carbon::now())
+            ->orderBy('news_id', 'DESC')->take(120)->get();
 
         $today = now()->format('Y-m-d');
 
@@ -182,6 +187,8 @@ class XmlService
 
         $info = MenuContent::where('language_id', $languageId)->get();
         $news = NewsMst::where('language_id', $languageId)
+                    ->where('status', 1)
+                    ->where('publish_date', '<=', Carbon::now())
                     ->select('encode_title', 'updated_at')
                     ->orderBy('news_id', 'DESC')
                     ->take(120)

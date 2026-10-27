@@ -295,6 +295,10 @@ return [
 
             'exceptions' => [
                 'https://www.khobor71.com',
+                ...array_map(
+                    static fn ($host) => 'https://' . strtolower(trim($host)),
+                    array_filter(explode(',', (string) env('AI_NEWS_ALLOWED_FEED_HOSTS', '')))
+                ),
             ],
 
             'auto_block' => [

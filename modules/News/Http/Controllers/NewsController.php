@@ -206,7 +206,25 @@ class NewsController extends Controller
     {
         $data                = $request->validated();
         $data['news_mst_id'] = $id;
+        $currentNews = NewsMst::whereKey($id)->first(['status', 'publish_date']);
+        $isPublishing = $currentNews?->status == 0 && (int) ($data['status'] ?? 0) === 1;
         $status_span         = $this->newsService->updateStatus($data);
+
+        if ($isPublishing && (! $currentNews->publish_date || ! Carbon::parse($currentNews->publish_date)->isFuture())) {
+            NewsMst::whereKey($id)->update([
+                'publish_date' => Carbon::now(),
+                'time_stamp' => Carbon::now()->timestamp,
+                'last_update' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        try {
+            app(\App\Services\Sitemap\SitemapService::class)->clearCaches();
+            \App\Services\XmlService::rss_xml();
+            \App\Services\XmlService::sitemap_xml();
+        } catch (\Throwable $exception) {
+            \Log::warning('Published news sitemap refresh failed.', ['news_id' => $id, 'error' => $exception->getMessage()]);
+        }
 
 
         $news = NewsMst::select(['id', 'status', 'stitle', 'title', 'news', 'encode_title', 'publish_date', 'is_auto_post', 'is_posted_to_social'])

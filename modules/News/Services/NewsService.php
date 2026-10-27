@@ -14,6 +14,7 @@ use App\Models\NewsPosition;
 use App\Services\XmlService;
 use App\Services\PhotoLibraryService;
 use App\Models\PostSeoOnpage;
+use Modules\News\Entities\AiNewsCandidate;
 use App\Models\NewsPositionMap;
 use Illuminate\Support\Facades\DB;
 use Modules\Setting\Entities\Language;
@@ -433,6 +434,9 @@ class NewsService
     {
         $newsMstId = $attributes['news_mst_id'];
         $newsMst   = NewsMst::findOrFail($newsMstId);
+        $isUnpublishedAiDraft = $newsMst->status == 0 && AiNewsCandidate::where('news_mst_id', $newsMst->id)
+            ->where('status', AiNewsCandidate::STATUS_IMPORTED)
+            ->exists();
 
         $generate_id = $newsMst->news_id;
 
@@ -463,6 +467,12 @@ class NewsService
                 $st = 0;
             }
 
+            // Editing an imported AI draft must not publish it as a side effect.
+            if ($isUnpublishedAiDraft) {
+                $sta = 0;
+                $st = 0;
+            }
+
             $other_page = $attributes['other_page'];
             $title      = $attributes['head_line'] ?? null;
 
@@ -485,7 +495,7 @@ class NewsService
             }
 
             $other_position         = $attributes['other_position'] ?? 1;
-            $confirm_dynamic_static = $attributes['confirm_dynamic_static'] ?? null;
+            $confirm_dynamic_static = $isUnpublishedAiDraft ? 2 : ($attributes['confirm_dynamic_static'] ?? null);
             $breaking_confirmed     = $attributes['breaking_confirmed'] ?? null;
             $home_page              = $attributes['home_page'] ?? null;
             $total_news             = 14;
@@ -526,7 +536,7 @@ class NewsService
                 'is_latest'        => $attributes['latest_confirmed'] ?? null,
                 'is_featured'      => $attributes['feature_news'] ?? 0,
                 'is_recommanded'   => $attributes['recommanded_news'] ?? 0,
-                'is_auto_post'     => $attributes['is_auto_post'] ?? 0,
+                'is_auto_post'     => $isUnpublishedAiDraft ? 0 : ($attributes['is_auto_post'] ?? 0),
                 'status'           => $sta,
             ];
 

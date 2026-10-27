@@ -72,6 +72,14 @@ class PublishScheduledNewsCommand extends Command
             Log::info("Scheduled article published: {$news->title} (ID: {$news->id}, Publish Date: {$news->publish_date})");
         }
 
+        try {
+            app(\App\Services\Sitemap\SitemapService::class)->clearCaches();
+            \App\Services\XmlService::rss_xml();
+            \App\Services\XmlService::sitemap_xml();
+        } catch (\Throwable $e) {
+            Log::warning('Scheduled news sitemap refresh failed.', ['error' => $e->getMessage()]);
+        }
+
         $this->info("Published {$publishedCount} scheduled article(s).");
 
         return self::SUCCESS;

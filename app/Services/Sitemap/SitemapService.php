@@ -175,10 +175,13 @@ class SitemapService
             
             $posts = NewsMst::where('status', 1)
                 ->where('publish_date', '<=', Carbon::now())
-                ->where('created_at', '>=', $twoDaysAgo)
+                ->where('publish_date', '>=', $twoDaysAgo)
+                ->with('language')
                 ->orderBy('id', 'desc')
                 ->limit(1000)
                 ->get();
+
+            $publicationName = app_setting()->title ?: config('app.name');
 
             foreach ($posts as $post) {
                 $url = $this->getUrl(__url($post->encode_title));
@@ -189,11 +192,11 @@ class SitemapService
                 $xml .= '        <loc>' . htmlspecialchars($url) . '</loc>' . "\n";
                 $xml .= '        <news:news>' . "\n";
                 $xml .= '            <news:publication>' . "\n";
-                $xml .= '                <news:name>khobor71</news:name>' . "\n";
-                $xml .= '                <news:language>bn</news:language>' . "\n";
+                $xml .= '                <news:name>' . htmlspecialchars($publicationName, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</news:name>' . "\n";
+                $xml .= '                <news:language>' . htmlspecialchars($post->language?->value ?: 'bn', ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</news:language>' . "\n";
                 $xml .= '            </news:publication>' . "\n";
                 $xml .= '            <news:publication_date>' . $published . '</news:publication_date>' . "\n";
-                $xml .= '            <news:title>' . htmlspecialchars($title) . '</news:title>' . "\n";
+                $xml .= '            <news:title>' . htmlspecialchars($title, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</news:title>' . "\n";
                 $xml .= '        </news:news>' . "\n";
                 $xml .= '    </url>' . "\n";
             }

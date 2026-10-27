@@ -53,13 +53,13 @@
                     </li>
                 @endcan
 
-                @canany(['create_news', 'read_news'])
-                    <li class="{{ request()->is('admin/news*') ? 'mm-active' : '' }}">
+                @canany(['create_news', 'read_news', 'update_news'])
+                    <li class="{{ request()->is('admin/news*') || request()->is('admin/ai-news*') ? 'mm-active' : '' }}">
                         <a class="has-arrow material-ripple" href="#">
                             <i class="fa fa-th-list"></i>
                             <span> {{ localize_uc('post') }}</span>
                         </a>
-                        <ul class="nav-second-level {{ request()->is('admin/news*') ? 'mm-show' : '' }}">
+                        <ul class="nav-second-level {{ request()->is('admin/news*') || request()->is('admin/ai-news*') ? 'mm-show' : '' }}">
                             @can('create_news')
                                 <li
                                     class="{{ request()->routeIs('news.create') || request()->routeIs('news.edit') ? 'mm-active' : '' }}">
@@ -71,6 +71,18 @@
                                 <li class="{{ request()->routeIs('news.index') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
                                         href="{{ route('news.index') }}">{{ localize_uc('post_list') }}</a>
+                                </li>
+                            @endcan
+
+                            @canany(['read_news', 'create_news', 'update_news'])
+                                <li class="{{ request()->routeIs('ai-news.index', 'ai-news.edit') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item" href="{{ route('ai-news.index') }}">AI News Review</a>
+                                </li>
+                            @endcanany
+
+                            @can('update_news')
+                                <li class="{{ request()->routeIs('ai-news.sources') ? 'mm-active' : '' }}">
+                                    <a class="dropdown-item" href="{{ route('ai-news.sources') }}">AI RSS Sources</a>
                                 </li>
                             @endcan
 
