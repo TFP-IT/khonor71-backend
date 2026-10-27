@@ -23,7 +23,11 @@ class ImageHelper
             return null;
         }
 
+        $format          = isset($size['format']) ? strtolower($size['format']) : null;
         $filename        = $file->hashName();
+        if ($format) {
+            $filename = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
+        }
         $imagePath       = $folderName . '/' . $filename;
         $imageUploadPath = $imagePath;
 
@@ -46,7 +50,7 @@ class ImageHelper
 
         // Set image quality
         $quality = $size['quality'] ?? 75; // $quality = 95;
-        $encodedImage = $image->encode(null, $quality);
+        $encodedImage = $image->encode($format, $quality);
 
         // Handle dynamic S3 disk setup
         if ($disk === 's3') {

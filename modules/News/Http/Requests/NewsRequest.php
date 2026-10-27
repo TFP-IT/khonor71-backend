@@ -2,7 +2,6 @@
 
 namespace Modules\News\Http\Requests;
 
-use App\Models\PhotoLibrary;
 use App\Traits\FormRequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -39,7 +38,7 @@ class NewsRequest extends FormRequest
             'short_head'             => ['nullable', 'string'],
             'head_line'              => ['required', 'string'],
             'details_news'           => ['required', 'string'],
-            'lib_file_selected'      => ['nullable', 'string', Rule::exists(PhotoLibrary::class, 'actual_image_name')],
+            'image_file'             => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:5120'],
             'image_alt'              => ['nullable', 'string'],
             'image_title'            => ['nullable', 'string'],
             'custom_url'             => ['nullable', 'string'],

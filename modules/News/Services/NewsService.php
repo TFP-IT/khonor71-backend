@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Models\BreakingNews;
 use App\Models\NewsPosition;
 use App\Services\XmlService;
+use App\Services\PhotoLibraryService;
 use App\Models\PostSeoOnpage;
 use App\Models\NewsPositionMap;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +65,8 @@ class NewsService
     {
         try {
             DB::beginTransaction();
+
+            $newsImage = $this->storeUploadedNewsImage($attributes);
 
             $post_ap_status = 0;
             $auth_user      = auth()->user();
@@ -128,7 +131,7 @@ class NewsService
                 'title'            => $title,
 
                 'news'             => $attributes['details_news'] ?? null,
-                'image'            => $attributes['lib_file_selected'] ?? null,
+                'image'            => $newsImage,
                 'image_base_url'   => null,
                 'image_alt'        => $attributes['image_alt'] ?? null,
                 'image_title'      => $attributes['image_title'] ?? null,
@@ -436,6 +439,9 @@ class NewsService
         try {
             DB::beginTransaction();
 
+            $newsImage = $this->storeUploadedNewsImage($attributes)
+                ?? $newsMst->image;
+
             $post_ap_status = 0;
             $auth_user      = auth()->user();
 
@@ -497,7 +503,7 @@ class NewsService
                 'title'            => $title,
 
                 'news'             => $attributes['details_news'] ?? null,
-                'image'            => $attributes['lib_file_selected'] ?? null,
+                'image'            => $newsImage,
                 'image_base_url'   => null,
                 'image_alt'        => $attributes['image_alt'] ?? null,
                 'image_title'      => $attributes['image_title'] ?? null,
@@ -802,6 +808,26 @@ class NewsService
             ], 422));
         }
 
+    }
+
+    private function storeUploadedNewsImage(array $attributes): ?string
+    {
+        if (empty($attributes['image_file'])) {
+            return null;
+        }
+
+        $photoLibrary = app(PhotoLibraryService::class)->create([
+            'image'       => $attributes['image_file'],
+            'thumb_width' => 1200,
+            'thumb_height'=> 675,
+            'large_width' => 1200,
+            'large_height'=> 675,
+            'format'      => 'webp',
+            'caption'     => $attributes['image_title'] ?? $attributes['head_line'] ?? null,
+            'reference'   => $attributes['reference'] ?? null,
+        ]);
+
+        return $photoLibrary?->actual_image_name;
     }
 
     /**

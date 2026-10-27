@@ -60,10 +60,9 @@ class PhotoLibraryService
 
             $imageBaseUrl     = null;
             $thumb_image_path = null;
+            $format           = $attributes['format'] ?? null;
 
             if (!empty($attributes['image'])) {
-                $imageFilename = $attributes['image']->hashName();
-
                 $thumbSize = [
                     'width'  => $attributes['thumb_width'] ?? 438,
                     'height' => $attributes['thumb_height'] ?? 240,
@@ -74,9 +73,17 @@ class PhotoLibraryService
                     'height' => $attributes['large_height'] ?? 585,
                 ];
 
+                if ($format) {
+                    $thumbSize['format'] = $format;
+                    $largeSize['format'] = $format;
+                }
+
                 $thumbImgUpload = ImageHelper::upload($attributes['image'] ?? null, 'images/thumb', $uploadDisk, $thumbSize);
                 $thumbImgPath   = $thumbImgUpload['image_path'] ?? null;
                 $imageUlr       = $thumbImgUpload['image_url'] ?? null;
+                $imageFilename  = $format && $thumbImgPath
+                    ? basename($thumbImgPath)
+                    : $attributes['image']->hashName();
 
                 $largeImgUpload = ImageHelper::upload($attributes['image'] ?? null, 'images/large', $uploadDisk, $largeSize);
                 $largeImgPath   = $largeImgUpload['image_path'] ?? null;

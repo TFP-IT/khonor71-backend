@@ -240,20 +240,20 @@
                 <div class="form-group">
                     <label class="font-weight-600">{{ localize('image') }}</label>
                     <div class="btn-select-image">
-                        <div id="photo-library-preview">
+                        <div id="photo-library-preview" class="mb-2">
                             @if (isset($newsMst) && $newsMst->photoLibrary)
-                            <img class="img-responsive img-thumbnail"
-                                src="{{ $newsMst->photoLibrary->image_base_url ?? null }}"
-                                alt="{{ $newsMst->photoLibrary->title }}" height="100" width="100" />
+                                <img class="img-responsive img-thumbnail"
+                                    src="{{ $newsMst->photoLibrary->image_base_url ?? null }}"
+                                    alt="{{ $newsMst->photoLibrary->title }}"
+                                    style="max-height: 220px; max-width: 100%; object-fit: contain;" />
                             @endif
                         </div>
-                        <input type="hidden" name="lib_file_selected" id="photo_library_name"
-                            value="{{ $newsMst->image ?? null }}">
-                        <a href="{{ route('photo-library.view') }}" class="photo-library-page text-success">
-                            <i class="fa fa-cloud-upload-alt"></i> [image]
-                        </a>
+                        <input type="file" name="image_file" id="image_file"
+                            class="form-control @error('image_file') is-invalid @enderror"
+                            accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" />
+                        <small class="text-muted">Image will be resized to 1200 × 675 pixels and saved as WebP without cropping.</small>
                         <div class="invalid-feedback error text-danger m-2">
-                            @error('lib_file_selected')
+                            @error('image_file')
                             {{ $message }}
                             @enderror
                         </div>

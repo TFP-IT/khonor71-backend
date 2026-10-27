@@ -1,4 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const imageFileInput = document.getElementById('image_file');
+    const imagePreview = document.getElementById('photo-library-preview');
+    const originalPreview = imagePreview?.innerHTML ?? '';
+    let selectedImagePreviewUrl = null;
+
+    const restoreImagePreview = () => {
+        if (selectedImagePreviewUrl) {
+            URL.revokeObjectURL(selectedImagePreviewUrl);
+            selectedImagePreviewUrl = null;
+        }
+        if (imagePreview) imagePreview.innerHTML = originalPreview;
+    };
+
+    imageFileInput?.addEventListener('change', (event) => {
+        const file = event.target.files?.[0];
+        if (!file || !imagePreview) {
+            restoreImagePreview();
+            return;
+        }
+
+        if (selectedImagePreviewUrl) URL.revokeObjectURL(selectedImagePreviewUrl);
+        selectedImagePreviewUrl = URL.createObjectURL(file);
+
+        const previewImage = new Image();
+        previewImage.src = selectedImagePreviewUrl;
+        previewImage.alt = 'Selected image preview';
+        previewImage.className = 'img-fluid img-thumbnail';
+        previewImage.style.maxHeight = '220px';
+        previewImage.style.objectFit = 'contain';
+        imagePreview.replaceChildren(previewImage);
+    });
+
+    imageFileInput?.form?.addEventListener('reset', () => {
+        setTimeout(restoreImagePreview, 0);
+    });
+
     let aiGeneratedText = '';
     console.log("Tested AI");
     // ✅ 1️⃣ Config div থেকে ডেটা পড়া
