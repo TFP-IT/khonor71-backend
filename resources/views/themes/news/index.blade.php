@@ -121,6 +121,10 @@
             @if ($trendingNews->isNotEmpty())
                 @include ('themes.news.components.common.trending-post')
             @endif
+
+            @if (!empty($votingPoll))
+                @include('themes.news.components.common.voting-poll')
+            @endif
         </section>
     </section>
 

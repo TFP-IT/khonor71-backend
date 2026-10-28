@@ -23,11 +23,13 @@ class BreakingNewsService
      */
     public function formData(): array
     {
-        $categories    = Category::get();
-        $newsPositions = NewsPosition::with('newsMst')->get();
-        $languages     = Language::all();
+        $languages = Language::all();
 
-        return compact('categories', 'newsPositions', 'languages');
+        return [
+            'languages'     => $languages,
+            'categories'    => collect(),
+            'newsPositions' => collect(),
+        ];
     }
 
     /**

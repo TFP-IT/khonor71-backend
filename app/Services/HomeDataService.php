@@ -59,6 +59,7 @@ class HomeDataService
                 'divisions' => $this->getDivisionsWithDistricts(),
                 'homeStories' => $this->getHomeStory(),
                 'themeSettings' => ThemeHelper::themeSettings(),
+                'votingPoll' => $this->getVotingPoll(),
             ];
 
             // Manage Rss Feeds News

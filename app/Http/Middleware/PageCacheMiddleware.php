@@ -34,7 +34,21 @@ class PageCacheMiddleware
 
         // 3. Return from cache if exists
         if (Cache::has($key)) {
-            return response(Cache::get($key))->header("X-Page-Cache", "HIT");
+            $content = Cache::get($key);
+            $token = csrf_token();
+            if ($token) {
+                $content = preg_replace(
+                    '/<meta\s+name=["\']csrf-token["\']\s+content=["\'][^"\']*["\']/i',
+                    '<meta name="csrf-token" content="' . $token . '"',
+                    $content
+                );
+                $content = preg_replace(
+                    '/(<input\b[^>]*?\bname=["\']_token["\'][^>]*?\bvalue=["\'])[^"\']*?(["\'][^>]*?>)/i',
+                    '${1}' . $token . '${2}',
+                    $content
+                );
+            }
+            return response($content)->header("X-Page-Cache", "HIT");
         }
 
         // 4. Generate response and cache it

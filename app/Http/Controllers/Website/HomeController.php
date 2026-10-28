@@ -1430,11 +1430,20 @@ class HomeController extends Controller
             'option_id' => 'required|exists:poll_options,id',
         ]);
 
+        $poll = Poll::find($request->poll_id);
+        if (!$poll || $poll->status !== ActivationStatusEnum::ACTIVE) {
+            return response()->json(['status' => 'error', 'message' => localize('invalid_vote')], 422);
+        }
+
+        if ($poll->vote_permission == 1 && !auth()->guard('webuser')->check()) {
+            return response()->json(['status' => 'error', 'message' => localize('login_required_to_vote')], 403);
+        }
+
         $votedPolls = session()->get('voted_polls', []);
 
         // Check if user already voted
         if (in_array($request->poll_id, $votedPolls)) {
-            return response()->json(['status' => 'error', 'message' => localize('you_already_voted_for_this_poll') ], 403);
+            return response()->json(['status' => 'error', 'message' => localize('you_already_voted_for_this_poll')], 403);
         }
 
         $option = PollOption::where('poll_id', $request->poll_id)

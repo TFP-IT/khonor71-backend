@@ -4,7 +4,8 @@
              style="@if (!mode() && $themeSettings->background_color) background-color: {{ $themeSettings->background_color }}; @endif @if (!mode() && $themeSettings->text_color) color: {{ $themeSettings->text_color }}; @endif">
              {{ localize('voting_poll') }}
          </h2>
-         <form class="p-3 pt-1.5 space-y-2 dark:text-white">
+         <form class="p-3 pt-1.5 space-y-2 dark:text-white" data-msg-select="{{ localize('please_select_an_option') }}" data-total-votes-label="{{ localize('total_votes') }}">
+             @csrf
              <!-- {{-- Voting Question --}} -->
              <p class="font-bold text-lg">{{ $votingPoll->question }}</p>
              <input type="hidden" name="poll_id" id="poll_id" value="{{ $votingPoll->id }}">

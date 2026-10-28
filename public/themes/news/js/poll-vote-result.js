@@ -1,35 +1,52 @@
-const getCsrfToken = () =>
-    document.querySelector('input[name="_token"]')?.value ||
-    document.querySelector('meta[name="csrf-token"]')?.content ||
-    "";
+(function () {
+    const getCsrfToken = () =>
+        document.querySelector('input[name="_token"]')?.value ||
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        "";
 
-const voteBtn = document.getElementById("btn_vote");
-if (voteBtn) {
-    voteBtn.addEventListener("click", function () {
+    function showVoteMessage(text, type = "error") {
+        const voteMessage = document.getElementById("voteMessage");
+        if (!voteMessage) return;
+
+        voteMessage.textContent = text;
+        if (type === "success") {
+            voteMessage.classList.remove("bg-red-600");
+            voteMessage.classList.add("bg-green-600");
+        } else {
+            voteMessage.classList.remove("bg-green-600");
+            voteMessage.classList.add("bg-red-600");
+        }
+        voteMessage.classList.remove("hidden");
+
+        if (voteMessage._timer) {
+            clearTimeout(voteMessage._timer);
+        }
+        voteMessage._timer = setTimeout(() => {
+            voteMessage.classList.add("hidden");
+        }, 3500);
+    }
+
+    function handleVoteClick() {
         const selected = document.querySelector('input[name="voting"]:checked');
         const pollId = document.getElementById("poll_id")?.value;
-        const voteMessage = document.getElementById("voteMessage");
+        const form = document.querySelector('input[name="poll_id"]')?.closest("form") || document.querySelector("form");
         const token = getCsrfToken();
 
-        if (!voteMessage || !pollId) {
-            return;
-        }
+        if (!pollId) return;
 
         if (!selected) {
-            voteMessage.textContent = "Please select an option.";
-            voteMessage.classList.remove("hidden");
-
-            setTimeout(() => {
-                voteMessage.classList.add("hidden");
-            }, 3000);
-
+            const selectMsg = form?.dataset?.msgSelect || "অনুগ্রহ করে একটি অপশন নির্বাচন করুন।";
+            showVoteMessage(selectMsg, "error");
             return;
         }
+
+        if (typeof ajaxPollVoteUrl === "undefined") return;
 
         fetch(ajaxPollVoteUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "application/json",
                 "X-CSRF-TOKEN": token,
             },
             body: JSON.stringify({
@@ -37,86 +54,91 @@ if (voteBtn) {
                 option_id: selected.value,
             }),
         })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "error") {
-                    voteMessage.textContent = data.message;
-                    voteMessage.classList.remove("hidden");
-
-                    setTimeout(() => {
-                        voteMessage.classList.add("hidden");
-                    }, 3000);
+            .then(async (response) => {
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || data.status === "error") {
+                    const msg = data.message || "ভোট দেওয়া সম্ভব হয়নি।";
+                    showVoteMessage(msg, "error");
                     return;
                 }
 
                 if (data.status === "success") {
+                    showVoteMessage(data.message, "success");
+                    setTimeout(() => {
+                        loadPollResult(pollId);
+                    }, 600);
+                }
+            })
+            .catch(() => {
+                showVoteMessage("একটি সমস্যা দেখা দিয়েছে। অনুগ্রহ করে পুনরায় চেষ্টা করুন।", "error");
+            });
+    }
+
+    function loadPollResult(pollId) {
+        if (!pollId || typeof ajaxPollResultUrl === "undefined") return;
+
+        const url = ajaxPollResultUrl.replace("__POLL_ID__", pollId);
+        const form = document.querySelector('input[name="poll_id"][value="' + pollId + '"]')?.closest("form") || document.querySelector("form");
+        const totalVotesLabel = form?.dataset?.totalVotesLabel || "মোট ভোট";
+
+        fetch(url, {
+            headers: {
+                "Accept": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const resultContainer = document.querySelector(".voting_result_section");
+                const resultContent = resultContainer?.querySelector(".py-2.space-y-3");
+                if (!resultContainer || !resultContent) return;
+
+                const totalVotes = data.totalVotes || 0;
+                const totalVotesElem = document.getElementById("totalVotes");
+                if (totalVotesElem) {
+                    totalVotesElem.textContent = `${totalVotesLabel}: ${totalVotes}`;
+                }
+
+                const html = (data.results || [])
+                    .map((option) => {
+                        const percentage = option.percentage || 0;
+                        const vote = option.vote || 0;
+                        return `
+                        <div class="skills_bar">
+                            <div class="flex justify-between items-center text-sm font-medium mb-1">
+                                <span class="text-neutral-800 dark:text-neutral-200">${option.name}</span>
+                                <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400">${percentage}% (${vote})</span>
+                            </div>
+                            <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-red-600 h-2.5 rounded-full transition-all duration-700 ease-out" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                    })
+                    .join("");
+
+                resultContent.innerHTML = html;
+
+                document.querySelector(".votiong_question")?.classList.add("hidden");
+                resultContainer.classList.remove("hidden");
+            })
+            .catch((err) => {
+                console.error("Poll result load error:", err);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("click", function (e) {
+            if (e.target.closest("#btn_vote")) {
+                handleVoteClick();
+            } else if (e.target.closest(".btn_result")) {
+                const pollId = document.getElementById("poll_id")?.value;
+                if (pollId) {
                     loadPollResult(pollId);
                 }
-            });
-    });
-}
-
-function loadPollResult(pollId) {
-    const url = ajaxPollResultUrl.replace("__POLL_ID__", pollId);
-
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            const resultContainer = document.querySelector(".voting_result_section");
-            const resultContent = resultContainer?.querySelector(".py-2.space-y-3");
-            if (!resultContainer || !resultContent) {
-                return;
+            } else if (e.target.closest(".btn_option")) {
+                document.querySelector(".voting_result_section")?.classList.add("hidden");
+                document.querySelector(".votiong_question")?.classList.remove("hidden");
             }
-
-            const html = data.results
-                .map(
-                    (option) => `
-                    <div class="skills_bar">
-                        <h4 class="text-base mb-2">${option.name}</h4>
-                        <div class="progress_line relative w-full h-2 bg-black dark:bg-neutral-500 rounded-xl">
-                            <span
-                                class="skills_bar_valu absolute rounded-xl h-full bg-red-600 before:absolute before:content-[''] before:-top-[12px] before:right-0 before:border-[12px] before:border-transparent before:border-r-0 before:border-b-0 before:border-t-neutral-800 z-10"
-                                data-percentage="${option.percentage}%">
-                                <span class="absolute bg-neutral-800 text-white px-2 py-1 rounded-md text-xs -top-8 right-0">${option.percentage}%</span>
-                            </span>
-                        </div>
-                    </div>
-                `
-                )
-                .join("");
-
-            resultContent.innerHTML = html;
-
-            const totalVotes = document.getElementById("totalVotes");
-            if (totalVotes) {
-                totalVotes.textContent = `Total vote: ${data.totalVotes}`;
-            }
-
-            document.querySelectorAll(".skills_bar_valu").forEach((el) => {
-                el.style.width = el.getAttribute("data-percentage") || "0%";
-            });
-
-            document.querySelector(".votiong_question")?.classList.add("hidden");
-            resultContainer.classList.remove("hidden");
         });
-}
-
-const resultButton = document.querySelector(".btn_result");
-if (resultButton) {
-    resultButton.addEventListener("click", function () {
-        const pollId = document.getElementById("poll_id")?.value;
-        if (!pollId) {
-            return;
-        }
-
-        loadPollResult(pollId);
     });
-}
-
-const optionButton = document.querySelector(".btn_option");
-if (optionButton) {
-    optionButton.addEventListener("click", function () {
-        document.querySelector(".voting_result_section")?.classList.add("hidden");
-        document.querySelector(".votiong_question")?.classList.remove("hidden");
-    });
-}
+})();
