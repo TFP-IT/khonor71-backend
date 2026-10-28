@@ -19,7 +19,7 @@
         <div class="card-body">
             <form id="leadForm" action="{{ route('role.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="row pb-4">
+                <div class="row pb-3">
                     <div class="col-md-12">
                         <div class="row">
                             <label for="name"
@@ -39,6 +39,17 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row pb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            <input type="text" id="permissionSearch" class="form-control"
+                                placeholder="Search menu / permission (যেমন: AI News, RSS, Script Manager)...">
+                        </div>
+                    </div>
+                </div>
+
                 <input type="hidden" name="role_id" id="role_id" value="{{ $roles->id }}">
                 @php
                     $sl = 0;
@@ -51,84 +62,86 @@
                         }
                         $sl += 1;
                     @endphp
-                    <h4>{{ localize('' . $permissionMenuName?->menu_name) }}</h4>
+                    <div class="permission-section mb-4">
+                        <h4>{{ localize('' . $permissionMenuName?->menu_name) }}</h4>
 
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead>
-                            <tr>
-                                <th class="text-center">{{ localize('sl') }}</th>
-                                <th>{{ localize('module_menu') }}</th>
-                                <th class="text-center">{{ localize('select_all') }}</th>
-                                <th class="text-center">{{ localize('create') }}</th>
-                                <th class="text-center">{{ localize('read') }}</th>
-                                <th class="text-center">{{ localize('update') }}</th>
-                                <th class="text-center">{{ localize('delete') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="sub-select">
-                                <td class="text-center">{{ $sl }}</td>
-                                <td width="40%">{{ localize('' . $permissionMenuName?->menu_name) }}</td>
-                                <td class="text-center"><input class="form-check-input select-sub" type="checkbox"
-                                        id="select_sub{{ $key }}"></td>
-                                @forelse ($permissionMenuName->permission as $pkye => $permissionName)
-                                    <td class="text-center permissions"><input type="checkbox" class="form-check-input"
-                                            name="permission[]" value="{{ $permissionName->id }}"
-                                            {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
-                                    </td>
-                                @empty
-                                @endforelse
-                            </tr>
-                            @if (count($permissionMenuName->subMenu) > 0)
-                                @foreach ($permissionMenuName->subMenu as $subkey => $subMenu)
-                                    @php
-                                        $sl += 1;
-                                    @endphp
-                                    <tr class="sub-select">
-                                        <td class="text-center">{{ $sl }}</td>
-                                        <td width="40%">{{ localize('' . $permissionMenuName?->menu_name) }} >>
-                                            {{ localize('' . $subMenu?->menu_name) }}</td>
-                                        <td class="text-center"><input class="form-check-input select-sub" type="checkbox"
-                                                id="select_sub{{ $key }}"></td>
-                                        @forelse ($subMenu->permission as $pkye => $permissionName)
-                                            <td class="text-center permissions"><input type="checkbox"
-                                                    class="form-check-input" name="permission[]"
-                                                    value="{{ $permissionName->id }}"
-                                                    {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
-                                            </td>
-                                        @empty
-                                        @endforelse
-                                    </tr>
-
-                                    @if (count($subMenu->childMenu) > 0)
-                                        @foreach ($subMenu->childMenu as $childkey => $childMenu)
-                                            @php
-                                                $sl += 1;
-                                            @endphp
-                                            <tr class="sub-select">
-                                                <td class="text-center">{{ $sl }}</td>
-                                                <td width="40%">
-                                                    {{ localize('' . $permissionMenuName?->menu_name) }} >>
-                                                    {{ localize('' . $subMenu?->menu_name) }} >>
-                                                    {{ localize('' . $childMenu?->menu_name) }}</td>
-                                                <td class="text-center"><input class="form-check-input select-sub"
-                                                        type="checkbox" id="select_sub{{ $key }}">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">{{ localize('sl') }}</th>
+                                    <th>{{ localize('module_menu') }}</th>
+                                    <th class="text-center">{{ localize('select_all') }}</th>
+                                    <th class="text-center">{{ localize('create') }}</th>
+                                    <th class="text-center">{{ localize('read') }}</th>
+                                    <th class="text-center">{{ localize('update') }}</th>
+                                    <th class="text-center">{{ localize('delete') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="sub-select">
+                                    <td class="text-center">{{ $sl }}</td>
+                                    <td width="40%">{{ localize('' . $permissionMenuName?->menu_name) }}</td>
+                                    <td class="text-center"><input class="form-check-input select-sub" type="checkbox"
+                                            id="select_sub_{{ $sl }}"></td>
+                                    @forelse ($permissionMenuName->permission as $pkye => $permissionName)
+                                        <td class="text-center permissions"><input type="checkbox" class="form-check-input"
+                                                name="permission[]" value="{{ $permissionName->id }}"
+                                                {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
+                                        </td>
+                                    @empty
+                                    @endforelse
+                                </tr>
+                                @if (count($permissionMenuName->subMenu) > 0)
+                                    @foreach ($permissionMenuName->subMenu as $subkey => $subMenu)
+                                        @php
+                                            $sl += 1;
+                                        @endphp
+                                        <tr class="sub-select">
+                                            <td class="text-center">{{ $sl }}</td>
+                                            <td width="40%">{{ localize('' . $permissionMenuName?->menu_name) }} >>
+                                                {{ localize('' . $subMenu?->menu_name) }}</td>
+                                            <td class="text-center"><input class="form-check-input select-sub" type="checkbox"
+                                                    id="select_sub_{{ $sl }}"></td>
+                                            @forelse ($subMenu->permission as $pkye => $permissionName)
+                                                <td class="text-center permissions"><input type="checkbox"
+                                                        class="form-check-input" name="permission[]"
+                                                        value="{{ $permissionName->id }}"
+                                                        {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
                                                 </td>
-                                                @forelse ($childMenu->permission as $pkye => $permissionName)
-                                                    <td class="text-center permissions"><input type="checkbox"
-                                                            class="form-check-input" name="permission[]"
-                                                            value="{{ $permissionName->id }}"
-                                                            {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
+                                            @empty
+                                            @endforelse
+                                        </tr>
+
+                                        @if (count($subMenu->childMenu) > 0)
+                                            @foreach ($subMenu->childMenu as $childkey => $childMenu)
+                                                @php
+                                                    $sl += 1;
+                                                @endphp
+                                                <tr class="sub-select">
+                                                    <td class="text-center">{{ $sl }}</td>
+                                                    <td width="40%">
+                                                        {{ localize('' . $permissionMenuName?->menu_name) }} >>
+                                                        {{ localize('' . $subMenu?->menu_name) }} >>
+                                                        {{ localize('' . $childMenu?->menu_name) }}</td>
+                                                    <td class="text-center"><input class="form-check-input select-sub"
+                                                            type="checkbox" id="select_sub_{{ $sl }}">
                                                     </td>
-                                                @empty
-                                                @endforelse
-                                            </tr>
-                                        @endforeach
-                                    @endif
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
+                                                    @forelse ($childMenu->permission as $pkye => $permissionName)
+                                                        <td class="text-center permissions"><input type="checkbox"
+                                                                class="form-check-input" name="permission[]"
+                                                                value="{{ $permissionName->id }}"
+                                                                {{ $roleHasPermission->contains($permissionName->name) ? 'checked' : '' }}>
+                                                        </td>
+                                                    @empty
+                                                    @endforelse
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                     @empty
                         <table>
                             <tr>

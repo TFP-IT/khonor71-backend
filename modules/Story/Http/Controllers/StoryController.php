@@ -14,6 +14,13 @@ use Modules\Story\DataTables\StoriesDataTable;
 
 class StoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:read_story')->only(['index']);
+        $this->middleware('permission:create_story')->only(['create', 'store']);
+        $this->middleware('permission:update_story')->only(['edit', 'update', 'updateStatus']);
+        $this->middleware('permission:delete_story')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      * @return Renderable

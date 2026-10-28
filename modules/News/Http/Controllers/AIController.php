@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Http;
 
 class AIController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:read_ai_writer')->only(['index']);
+        $this->middleware('permission:update_ai_writer')->only(['update', 'create']);
+    }
     /**
      * Display a listing of the resource.
      * @return Renderable

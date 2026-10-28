@@ -36,11 +36,11 @@ class RoleManagementController extends Controller
         return view('usermanagement::role-management.role-add', compact('permissions', 'perMenu'));
     }
 
-    //role add
+    //role view
     public function roleView()
     {
         $permissions = Permission::all();
-        $perMenu = PerMenu::with('subMenu', 'permission')->where('parentmenu_id', 'null')->orderBy('id', 'ASC')->get();
+        $perMenu = PerMenu::with('subMenu', 'permission')->whereNull('parentmenu_id')->orderBy('id', 'ASC')->get();
         return view('usermanagement::role-management.role-view', compact('permissions', 'perMenu'));
     }
 

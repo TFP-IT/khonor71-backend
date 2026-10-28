@@ -16,6 +16,13 @@ class ViewSetupController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('permission:read_setup_top_breaking_post')->only(['setupTopBreaking']);
+        $this->middleware('permission:update_setup_top_breaking_post')->only(['store']);
+        $this->middleware('permission:read_home_page')->only(['homePageSettings']);
+        $this->middleware('permission:update_home_page')->only(['homePageSettingsStore', 'homePageSettingsSave']);
+        $this->middleware('permission:read_contact_page_setup')->only(['contactPageSetup', 'footerSetup']);
+        $this->middleware('permission:update_contact_page_setup')->only(['contactPageSetupStore', 'footerSetupStore']);
+
         $this->middleware(['demo'])->only(['store', 'homePageSettingsStore', 'contactPageSetupStore', 'homePageSettingsSave', 'footerSetupStore']);
     }
 

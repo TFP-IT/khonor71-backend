@@ -20,10 +20,12 @@ class AiNewsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:read_news|update_news|create_news')->only(['index', 'edit']);
-        $this->middleware('permission:read_news|update_news')->only(['sources']);
-        $this->middleware('permission:update_news')->only(['storeSource', 'toggleSource', 'deleteSource', 'updateReview', 'reject']);
-        $this->middleware('permission:create_news')->only(['runNow', 'retry', 'createCmsDraft']);
+        $this->middleware('permission:read_ai_news|read_news|update_news|create_news')->only(['index', 'edit']);
+        $this->middleware('permission:read_ai_rss_sources|update_ai_rss_sources|read_ai_news|read_news|update_news')->only(['sources']);
+        $this->middleware('permission:create_ai_rss_sources|update_ai_rss_sources|update_ai_news|update_news')->only(['storeSource']);
+        $this->middleware('permission:update_ai_rss_sources|update_ai_news|update_news')->only(['toggleSource', 'updateReview', 'reject']);
+        $this->middleware('permission:delete_ai_rss_sources|update_ai_news|update_news')->only(['deleteSource']);
+        $this->middleware('permission:create_ai_news|create_news')->only(['runNow', 'retry', 'createCmsDraft']);
     }
 
     public function index()

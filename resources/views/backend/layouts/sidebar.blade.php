@@ -31,7 +31,7 @@
 
 
                 @can('read_probashi_news')
-                    <li class="{{ request()->is('admin/probashijanala*') ? 'mm-active' : 'XXXX' }}">
+                    <li class="{{ request()->is('admin/probashijanala*') ? 'mm-active' : '' }}">
                         <a class="has-arrow material-ripple" href="#">
                             <i class="fa fa-newspaper"></i>
                             <span> {{ ucwords(localize('probashi_news')) }}</span>
@@ -43,7 +43,7 @@
                                         href="{{ route('probashijanala.create') }}">{{ ucwords(localize('add_probashi_news')) }}</a>
                                 </li>
                             @endcan
-                            @can('read_probashi_news_list')
+                            @can('read_probashi_news')
                                 <li class="{{ request()->is('admin/probashijanala/probashijanala-list') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
                                         href="{{ route('probashijanala.index') }}">{{ ucwords(localize('probashi_news_list')) }}</a>
@@ -74,17 +74,17 @@
                                 </li>
                             @endcan
 
-                            @canany(['read_news', 'create_news', 'update_news'])
+                            @canany(['read_ai_news', 'read_news', 'create_news', 'update_news'])
                                 <li class="{{ request()->routeIs('ai-news.index', 'ai-news.edit') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item" href="{{ route('ai-news.index') }}">AI News Review</a>
                                 </li>
                             @endcanany
 
-                            @can('update_news')
+                            @canany(['read_ai_rss_sources', 'update_ai_rss_sources', 'update_ai_news', 'update_news'])
                                 <li class="{{ request()->routeIs('ai-news.sources') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item" href="{{ route('ai-news.sources') }}">AI RSS Sources</a>
                                 </li>
-                            @endcan
+                            @endcanany
 
                             {{-- @can('create_news')
                                 <li class="{{ request()->routeIs('bulk.post.upload*') ? 'mm-active' : '' }}">
@@ -173,18 +173,20 @@
                 @endcan
 
 
-                <li class="{{ request()->is('admin/menu*') ? 'mm-active' : '' }}">
-                    <a class="has-arrow material-ripple" href="#">
-                        <i class="fas fa-brain"></i>
-                        <span> {{ localize_uc('AI Writer') }}</span>
-                    </a>
-                    <ul class="nav-second-level {{ request()->is('admin/menu*') ? 'mm-show' : '' }}">
-                        <li class="{{ request()->routeIs('ai.ai_settings*') ? 'mm-active' : '' }}">
-                            <a class="dropdown-item"
-                                href="{{ route('ai.ai_settings') }}">{{ localize_uc('AI Settings') }}</a>
-                        </li>
-                    </ul>
-                </li>
+                @can('read_ai_writer')
+                    <li class="{{ request()->is('admin/ai*') ? 'mm-active' : '' }}">
+                        <a class="has-arrow material-ripple" href="#">
+                            <i class="fas fa-brain"></i>
+                            <span> {{ localize_uc('AI Writer') }}</span>
+                        </a>
+                        <ul class="nav-second-level {{ request()->is('admin/ai*') ? 'mm-show' : '' }}">
+                            <li class="{{ request()->routeIs('ai.ai_settings*') ? 'mm-active' : '' }}">
+                                <a class="dropdown-item"
+                                    href="{{ route('ai.ai_settings') }}">{{ localize_uc('AI Settings') }}</a>
+                            </li>
+                        </ul>
+                    </li>
+                @endcan
 
 
 

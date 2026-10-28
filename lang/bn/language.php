@@ -2311,4 +2311,13 @@
     'share_on_x' => 'Share on x',
     'share_on_pinterest' => 'Share on pinterest',
     'share_on_linkedin' => 'Share on linkedin',
+    'ai_news_review' => 'এআই নিউজ রিভিউ (AI News Review)',
+    'ai_rss_sources' => 'এআই আরএসএস সোর্স (AI RSS Sources)',
+    'script_manager' => 'স্ক্রিপ্ট ম্যানেজার (Script Manager)',
+    'story_manage' => 'স্টোরি ম্যানেজ (Story Manage)',
+    'probashi_news' => 'প্রবাসী নিউজ (Probashi News)',
+    'web_setup' => 'ওয়েব সেটআপ (Web Setup)',
+    'setup_top_breaking_post' => 'টপ ব্রেকিং পোস্ট সেটআপ (Top Breaking Post)',
+    'home_page' => 'হোম পেজ সেটিংস (Home Page)',
+    'contact_page_setup' => 'যোগাযোগ পেজ সেটআপ (Contact Page Setup)',
 );
