@@ -56,119 +56,85 @@ class ApplicationController extends Controller
         $app->fill($request->except(['logo', 'favicon', 'fixed_date', 'sidebar_logo', 'footer_logo', 'app_logo', 'mobile_menu_image', 'footer_bg_image']));
 
         if ($request->hasFile('logo')) {
-
             if ($old) {
                 $this->deleteFile($old);
             }
-
             $request_file = $request->file('logo');
             $name         = time() . 'logo.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->logo = $path;
+            $app->logo    = $this->saveOptimizedImage($request_file, $name, 400);
         }
 
         if ($request->hasFile('sidebar_logo')) {
-
             if ($old_sidebar_logo) {
                 $this->deleteFile($old_sidebar_logo);
             }
-
-            $request_file = $request->file('sidebar_logo');
-            $name         = time() . 'sidebar-logo.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->sidebar_logo = $path;
+            $request_file       = $request->file('sidebar_logo');
+            $name               = time() . 'sidebar-logo.' . $request_file->getClientOriginalExtension();
+            $app->sidebar_logo  = $this->saveOptimizedImage($request_file, $name, 400);
         }
 
         if ($request->hasFile('sidebar_collapsed_logo')) {
-
             if ($old_sidebar_collapsed_logo) {
                 $this->deleteFile($old_sidebar_collapsed_logo);
             }
-
-            $request_file = $request->file('sidebar_collapsed_logo');
-            $name         = time() . 'sidebar-collapsed-logo.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->sidebar_collapsed_logo = $path;
+            $request_file                 = $request->file('sidebar_collapsed_logo');
+            $name                         = time() . 'sidebar-collapsed-logo.' . $request_file->getClientOriginalExtension();
+            $app->sidebar_collapsed_logo  = $this->saveOptimizedImage($request_file, $name, 200);
         }
 
         if ($request->hasFile('login_image')) {
-
             if ($old_login_image) {
                 $this->deleteFile($old_login_image);
             }
-
-            $request_file = $request->file('login_image');
-            $name         = time() . 'login-image.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->login_image = $path;
+            $request_file       = $request->file('login_image');
+            $name               = time() . 'login-image.' . $request_file->getClientOriginalExtension();
+            $app->login_image   = $this->saveOptimizedImage($request_file, $name, 800);
         }
         if ($request->hasFile('footer_bg_image')) {
-
             if ($old_footer_bg_image) {
                 $this->deleteFile($old_footer_bg_image);
             }
-
-            $request_file = $request->file('footer_bg_image');
-            $name         = time() . 'footer-bg-image.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->footer_bg_img = $path;
+            $request_file        = $request->file('footer_bg_image');
+            $name                = time() . 'footer-bg-image.' . $request_file->getClientOriginalExtension();
+            $app->footer_bg_img  = $this->saveOptimizedImage($request_file, $name, 1200);
         }
 
         if ($request->hasFile('favicon')) {
-
             if ($oldFavicon) {
                 $this->deleteFile($oldFavicon);
             }
-
-            $request_file = $request->file('favicon');
-            $name         = time() . 'favicon.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
+            $request_file   = $request->file('favicon');
+            $name           = time() . 'favicon.' . $request_file->getClientOriginalExtension();
+            $path           = Storage::disk('public')->putFileAs('application', $request_file, $name);
             Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->favicon = $path;
+            $app->favicon   = $path;
         }
 
         if ($request->hasFile('footer_logo')) {
-
             if ($oldFooterLogo) {
                 $this->deleteFile($oldFooterLogo);
             }
-
-            $request_file = $request->file('footer_logo');
-            $name         = time() . 'footer_logo.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->footer_logo = $path;
+            $request_file     = $request->file('footer_logo');
+            $name             = time() . 'footer_logo.' . $request_file->getClientOriginalExtension();
+            $app->footer_logo = $this->saveOptimizedImage($request_file, $name, 400);
         }
 
         if ($request->hasFile('app_logo')) {
-
             if ($oldAppLogo) {
                 $this->deleteFile($oldAppLogo);
             }
-
-            $request_file = $request->file('app_logo');
-            $name         = time() . 'app_logo.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->app_logo = $path;
+            $request_file   = $request->file('app_logo');
+            $name           = time() . 'app_logo.' . $request_file->getClientOriginalExtension();
+            $app->app_logo  = $this->saveOptimizedImage($request_file, $name, 400);
         }
 
         if ($request->hasFile('mobile_menu_image')) {
-
             if ($oldMobileMenuImage) {
                 $this->deleteFile($oldMobileMenuImage);
             }
-
-            $request_file = $request->file('mobile_menu_image');
-            $name         = time() . 'mobile_menu_image.' . $request_file->getClientOriginalExtension();
-            $path         = Storage::disk('public')->putFileAs('application', $request_file, $name);
-            Image::make($request_file)->save(public_path('storage/' . $path));
-            $app->mobile_menu_image = $path;
+            $request_file             = $request->file('mobile_menu_image');
+            $name                     = time() . 'mobile_menu_image.' . $request_file->getClientOriginalExtension();
+            $app->mobile_menu_image   = $this->saveOptimizedImage($request_file, $name, 400);
         }
 
         $app->fixed_date = $request->fixed_date;
@@ -232,4 +198,23 @@ class ApplicationController extends Controller
         return redirect()->route('app.index');
     }
 
+    private function saveOptimizedImage($request_file, string $name, int $maxWidth = 400): string
+    {
+        $path = 'application/' . $name;
+        $fullPath = storage_path('app/public/' . $path);
+        if (!file_exists(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0755, true);
+        }
+        $img = Image::make($request_file)->orientate();
+        if ($img->width() > $maxWidth) {
+            $img->widen($maxWidth, function ($constraint) {
+                $constraint->upsize();
+            });
+        }
+        $img->save($fullPath);
+        if (file_exists(public_path('storage/application'))) {
+            @copy($fullPath, public_path('storage/' . $path));
+        }
+        return $path;
+    }
 }

@@ -46,13 +46,15 @@
 
             <!-- Slider Next/Preview Button -->
             <button type="button"
-                class="swiper_button_prev stories-swiper-button-prev rtl:order-2 absolute top-1/2 left-2 z-10">
+                class="swiper_button_prev stories-swiper-button-prev rtl:order-2 absolute top-1/2 left-2 z-10"
+                aria-label="{{ localize('previous') ?? 'Previous' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
                     fill="none">
                     <path d="M13.1,13.9L9.2,10l3.9-3.8L11.9,5l-5,5l5,5L13.1,13.9z" fill="#ffffff" />
                 </svg>
             </button>
-            <button type="button" class="swiper_button_next stories-swiper-button-next absolute top-1/2 right-2 z-10">
+            <button type="button" class="swiper_button_next stories-swiper-button-next absolute top-1/2 right-2 z-10"
+                aria-label="{{ localize('next') ?? 'Next' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
                     fill="none">
                     <path

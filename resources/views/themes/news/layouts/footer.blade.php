@@ -63,7 +63,7 @@
                             <button type="submit" id="subscribe-btn"
                                 data-label="{{ $footerLabels['subscribe'] }}"
                                 data-loading-label="{{ $footerLabels['subscribing'] }}"
-                                class="shrink-0 bg-brand-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white disabled:cursor-wait disabled:opacity-70">
+                                class="shrink-0 bg-red-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white disabled:cursor-wait disabled:opacity-70">
                                 {{ $footerLabels['subscribe'] }}
                             </button>
                         </div>

@@ -64,12 +64,16 @@
                         <!-- bottom news list -->
                         @if ($secSixNewsChunk->slice(1)->isNotEmpty())
                             @foreach ($secSixNewsChunk->slice(1) as $secSixNewsChunkItem)
-                                <a class="block pt-2" href="{{ __url($secSixNewsChunkItem->news->encode_title) }}">
+                                <a class="block py-2.5 my-0.5" href="{{ __url($secSixNewsChunkItem->news->encode_title) }}">
                                     <div class="grid grid-cols-3 gap-2 items-center">
                                         <figure class="w-full h-20">
                                             <img class="w-full h-full object-cover"
                                                 src="{{ isset($secSixNewsChunkItem->news->photoLibrary->image_base_url) ? $secSixNewsChunkItem->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
-                                                alt="{{ $secSixNewsChunkItem->news->image_alt ?: $secSixNewsChunkItem->news->title }}" />
+                                                alt="{{ $secSixNewsChunkItem->news->image_alt ?: '' }}"
+                                                width="160"
+                                                height="90"
+                                                loading="lazy"
+                                                decoding="async" />
                                         </figure>
                                         <h2
                                             class="col-span-2 line-clamp-3 text-neutral-600 hover:text-brand-primary transition_3 dark:text-neutral-50 dark:hover:text-brand-primary">

@@ -95,7 +95,13 @@ class VideoNewsController extends Controller
         $imagePath = '';
         if ($request->hasFile('image')) {
             $request_file = $request->file('image');
-            $upload = ImageHelper::upload($request_file, 'videonews/thumb');
+            $upload = ImageHelper::upload($request_file, 'videonews/thumb', 'local', [
+                'width' => 640,
+                'height' => 360,
+                'mode' => 'fit',
+                'format' => 'webp',
+                'quality' => 80,
+            ]);
             $imagePath = $upload['image_path'] ?? '';
         }
 
@@ -361,7 +367,13 @@ class VideoNewsController extends Controller
                 }
 
                 $imageFile = $request->file('image');
-                $upload = ImageHelper::upload($imageFile, 'videonews/thumb');
+                $upload = ImageHelper::upload($imageFile, 'videonews/thumb', 'local', [
+                    'width' => 640,
+                    'height' => 360,
+                    'mode' => 'fit',
+                    'format' => 'webp',
+                    'quality' => 80,
+                ]);
                 $imagePath = $upload['image_path'] ?? '';
                 \Log::info('Image uploaded to: ' . $imagePath);
             }

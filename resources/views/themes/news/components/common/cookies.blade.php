@@ -1,34 +1,34 @@
 <section 
-    class="cookies_section bg-neutral-100 fixed left-0 bottom-0 z-20 w-full shadow-inner shadow-black/5"
+    class="cookies_section bg-neutral-100 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100 fixed left-0 bottom-0 z-20 w-full shadow-inner shadow-black/5"
     style="display: none;"
     id="cookie-banner">
     <div class="space-y-4 xl:grid items-center grid-cols-7 gap-12 p-6 md:mx-2 lg:mx-12 4xl:container 4xl:mx-auto">
         <div class="col-span-5">
-            <h1 class="text-lg font-semibold">{{ $cookieInfo->alert_title }}</h1>
-            <p>{{ $cookieInfo->alert_content }}</p>
+            <h2 class="text-lg font-semibold">{{ $cookieInfo->alert_title }}</h2>
+            <p class="text-neutral-700 dark:text-neutral-300">{{ $cookieInfo->alert_content }}</p>
             @if ($cookieInfo->page_title)
-                <a href="{{ $cookieInfo->page_url }}" class="capitalize underline text-blue-500">{{ $cookieInfo->page_title }}</a>
+                <a href="{{ $cookieInfo->page_url }}" class="capitalize underline text-blue-700 dark:text-blue-400 font-medium">{{ $cookieInfo->page_title }}</a>
             @endif
         </div>
         <div class="col-span-2 flex justify-end items-center gap-2">
             <button type="button"
                 id="cookie-customise-btn"
                 data-role="customise"
-                class="capitalize text-xs px-4 py-3 text-white hover:text-red-800 bg-red-600 hover:bg-red-600/10 border border-red-600 transition_5">
+                class="capitalize text-xs font-semibold px-4 py-3 text-white bg-red-700 hover:bg-red-800 border border-red-700 transition_5">
                 {{ localize('customise') }}
             </button>
 
             <button type="button"
                 id="cookie-reject-btn"
                 data-role="reject"
-                class="capitalize text-xs px-4 py-3 text-white hover:text-red-800 bg-red-600 hover:bg-red-600/10 border border-red-600 transition_5">
+                class="capitalize text-xs font-semibold px-4 py-3 text-white bg-red-700 hover:bg-red-800 border border-red-700 transition_5">
                 {{ localize('reject_all') }}
             </button>
 
             <button type="button"
                 id="cookie-accept-btn"
                 data-role="accept"
-                class="capitalize text-xs px-4 py-3 text-white hover:text-red-800 bg-red-600 hover:bg-red-600/10 border border-red-600 transition_5">
+                class="capitalize text-xs font-semibold px-4 py-3 text-white bg-red-700 hover:bg-red-800 border border-red-700 transition_5">
                 {{ localize('accept_all') }}
             </button>
         </div>

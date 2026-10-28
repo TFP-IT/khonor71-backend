@@ -48,13 +48,17 @@
       class="space-y-2 divide-y divide-neutral-200 dark:divide-neutral-700 mt-2">
       <!-- bottom news list -->
       @foreach($newsCards->slice(1) as $newsCard)
-        <a class="block pt-2" href="{{ __url($newsCard->news->encode_title) }}">
+        <a class="block py-2.5 my-0.5" href="{{ __url($newsCard->news->encode_title) }}">
           <div class="grid grid-cols-3 gap-2 items-center">
             <figure class="w-full h-20">
               <img
                 class="w-full h-full object-cover"
                 src="{{ isset($newsCard->news->photoLibrary->image_base_url) ? $newsCard->news->photoLibrary->image_base_url : asset('/assets/opinion-avatar.png') }}"
-                alt="{{ $newsCard->news->image_alt ?: $newsCard->news->title }}"
+                alt="{{ $newsCard->news->image_alt ?: '' }}"
+                width="160"
+                height="90"
+                loading="lazy"
+                decoding="async"
               />
             </figure>
             <h2

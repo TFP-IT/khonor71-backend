@@ -67,13 +67,25 @@ class OpinionController extends Controller
 
         if ($request->hasFile('person_image')) {
             $request_file = $request->file('person_image');
-            $upload = ImageHelper::upload($request_file, 'opinion');
+            $upload = ImageHelper::upload($request_file, 'opinion', 'local', [
+                'width' => 200,
+                'height' => 200,
+                'mode' => 'fit',
+                'format' => 'webp',
+                'quality' => 80,
+            ]);
             $person_image_path = $upload['image_path'] ?? null;
         }
 
         if ($request->hasFile('news_image')) {
             $request_file = $request->file('news_image');
-            $upload = ImageHelper::upload($request_file, 'opinion');
+            $upload = ImageHelper::upload($request_file, 'opinion', 'local', [
+                'width' => 800,
+                'height' => 450,
+                'mode' => 'fit',
+                'format' => 'webp',
+                'quality' => 80,
+            ]);
             $news_image_path = $upload['image_path'] ?? null;
         }
 
@@ -164,7 +176,13 @@ class OpinionController extends Controller
             }
 
             $file = $request->file('person_image');
-            $upload = ImageHelper::upload($file, 'opinion');
+            $upload = ImageHelper::upload($file, 'opinion', 'local', [
+                'width' => 200,
+                'height' => 200,
+                'mode' => 'fit',
+                'format' => 'webp',
+                'quality' => 80,
+            ]);
             $person_image_path = $upload['image_path'] ?? null;
         }
 
@@ -175,7 +193,13 @@ class OpinionController extends Controller
             }
 
             $file = $request->file('news_image');
-            $upload = ImageHelper::upload($file, 'opinion');
+            $upload = ImageHelper::upload($file, 'opinion', 'local', [
+                'width' => 800,
+                'height' => 450,
+                'mode' => 'fit',
+                'format' => 'webp',
+                'quality' => 80,
+            ]);
             $news_image_path = $upload['image_path'] ?? null;
         }
 

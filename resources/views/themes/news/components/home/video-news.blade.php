@@ -9,12 +9,15 @@
         <!-- Card-1 -->
         <div class="overflow-hidden">
           <figure class="relative w-full h-56 group overflow-hidden block">
-            <a href="{{ __url($videoNewsItem->encode_title) }}" class="">
+            <a href="{{ __url($videoNewsItem->encode_title) }}" class="" tabindex="-1" aria-hidden="true">
               <img
                 class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                 src="{{ get_image_url('/assets/thumbnail-image.jpg', $videoNewsItem->thumbnail_image) }}"
-                alt="{{ $videoNewsItem->image_alt ?: $videoNewsItem->title }}"
+                alt="{{ $videoNewsItem->image_alt ?: '' }}"
+                width="400"
+                height="225"
                 loading="lazy"
+                decoding="async"
               />
             </a>
             <!-- Play button -->
@@ -54,7 +57,7 @@
             </div>
 
             <div
-              class="text-neutral-500 capitalize flex items-center gap-1 text-sm">
+              class="text-neutral-700 dark:text-neutral-300 capitalize flex items-center gap-1 text-sm font-medium">
               <span>{{ views_format($videoNewsItem->total_view) }}&nbsp;{{ localize('view') }}</span>
               <span>{{ $videoNewsItem->postByUser->full_name ?? localize('unknown') }}</span>
               <svg

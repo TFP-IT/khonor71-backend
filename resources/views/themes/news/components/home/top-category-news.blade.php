@@ -192,7 +192,7 @@
                     <div
                         class="col-span-3 relative flex items-center justify-center overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
                         <img src="{{ asset('assets/probash-tv.png') }}" alt="TV Frame"
-                            class="w-full h-full object-contain" loading="lazy" decoding="async" fetchpriority="low">
+                            class="w-full h-full object-contain" width="400" height="260" loading="lazy" decoding="async" fetchpriority="low">
 
                         @if (!empty($tvVideoNews) && !empty($tvPlayableSource))
                             <button type="button"
@@ -200,7 +200,7 @@
                                 aria-label="Play video: {{ $tvVideoNews->title }}">
                                 <img src="{{ $tvPoster }}"
                                     alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
-                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" width="320" height="180" loading="lazy" decoding="async"
                                     fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                                 <span
@@ -224,13 +224,13 @@
                                 class="absolute inset-0 flex items-center justify-center">
                                 <img src="{{ $tvPoster }}"
                                     alt="{{ $tvVideoNews->image_alt ?? $tvVideoNews->title }}"
-                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
+                                    class="absolute w-3/4 h-3/4 object-cover rounded-sm" width="320" height="180" loading="lazy" decoding="async"
                                     fetchpriority="low"
                                     style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                             </a>
                         @else
                             <img src="{{ asset('assets/no_news.webp') }}" alt="Default TV News"
-                                class="absolute w-3/4 h-3/4 object-cover rounded-sm" loading="lazy" decoding="async"
+                                class="absolute w-3/4 h-3/4 object-cover rounded-sm" width="320" height="180" loading="lazy" decoding="async"
                                 fetchpriority="low" style="width: 75%; height: 60%; transform: translate(-7.5%, 13%);">
                         @endif
                     </div>
@@ -252,9 +252,7 @@
 
             <!-- card 2: Probash category news -->
             <div class="space-y-2">
-                <div class="inline-flex items-center gap-2 border-2 border-yellow-400 bg-neutral-800 py-1.5"
-                    style="padding-left: 1rem; padding-right: 11rem;">
-                    <span class="h-2.5 "></span>
+                <div class="flex items-center justify-between border-2 border-yellow-400 bg-neutral-800 py-1.5 px-4 w-full">
                     <span class="text-sm font-semibold text-white">সর্বশেষ প্রবাস সংবাদ</span>
                 </div>
                 @if ($rightCategoryNews)
@@ -270,11 +268,15 @@
                         }
                     @endphp
                     <a href="{{ __url($rightCategoryNews->encode_title) }}"
-                        class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden">
+                        class="block w-full h-52 md:h-[150px] xl:h-36 4xl:h-52 object-cover group overflow-hidden"
+                        tabindex="-1" aria-hidden="true">
                         <img class="w-full h-full object-cover group-hover:scale-105 transition_slow"
                             src="{{ $rightCategoryImage }}"
                             onerror="this.onerror=null;this.src='{{ asset('/assets/news-card-view.webp') }}';"
-                            alt="{{ $rightCategoryNews->image_alt ?: $rightCategoryNews->title }}" loading="lazy"
+                            alt="{{ $rightCategoryNews->image_alt ?: '' }}"
+                            width="400"
+                            height="225"
+                            loading="lazy"
                             decoding="async" fetchpriority="low" />
                     </a>
                     <div class="py-3 space-y-2">

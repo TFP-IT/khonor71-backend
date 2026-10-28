@@ -17,6 +17,8 @@
     <meta name="base-url" content="{{ url('/') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="google-site-verification" content="F_Q9nuMHlFCzzIgz2Ow-5bJM2ZVqoAYYIIVDwbsjOTI" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
     {!! SEOTools::generate() !!}
 
@@ -24,10 +26,10 @@
         $swiperCssUrl = \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css');
     @endphp
 
-    {{-- Load Google Fonts --}}
+    {{-- Load Google Fonts with preconnect and preload --}}
     @foreach ($loadedFonts as $font)
-        <link href="{{ $font->source_url }}" rel="stylesheet" media="print" onload="this.onload=null;this.media='all'">
-        <noscript><link href="{{ $font->source_url }}" rel="stylesheet"></noscript>
+        <link rel="preload" as="style" href="{{ $font->source_url }}">
+        <link href="{{ $font->source_url }}" rel="stylesheet">
     @endforeach
 
     @php
@@ -65,6 +67,7 @@
 
         body {
             font-family: var(--font-principal) !important;
+            font-size-adjust: from-font;
         }
 
         button,
@@ -72,6 +75,7 @@
         select,
         textarea {
             font-family: var(--font-principal) !important;
+            font-size-adjust: from-font;
         }
 
         h1,
@@ -82,10 +86,16 @@
         h6,
         a {
             font-family: var(--font-alternate) !important;
+            font-size-adjust: from-font;
         }
 
         p {
             font-family: var(--font-supplementary) !important;
+            font-size-adjust: from-font;
+        }
+
+        .sangbadik-logo, .probash-logo {
+            aspect-ratio: 100 / 90;
         }
     </style>
     <style>{!! file_get_contents(public_path('assets/css/news.min.css')) !!}</style>
@@ -319,7 +329,9 @@
     @include('themes.news.layouts.header.side-menu')
     @include('themes.news.layouts.header.mobile-menu')
 
-    {{ $slot }}
+    <main id="main-content" role="main">
+        {{ $slot }}
+    </main>
 
     <!-- Footer section -->
     @include('themes.news.layouts.footer')

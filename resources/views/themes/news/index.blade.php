@@ -1,4 +1,16 @@
 <x-web-layout>
+    @if ($homePageTopNews->isNotEmpty())
+        @php
+            $heroPhoto = $homePageTopNews[0]->news->photoLibrary ?? null;
+            $preloadImg = $heroPhoto?->large_image ? asset('storage/' . $heroPhoto->large_image) : ($heroPhoto?->image_base_url ?: null);
+        @endphp
+        @if ($preloadImg)
+            @push('custom-css')
+                <link rel="preload" as="image" href="{{ $preloadImg }}" fetchpriority="high">
+            @endpush
+        @endif
+    @endif
+
     <!-- News Ticker Section -->
     @if ((app_setting()->newstriker_status ?? 1) == 1 && $breakingNews->isNotEmpty())
         <div class="container my-2">
@@ -145,13 +157,13 @@
 
                     <!-- Slider Next/Preview Button -->
                     <div class="flex items-center gap-2">
-                        <button type="button" class="swiper_button_prev video-swiper-button-prev rtl:order-2">
+                        <button type="button" class="swiper_button_prev video-swiper-button-prev rtl:order-2" aria-label="{{ localize('previous') ?? 'Previous' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
                                 fill="none">
                                 <path d="M13.1,13.9L9.2,10l3.9-3.8L11.9,5l-5,5l5,5L13.1,13.9z" fill="#ffffff" />
                             </svg>
                         </button>
-                        <button type="button" class="swiper_button_next video-swiper-button-next">
+                        <button type="button" class="swiper_button_next video-swiper-button-next" aria-label="{{ localize('next') ?? 'Next' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 20 20"
                                 fill="none">
                                 <path

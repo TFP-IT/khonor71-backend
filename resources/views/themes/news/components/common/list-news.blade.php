@@ -2,18 +2,22 @@
 <div class="divide-y border-b dark:border-b-neutral-700 dark:divide-neutral-700">
   @foreach($sectionTwoNews as $sectionTwoNewsItem)
     <div class="grid items-center grid-cols-4 gap-4 py-4">
-      <a href="{{ __url($sectionTwoNewsItem->news->encode_title) }}" class="block w-full h-24 xl:h-28 2xl:h-36 group overflow-hidden">
+      <a href="{{ __url($sectionTwoNewsItem->news->encode_title) }}" class="block w-full h-24 xl:h-28 2xl:h-36 group overflow-hidden" tabindex="-1" aria-hidden="true">
         <img
           class="w-full h-full object-cover group-hover:scale-105 transition_5"
           src="{{ isset($sectionTwoNewsItem->news->photoLibrary->image_base_url) ? $sectionTwoNewsItem->news->photoLibrary->image_base_url : asset('/assets/news-card-view.webp') }}"
-          alt="{{ $sectionTwoNewsItem->news->image_alt ?: $sectionTwoNewsItem->news->title }}"
+          alt="{{ $sectionTwoNewsItem->news->image_alt ?: '' }}"
+          width="400"
+          height="225"
+          loading="lazy"
+          decoding="async"
         />
       </a>
       <div class="col-span-3 space-y-2">
         <a href="{{ __url($sectionTwoNewsItem->news->encode_title) }}" class="line-clamp-2 text-gray-600 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary font-bold text-lg leading-6 transition_3">
           {{ $sectionTwoNewsItem->news->title }}
         </a>
-        <div class="text-neutral-500 capitalize flex items-center gap-1 text-sm">
+        <div class="text-neutral-700 dark:text-neutral-300 capitalize flex items-center gap-1 text-sm font-medium">
           <span>{{ $sectionTwoNewsItem->news->postByUser->full_name ?? localize('unknown') }}</span>
           <!-- calendar SVG -->
           <svg
