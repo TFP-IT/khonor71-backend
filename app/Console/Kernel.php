@@ -28,6 +28,11 @@ class Kernel extends ConsoleKernel
             ->everyTenMinutes()
             ->withoutOverlapping(20)
             ->when(fn () => config('ai_news.enabled'));
+
+        // Process AI news background queue automatically
+        $schedule->command('queue:work database --queue=ai-news,default --stop-when-empty --max-time=50')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

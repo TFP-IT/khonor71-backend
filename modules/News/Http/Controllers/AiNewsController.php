@@ -14,6 +14,7 @@ use Modules\News\Entities\AiNewsSource;
 use Modules\News\Jobs\GenerateAiNewsCandidateJob;
 use Modules\News\Jobs\CollectAiNewsFeedsJob;
 use Modules\News\Services\AiNewsHostPolicy;
+use Modules\News\Services\GemmaNewsDraftService;
 use Modules\News\Services\NewsService;
 
 class AiNewsController extends Controller
@@ -25,18 +26,25 @@ class AiNewsController extends Controller
         $this->middleware('permission:create_ai_rss_sources|update_ai_rss_sources|update_ai_news|update_news')->only(['storeSource']);
         $this->middleware('permission:update_ai_rss_sources|update_ai_news|update_news')->only(['toggleSource', 'updateReview', 'reject']);
         $this->middleware('permission:delete_ai_rss_sources|update_ai_news|update_news')->only(['deleteSource']);
-        $this->middleware('permission:create_ai_news|create_news')->only(['runNow', 'retry', 'createCmsDraft']);
+        $this->middleware('permission:create_ai_news|create_news|update_ai_news|update_news')->only(['runNow', 'retry', 'createCmsDraft']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $candidates = AiNewsCandidate::with(['source', 'language', 'category'])->latest()->paginate(25);
+        $selectedStatus = $request->query('status');
+        $query = AiNewsCandidate::with(['source', 'language', 'category'])->latest();
+
+        if ($selectedStatus && in_array($selectedStatus, ['pending', 'draft', 'reviewed', 'failed', 'rejected', 'imported'], true)) {
+            $query->where('status', $selectedStatus);
+        }
+
+        $candidates = $query->paginate(25)->withQueryString();
         $counts = AiNewsCandidate::query()
             ->selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        return view('news::ai_news.index', compact('candidates', 'counts'));
+        return view('news::ai_news.index', compact('candidates', 'counts', 'selectedStatus'));
     }
 
     public function sources()
@@ -124,44 +132,80 @@ class AiNewsController extends Controller
         return back()->with('success', 'RSS collection queued. New candidates will appear in the review list.');
     }
 
-    public function retry(AiNewsCandidate $candidate)
+    protected function resolveCandidate($candidate): ?AiNewsCandidate
     {
+        if ($candidate instanceof AiNewsCandidate) {
+            return $candidate;
+        }
+
+        if (empty($candidate) || $candidate === 'undefined' || ! is_numeric($candidate)) {
+            return null;
+        }
+
+        return AiNewsCandidate::find($candidate);
+    }
+
+    public function retry(Request $request, $candidate, GemmaNewsDraftService $draftService)
+    {
+        $candidateModel = $this->resolveCandidate($candidate);
+        if (! $candidateModel) {
+            return redirect()->route('ai-news.index')->with('warning', 'Candidate not found or invalid URL.');
+        }
+
         abort_unless(config('ai_news.enabled'), 503, 'AI news generation is disabled.');
         abort_unless(
-            in_array($candidate->status, [AiNewsCandidate::STATUS_FAILED, AiNewsCandidate::STATUS_DRAFT], true) &&
-            ! $candidate->reviewed_at &&
-            ! $candidate->news_mst_id,
-            409
+            in_array($candidateModel->status, [
+                AiNewsCandidate::STATUS_PENDING,
+                AiNewsCandidate::STATUS_FAILED,
+                AiNewsCandidate::STATUS_DRAFT,
+                AiNewsCandidate::STATUS_REJECTED,
+            ], true) &&
+            ! $candidateModel->news_mst_id,
+            409,
+            'This candidate cannot be regenerated in its current state.'
         );
-        abort_if($candidate->generation_attempts >= 5, 409, 'This candidate has reached its generation attempt limit.');
+        abort_if($candidateModel->generation_attempts >= 5, 409, 'This candidate has reached its maximum generation attempt limit (5).');
 
-        $candidate->forceFill([
-            'status' => AiNewsCandidate::STATUS_PENDING,
-            'error_message' => null,
-            'title' => null,
-            'short_head' => null,
-            'summary' => null,
-            'body' => null,
-            'meta_title' => null,
-            'meta_description' => null,
-            'keywords' => null,
-        ])->save();
+        $candidateModel->increment('generation_attempts');
+        $candidateModel->refresh();
 
-        GenerateAiNewsCandidateJob::dispatch($candidate->id)
-            ->onConnection(config('ai_news.queue_connection', 'database'))
-            ->onQueue('ai-news');
+        try {
+            $draftService->generate($candidateModel);
 
-        return redirect()->route('ai-news.edit', $candidate)->with('success', 'Generation retry queued.');
+            return redirect()->route('ai-news.edit', $candidateModel)->with('success', 'AI draft generated successfully! You can now review, edit, and approve it.');
+        } catch (\Throwable $exception) {
+            $candidateModel->forceFill([
+                'status' => AiNewsCandidate::STATUS_FAILED,
+                'error_message' => Str::limit($exception->getMessage(), 2000),
+            ])->save();
+
+            return redirect()->route('ai-news.edit', $candidateModel)->with('error', 'Draft generation failed: ' . $exception->getMessage());
+        }
     }
 
-    public function edit(AiNewsCandidate $candidate)
+    public function edit($candidate)
     {
-        return view('news::ai_news.review', compact('candidate'));
+        $candidateModel = $this->resolveCandidate($candidate);
+        if (! $candidateModel) {
+            return redirect()->route('ai-news.index')->with('warning', 'Candidate not found or invalid URL. Returned to candidate list.');
+        }
+
+        return view('news::ai_news.review', ['candidate' => $candidateModel]);
     }
 
-    public function updateReview(Request $request, AiNewsCandidate $candidate)
+    public function updateReview(Request $request, $candidate)
     {
-        abort_unless(in_array($candidate->status, [AiNewsCandidate::STATUS_DRAFT, AiNewsCandidate::STATUS_REVIEWED], true), 409);
+        $candidateModel = $this->resolveCandidate($candidate);
+        if (! $candidateModel) {
+            return redirect()->route('ai-news.index')->with('warning', 'Candidate not found or invalid URL.');
+        }
+
+        abort_unless(in_array($candidateModel->status, [
+            AiNewsCandidate::STATUS_PENDING,
+            AiNewsCandidate::STATUS_DRAFT,
+            AiNewsCandidate::STATUS_REVIEWED,
+            AiNewsCandidate::STATUS_FAILED,
+        ], true), 409);
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -181,7 +225,7 @@ class AiNewsController extends Controller
             ->values()
             ->all();
 
-        $candidate->forceFill([
+        $candidateModel->forceFill([
             ...$data,
             'keywords' => $keywords,
             'status' => AiNewsCandidate::STATUS_REVIEWED,
@@ -190,14 +234,24 @@ class AiNewsController extends Controller
             'error_message' => null,
         ])->save();
 
-        return redirect()->route('ai-news.edit', $candidate)->with('success', 'Review saved. This candidate is still unpublished.');
+        return redirect()->route('ai-news.edit', $candidateModel)->with('success', 'Review saved. This candidate is now approved and ready to import as a CMS draft.');
     }
 
-    public function reject(AiNewsCandidate $candidate)
+    public function reject($candidate)
     {
-        abort_unless(in_array($candidate->status, [AiNewsCandidate::STATUS_DRAFT, AiNewsCandidate::STATUS_REVIEWED, AiNewsCandidate::STATUS_FAILED], true), 409);
+        $candidateModel = $this->resolveCandidate($candidate);
+        if (! $candidateModel) {
+            return redirect()->route('ai-news.index')->with('warning', 'Candidate not found or invalid URL.');
+        }
 
-        $candidate->forceFill([
+        abort_unless(in_array($candidateModel->status, [
+            AiNewsCandidate::STATUS_PENDING,
+            AiNewsCandidate::STATUS_DRAFT,
+            AiNewsCandidate::STATUS_REVIEWED,
+            AiNewsCandidate::STATUS_FAILED,
+        ], true), 409);
+
+        $candidateModel->forceFill([
             'status' => AiNewsCandidate::STATUS_REJECTED,
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
@@ -206,27 +260,32 @@ class AiNewsController extends Controller
         return redirect()->route('ai-news.index')->with('success', 'Candidate rejected; it will not be published.');
     }
 
-    public function createCmsDraft(AiNewsCandidate $candidate, NewsService $newsService)
+    public function createCmsDraft($candidate, NewsService $newsService)
     {
-        abort_unless($candidate->status === AiNewsCandidate::STATUS_REVIEWED, 409, 'Review and save this candidate before importing it.');
-        abort_unless(! $candidate->news_mst_id, 409, 'This candidate was already imported.');
+        $candidateModel = $this->resolveCandidate($candidate);
+        if (! $candidateModel) {
+            return redirect()->route('ai-news.index')->with('warning', 'Candidate not found or invalid URL.');
+        }
 
-        $category = Category::whereKey($candidate->category_id)
-            ->where('language_id', $candidate->language_id)->first();
+        abort_unless($candidateModel->status === AiNewsCandidate::STATUS_REVIEWED, 409, 'Review and save this candidate before importing it.');
+        abort_unless(! $candidateModel->news_mst_id, 409, 'This candidate was already imported.');
+
+        $category = Category::whereKey($candidateModel->category_id)
+            ->where('language_id', $candidateModel->language_id)->first();
         abort_unless($category, 422, 'The configured category is no longer available for this language.');
 
-        $paragraphs = preg_split('/\R{2,}/u', trim((string) $candidate->body)) ?: [];
+        $paragraphs = preg_split('/\R{2,}/u', trim((string) $candidateModel->body)) ?: [];
         $bodyHtml = collect($paragraphs)
             ->map(static fn ($paragraph) => trim($paragraph))
             ->filter()
             ->map(static fn ($paragraph) => '<p>' . e($paragraph) . '</p>')
             ->implode("\n");
 
-        $keywords = collect($candidate->keywords ?? [])->implode(', ');
+        $keywords = collect($candidateModel->keywords ?? [])->implode(', ');
         if (trim($keywords) === '') {
-            $keywords = $candidate->title;
+            $keywords = $candidateModel->title;
         }
-        $baseSlug = generateSlug($candidate->title) ?: 'ai-news-' . $candidate->id;
+        $baseSlug = generateSlug($candidateModel->title) ?: 'ai-news-' . $candidateModel->id;
         $slug = $baseSlug;
         $suffix = 2;
         while (NewsMst::where('encode_title', $slug)->exists()) {
@@ -234,17 +293,17 @@ class AiNewsController extends Controller
         }
 
         $attributes = [
-            'language_id' => $candidate->language_id,
+            'language_id' => $candidateModel->language_id,
             'other_page' => (string) $category->id,
-            'head_line' => $candidate->title,
+            'head_line' => $candidateModel->title,
             'custom_url' => $slug,
-            'short_head' => $candidate->short_head,
+            'short_head' => $candidateModel->short_head,
             'details_news' => $bodyHtml,
-            'seo_title' => $candidate->meta_title,
+            'seo_title' => $candidateModel->meta_title,
             'meta_keyword' => Str::limit($keywords, 191, ''),
-            'meta_description' => Str::limit((string) $candidate->meta_description, 255, ''),
+            'meta_description' => Str::limit((string) $candidateModel->meta_description, 255, ''),
             'post_tag' => Str::limit($keywords, 191, ''),
-            'reference' => Str::limit($candidate->source_url, 250, ''),
+            'reference' => Str::limit($candidateModel->source_url, 250, ''),
             'ref_date' => now()->toDateString(),
             'publish_type' => 'immediate',
             'status_confirmed' => 1,
@@ -258,9 +317,9 @@ class AiNewsController extends Controller
             'schemasetup' => null,
         ];
 
-        $reviewVersion = $candidate->updated_at?->toDateTimeString();
-        $news = DB::transaction(function () use ($newsService, $attributes, $candidate, $reviewVersion) {
-            $lockedCandidate = AiNewsCandidate::query()->lockForUpdate()->findOrFail($candidate->id);
+        $reviewVersion = $candidateModel->updated_at?->toDateTimeString();
+        $news = DB::transaction(function () use ($newsService, $attributes, $candidateModel, $reviewVersion) {
+            $lockedCandidate = AiNewsCandidate::query()->lockForUpdate()->findOrFail($candidateModel->id);
             abort_unless(
                 $lockedCandidate->status === AiNewsCandidate::STATUS_REVIEWED &&
                 ! $lockedCandidate->news_mst_id &&

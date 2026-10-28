@@ -24,6 +24,7 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
     Route::group(['middleware' => ['auth']], function () {
         Route::prefix('ai-news')->as('ai-news.')->controller(AiNewsController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::redirect('/candidates', '/admin/ai-news');
             Route::get('/sources', 'sources')->name('sources');
             Route::post('/sources', 'storeSource')->name('sources.store');
             Route::patch('/sources/{source}/toggle', 'toggleSource')->name('sources.toggle');
