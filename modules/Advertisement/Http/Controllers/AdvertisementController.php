@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Modules\Advertisement\Entities\Advertisement;
 use Modules\Advertisement\DataTables\AdvertisementDataTable;
 use Modules\Theme\Entities\Theme;
+use App\Helpers\ImageHelper;
 
 class AdvertisementController extends Controller
 {
@@ -49,10 +50,10 @@ class AdvertisementController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $path = '';
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'theme' => 'required',
             'page' => 'required',
             'ad_position' => 'required',
@@ -77,8 +78,8 @@ class AdvertisementController extends Controller
 
             if ($request->hasFile('ad_image')) {
                 $request_file = $request->file('ad_image');
-                $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-                $path = $request_file->storeAs('ad_image', $filename, 'public');
+                $upload = ImageHelper::upload($request_file, 'ad_image');
+                $path = $upload['image_path'] ?? null;
 
                 $ad_img = asset('storage/' . $path);
                 $ad_img_url = $this->addhttp(trim(@$request->ad_url));
@@ -186,9 +187,10 @@ class AdvertisementController extends Controller
     public function update(Request $request, $id)
     {
         $advertise = Advertisement::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($advertise->language_id ?? get_language_id())]);
 
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'theme' => 'required',
             'page' => 'required',
             'ad_position' => 'required',
@@ -215,8 +217,8 @@ class AdvertisementController extends Controller
             if ($request->hasFile('ad_image')) {
 
                 $request_file = $request->file('ad_image');
-                $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-                $path = $request_file->storeAs('ad_image', $filename, 'public');
+                $upload = ImageHelper::upload($request_file, 'ad_image');
+                $path = $upload['image_path'] ?? null;
 
                 $ad_img = asset('storage/' . $path);
                 $ad_img_url = $this->addhttp(trim(@$request->ad_url));

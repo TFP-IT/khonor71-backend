@@ -50,10 +50,11 @@ class AiNewsController extends Controller
 
     public function storeSource(Request $request, AiNewsHostPolicy $hostPolicy)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'feed_url' => ['required', 'string', 'max:2048', 'url'],
-            'language_id' => ['required', 'integer', 'exists:languages,id'],
+            'language_id' => ['required', 'integer', 'exists:languages,id,value,bn'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
 

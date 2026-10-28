@@ -12,6 +12,7 @@ use Modules\Localize\Entities\Language;
 use Modules\ProbashiJanala\Entities\ProbashiNews;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+use App\Helpers\ImageHelper;
 
 class ProbashiNewsController extends Controller
 {
@@ -65,8 +66,9 @@ public function create()
 
 public function store(Request $request)
 {
+    $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
     $request->validate([
-        'language_id' => 'required|exists:languages,id',
+        'language_id' => 'required|exists:languages,id,value,bn',
         'web_user_id' => 'required|exists:web_users,id',
         'publish_date' => 'required|date',
         'title' => 'required|string|max:255',
@@ -99,8 +101,8 @@ public function store(Request $request)
     // Handle image upload
     $imagePath = '';
     if ($request->hasFile('image')) {
-        $filename = time() . rand(10, 1000) . '.' . $request->file('image')->extension();
-        $imagePath = $request->file('image')->storeAs('probashi-news/thumb', $filename, 'public');
+        $upload = ImageHelper::upload($request->file('image'), 'probashi-news/thumb');
+        $imagePath = $upload['image_path'] ?? '';
     }
 
     // Handle video upload and frame extraction

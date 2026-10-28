@@ -8,7 +8,7 @@
                 </label>
                 <select name="language_id" id="language_id_" form="editForm" class="form-control select-basic-single" required>
                     @foreach ($languages as $language)
-                        <option value="{{ $language->id }}" {{ $storyData->language_id == $language->id ? 'selected' : '' }}>
+                        <option value="{{ $language->id }}" @selected(old('language_id', $storyData->language_id ?? get_language_id()) == $language->id)>
                             {{ $language->langname }}
                         </option>
                     @endforeach

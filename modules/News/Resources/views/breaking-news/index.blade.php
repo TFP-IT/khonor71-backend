@@ -68,7 +68,7 @@
                         <label for="language_id">{{ localize('language') }} <span class="text-danger">*</span></label>
                         <select name="language_id" id="language_id" class="form-control select-basic-single @error('language_id') is-invalid @enderror" required>
                             @foreach ($languages as $language)
-                                <option value="{{ $language->id }}">
+                                <option value="{{ $language->id }}" @selected(old('language_id', get_language_id()) == $language->id)>
                                     {{ $language->langname }}
                                 </option>
                             @endforeach

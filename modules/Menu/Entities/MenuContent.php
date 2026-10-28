@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Facades\Session;
 
 class MenuContent extends Model
 {
@@ -54,9 +53,7 @@ class MenuContent extends Model
     protected static function booted()
     {
         static::creating(function ($model) {
-            if (!isset($model->language_id)) {
-                $model->language_id = Session::get('language_id', 1);
-            }
+            $model->language_id = bangla_language_id();
         });
     }
 

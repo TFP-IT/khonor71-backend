@@ -51,8 +51,9 @@ class NewsService
         $auth_user           = auth()->user();
         $languages = Language::all();
         $divisions = Division::orderBy('name')->get();
+        $categories = Category::onlyParents()->where('language_id', get_language_id())->get();
 
-        return compact('reporters', 'categoryPositions', 'homeSliderPositions', 'auth_user', 'languages', 'divisions');
+        return compact('reporters', 'categoryPositions', 'homeSliderPositions', 'auth_user', 'languages', 'divisions', 'categories');
     }
 
     /**
@@ -828,8 +829,8 @@ class NewsService
 
         $photoLibrary = app(PhotoLibraryService::class)->create([
             'image'       => $attributes['image_file'],
-            'thumb_width' => 1200,
-            'thumb_height'=> 675,
+            'thumb_width' => 400,
+            'thumb_height'=> 225,
             'large_width' => 1200,
             'large_height'=> 675,
             'format'      => 'webp',

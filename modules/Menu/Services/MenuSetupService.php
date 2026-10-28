@@ -21,7 +21,7 @@ class MenuSetupService
      */
     public function formData(int $menuId): array
     {
-        $languageId       = session('language_id') ?? 1;
+        $languageId       = get_language_id();
         $menuContents     = MenuContent::where('menu_id', $menuId)->where('language_id', $languageId)->orderBy('menu_position', 'ASC')->get();
         $menuContentSlugs = $menuContents->whereNotNull('slug')->pluck('slug')->toArray();
 

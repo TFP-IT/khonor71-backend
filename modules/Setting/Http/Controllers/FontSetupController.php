@@ -21,7 +21,7 @@ class FontSetupController extends Controller
     {
         $languages = Language::all();
         $fonts = FontSetting::all();
-        $fontSetting = FontSetup::getByLanguageGroupedByType(session('language_id', 1));
+        $fontSetting = FontSetup::getByLanguageGroupedByType(get_language_id());
 
         return view('setting::font_setup.index', compact('languages', 'fonts', 'fontSetting'));
     }
@@ -41,8 +41,9 @@ class FontSetupController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $validated = $request->validate([
-            'language_id'       => 'required|integer|exists:languages,id',
+            'language_id'       => 'required|integer|exists:languages,id,value,bn',
             'principal_font'    => 'required|integer|exists:font_settings,id',
             'alternate_font'    => 'required|integer|exists:font_settings,id',
             'supplementary_font'=> 'required|integer|exists:font_settings,id',

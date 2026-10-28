@@ -24,11 +24,9 @@
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="language_id" class="col-form-label fw-semibold">{{ ucwords(localize('language')) }}<span class="text-danger">*</span></label>
-                                <select name="language_id" id="language_id" class="form-select select-basic-single" 
-                                    data-allow-clear="true" data-placeholder="{{ localize_uc('select_language') }}" required>
-                                    <option value=""></option> 
+                                <select name="language_id" id="language_id" class="form-select select-basic-single" required>
                                     @foreach ($languages as $language)
-                                        <option value="{{ $language->id }}">{{ $language->langname }}</option>
+                                        <option value="{{ $language->id }}" @selected(old('language_id', get_language_id()) == $language->id)>{{ $language->langname }}</option>
                                     @endforeach
                                 </select>
 
@@ -55,6 +53,9 @@
                                 <select name="category_name" id="category_name" class="form-select select-basic-single"
                                     data-placeholder="{{ localize_uc('select_category') }}" required>
                                     <option value=""></option>
+                                    @foreach ($categories->where('language_id', get_language_id()) as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                                    @endforeach
                                 </select>
 
                                 @if ($errors->has('category_name'))

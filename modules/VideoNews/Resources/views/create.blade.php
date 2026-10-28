@@ -33,11 +33,9 @@
                                                 <span class="text-danger">*</span>
                                             </label>
                                             
-                                            <select name="language_id" id="language_id" class="form-control select-basic-single"
-                                                data-allow-clear="true" data-placeholder="{{ localize_uc('select_language') }}" required>
-                                                <option value=""></option>
+                                            <select name="language_id" id="language_id" class="form-control select-basic-single" required>
                                                 @foreach ($languages as $language)
-                                                    <option value="{{ $language->id }}">
+                                                    <option value="{{ $language->id }}" @selected(old('language_id', get_language_id()) == $language->id)>
                                                         {{ $language->langname }}
                                                     </option>
                                                 @endforeach

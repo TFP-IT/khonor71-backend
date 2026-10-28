@@ -14,10 +14,10 @@ var showCallBackViewData = function (response) {
     let data = response.data;
     let title = data.title != null ? data.title : "";
 
-    $("#thumb_height").val(280);
+    $("#thumb_height").val(225);
     $("#thumb_width").val(400);
-    $("#large_height").val(451);
-    $("#large_width").val(643);
+    $("#large_height").val(675);
+    $("#large_width").val(1200);
 
     let html = `
         <div class="m-2 photo-library-element"

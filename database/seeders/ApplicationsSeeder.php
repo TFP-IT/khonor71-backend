@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Modules\Setting\Entities\Application;
 
 class ApplicationsSeeder extends Seeder
@@ -15,8 +16,10 @@ class ApplicationsSeeder extends Seeder
      */
     public function run()
     {
+        $banglaLanguageId = DB::table('languages')->where('value', 'bn')->value('id');
+
         Application::create([
-            'language_id' => 1,
+            'language_id' => $banglaLanguageId,
             'currency_id' => 1,
             'title' => 'HRM',
             'phone' => '880-258970255',

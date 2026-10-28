@@ -53,7 +53,7 @@ class PhotoLibraryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => localize("photo_library_data_delete_successfully"),
+            'message' => localize("data_saved_successfully"),
             'title'   => localize("photo_library"),
             'data'    => $photoLibrary,
         ]);

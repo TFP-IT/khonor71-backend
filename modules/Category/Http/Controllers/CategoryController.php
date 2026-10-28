@@ -16,6 +16,7 @@ use Modules\Localize\Entities\Language;
 use Illuminate\Contracts\Support\Renderable;
 use Modules\Category\Entities\CategoryTopic;
 use Modules\Category\DataTables\CategoryDataTable;
+use App\Helpers\ImageHelper;
 
 class CategoryController extends Controller
 {
@@ -64,10 +65,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $path = '';
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'category_name' => 'required',
             'category_type' => 'required',
             'slug' => 'required',
@@ -90,8 +91,8 @@ class CategoryController extends Controller
 
         if ($request->hasFile('category_image')) {
             $request_file = $request->file('category_image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('category', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'category');
+            $path = $upload['image_path'] ?? null;
         }
 
         try {
@@ -163,7 +164,10 @@ class CategoryController extends Controller
 
         // Use query builder to join the tables and get the results
         $topics = DB::table('category_topics')
-                ->join('categories', 'categories.slug', '=', 'category_topics.topic')
+                ->join('categories', function ($join) {
+                    $join->on('categories.slug', '=', 'category_topics.topic')
+                        ->where('categories.language_id', get_language_id());
+                })
                 ->select('category_topics.topic')
                 ->where('category_topics.cat_slug', $category->slug)
                 ->where('category_topics.deleted_at', Null)
@@ -190,11 +194,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $category = Category::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($category->language_id ?? get_language_id())]);
 
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'category_name' => 'required',
             'category_type' => 'required',
             'slug' => 'required',
@@ -222,8 +226,8 @@ class CategoryController extends Controller
              Storage::delete('public/' . $category->category_imgae);
 
             $request_file = $request->file('category_image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('category', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'category');
+            $path = $upload['image_path'] ?? null;
         }
 
         try {

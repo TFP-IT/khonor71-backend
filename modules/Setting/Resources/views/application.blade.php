@@ -143,10 +143,9 @@
                                                 class="text-danger">*</span></label>
                                         <select name="default_language" id="default_language" class="select-basic-single"
                                             required>
-                                            <option value="" disabled>{{ localize('default_language') }}</option>
                                             @foreach ($langs as $value)
                                                 <option value="{{ $value->id }}"
-                                                    {{ $app->language_id == $value->id ? 'selected' : '' }}>
+                                                    @selected(old('default_language', $app->language_id ?? get_language_id()) == $value->id)>
                                                     {{ $value->langname }}
                                                 </option>
                                             @endforeach

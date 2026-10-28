@@ -245,6 +245,7 @@ class ArchiveController extends Controller
             DB::table('news_msts')
                 ->select(['uuid', 'news_id', 'language_id', 'category_id', 'sub_category_id', 'encode_title', 'seo_title', 'stitle', 'title', 'news', 'image', 'image_base_url', 'videos', 'podcust_id', 'image_alt', 'reporter', 'reporter_message', 'page', 'reference', 'ref_date', 'post_by', 'reporter_id', 'update_by', 'time_stamp', 'post_date', 'publish_date', 'last_update', 'is_latest', 'is_featured', 'is_recommanded', 'reader_hit', 'status', 'post_by', 'update_by', 'created_at', 'updated_at'])
                 ->where('page', $category_name)
+                ->where('language_id', get_language_id())
                 ->orderBy('publish_date', 'asc')
                 ->limit($number_of_archive)
         );
@@ -281,6 +282,7 @@ class ArchiveController extends Controller
         $result = DB::table('categories')
         ->select('categories.category_id', 'categories.slug', 'categories.category_name', 'max_archive_settings.max_archive')
         ->join('max_archive_settings', 'max_archive_settings.category_id', '=', 'categories.category_id')
+        ->where('categories.language_id', get_language_id())
         ->get();
 
         // Iterate over the result to process each category
@@ -289,7 +291,10 @@ class ArchiveController extends Controller
             $value->slug = str_replace("'", '', $value->slug);
 
             // Count the total news for the current slug
-            $count_total_news = DB::table('news_msts')->where('page', $value->slug)->count();
+            $count_total_news = DB::table('news_msts')
+                ->where('language_id', get_language_id())
+                ->where('page', $value->slug)
+                ->count();
 
             // Calculate available for archive
             $value->available_for_archive = $count_total_news - $value->max_archive;

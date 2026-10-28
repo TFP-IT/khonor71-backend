@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Website;
 
+use App\Models\NewsMst;
 use App\Models\NewsComment;
+use Modules\Opinion\Entities\Opinion;
+use Modules\VideoNews\Entities\VideoNews;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -40,15 +43,15 @@ class NewsCommentController extends Controller
                 'integer',
                 function ($attribute, $value, $fail) use ($request) {
                     if ($request->news_comment_type === 'news') {
-                        if (!\DB::table('news_msts')->where('id', $value)->exists()) {
+                        if (!NewsMst::whereKey($value)->exists()) {
                             $fail('Selected news ID does not exist in news_msts.');
                         }
                     } elseif ($request->news_comment_type === 'video_news') {
-                        if (!\DB::table('video_news')->where('id', $value)->exists()) {
+                        if (!VideoNews::whereKey($value)->exists()) {
                             $fail('Selected news ID does not exist in video_news.');
                         }
                     } elseif ($request->news_comment_type === 'opinion') {
-                        if (!\DB::table('opinions')->where('id', $value)->exists()) {
+                        if (!Opinion::whereKey($value)->exists()) {
                             $fail('Selected news ID does not exist in opinions.');
                         }
                     }

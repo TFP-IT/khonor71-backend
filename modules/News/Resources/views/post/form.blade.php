@@ -6,11 +6,9 @@
                     {{ localize_uc('language') }} 
                     <span class="text-danger">*</span>
                 </label>
-                <select name="language_id" id="language_id" class="form-control select-basic-single"
-                    data-allow-clear="true" data-placeholder="{{ localize_uc('select_language') }}" required>
-                    <option value=""></option>
+                <select name="language_id" id="language_id" class="form-control select-basic-single" required>
                     @foreach ($languages as $language)
-                        <option value="{{ $language->id }}" @selected(old('language_id', $photoPost->language_id ?? null) == $language->id)>
+                        <option value="{{ $language->id }}" @selected(old('language_id', $photoPost->language_id ?? get_language_id()) == $language->id)>
                             {{ $language->langname }}
                         </option>
                     @endforeach
@@ -36,7 +34,7 @@
                     <option value=""></option>
                     @if (isset($categories))
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('other_page', $photoPost->category_id ?? null) == $category->category_id)>
+                            <option value="{{ $category->id }}" @selected(old('other_page', $photoPost->category_id ?? null) == $category->id)>
                                 {{ $category->category_name }}
                             </option>
                         @endforeach

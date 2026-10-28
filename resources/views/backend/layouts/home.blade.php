@@ -42,7 +42,7 @@
                     <select name="language_id" class="form-control select-basic-single" data-allow-clear="true">
                         <option value="">{{ localize('all') }}</option>
                         @foreach ($languages as $language)
-                            <option value="{{ $language->id }}" @selected(($filters['language_id'] ?? null) == $language->id)>
+                            <option value="{{ $language->id }}" @selected(($filters['language_id'] ?? get_language_id()) == $language->id)>
                                 {{ $language->langname ?? $language->name ?? $language->value }}
                             </option>
                         @endforeach

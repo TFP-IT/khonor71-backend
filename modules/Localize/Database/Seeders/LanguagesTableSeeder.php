@@ -13,25 +13,25 @@ class LanguagesTableSeeder extends Seeder
      */
     public function run()
     {
+        $now = now();
+        $bangla = \DB::table('languages')->where('value', 'bn')->first();
 
-        \DB::table('languages')->delete();
+        if ($bangla) {
+            \DB::table('languages')->where('id', $bangla->id)->update([
+                'langname' => 'Bengali/Bangla',
+                'status' => 1,
+                'updated_at' => $now,
+            ]);
+            return;
+        }
 
+        // Add Bangla without deleting or rewriting existing language rows.
         \DB::table('languages')->insert([
-            0 => [
-                'created_at' => '2022-12-08 06:29:24',
-                'id' => 1,
-                'langname' => 'English',
-                'updated_at' => '2022-12-08 06:29:24',
-                'value' => 'en',
-            ],
-            1 => [
-                'created_at' => '2022-12-08 06:29:24',
-                'id' => 2,
-                'langname' => 'Arabic',
-                'updated_at' => '2022-12-08 06:29:24',
-                'value' => 'ar',
-            ],
+            'langname' => 'Bengali/Bangla',
+            'value' => 'bn',
+            'status' => 1,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
-
     }
 }

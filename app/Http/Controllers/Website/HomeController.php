@@ -373,7 +373,7 @@ class HomeController extends Controller
         }
         SEOTools::opengraph()->setType('article');
         SEOTools::opengraph()->setSiteName($siteName);
-        SEOTools::opengraph()->addProperty('locale', app()->getLocale() == 'bn' ? 'bn_BD' : 'en_US');
+        SEOTools::opengraph()->addProperty('locale', 'bn_BD');
 
         if ($publishedW3c) {
             SEOTools::opengraph()->addProperty('article:published_time', $publishedW3c);

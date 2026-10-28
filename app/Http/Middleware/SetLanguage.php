@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Modules\Setting\Entities\Language;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetLanguage
@@ -16,23 +15,35 @@ class SetLanguage
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lang = $request->route('lang') ?? $request->route('param');
+        $routeLanguage = strtolower((string) $request->route('lang', ''));
+        $routeParam = strtolower((string) $request->route('param', ''));
 
-        $defaultLang = Language::getDefault()->value;
-        if ($lang === $defaultLang) {
-            return redirect('/');
+        if ($routeLanguage === 'en') {
+            abort(410);
         }
 
-        if ($lang) {
-            $lang = Language::where('value', $lang)->value('value');
-            if (!$lang) {
-                $lang = $defaultLang;
+        if ($routeLanguage === 'bn') {
+            $path = preg_replace('#^bn(?:/|$)#i', '', $request->path()) ?? '';
+            $target = '/' . ltrim($path, '/');
+            $query = $request->getQueryString();
+
+            if ($query) {
+                $target .= '?' . $query;
             }
-        } else {
-            $lang = $defaultLang;
+
+            $status = in_array($request->method(), ['GET', 'HEAD'], true) ? 301 : 308;
+            return redirect($target, $status);
         }
 
-        app()->setLocale($lang);
+        if ($routeParam === 'en') {
+            return redirect('/', 301);
+        }
+
+        if ($routeParam === 'bn') {
+            return redirect('/', 301);
+        }
+
+        app()->setLocale('bn');
 
         return $next($request);
     }

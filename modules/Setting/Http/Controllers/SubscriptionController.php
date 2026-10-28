@@ -24,7 +24,10 @@ class SubscriptionController extends Controller
     public function index()
     {
         $dbData = DB::table('subscriptions')
-            ->join('categories', 'categories.id', '=', 'subscriptions.category')
+            ->join('categories', function ($join) {
+                $join->on('categories.id', '=', 'subscriptions.category')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->select('subscriptions.*', 'categories.category_name')
             ->where('subscriptions.deleted_at', Null)
             ->orderBy('subscriptions.id', 'DESC')

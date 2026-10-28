@@ -9,6 +9,15 @@ class BreakingNewsRequest extends FormRequest
 {
     use FormRequestTrait;
 
+    protected function prepareForValidation(): void
+    {
+        if (!$this->filled('language_id')) {
+            $this->merge([
+                'language_id' => get_language_id(),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,7 +26,7 @@ class BreakingNewsRequest extends FormRequest
     public function rules()
     {
         return [
-            'language_id'   => 'required|exists:languages,id',
+            'language_id'   => 'required|exists:languages,id,value,bn',
             'breaking_news' => 'required|string',
             'url'           => 'nullable|string|max:500',
             'start_time'    => 'nullable|date',

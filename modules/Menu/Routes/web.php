@@ -34,9 +34,10 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         Route::get('menu', [MenuController::class, 'index'])->name('menu.index');
 
         Route::post('menu/setup/language', function (Request $request) {
+            $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
             // Validate the request
             $validated = $request->validate([
-                'language_id' => ['required', 'integer', Rule::exists(Language::class, 'id')],
+                'language_id' => ['required', 'integer', Rule::exists('languages', 'id')->where('value', 'bn')],
             ]);
 
             // Set session variable

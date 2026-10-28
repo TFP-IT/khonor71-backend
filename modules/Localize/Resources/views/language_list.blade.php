@@ -11,15 +11,6 @@
                             <div>
                                 <h6 class="fs-17 fw-semi-bold mb-0">{{ localize('language_list') }}</h6>
                             </div>
-                            <div class="text-end">
-                                <div class="actions">
-
-                                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#addLanguage"><i
-                                            class="fa-sharp fa-solid fa-circle-plus"></i>&nbsp;Add Language</a>
-                                    @include('localize::languageAdd')
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -45,12 +36,6 @@
                                                 <a title="Edit"
                                                     href="{{ route('setting.localize.languageStringValueindex', $data->id) }}"
                                                     class="btn btn-primary btn-sm">String <i class="fa fa-edit"></i></a>
-                                                @if ($data->value != 'en')
-                                                    <a title="Delete" href="javascript:void(0)"
-                                                        class="btn btn-danger btn-sm delete-confirm"
-                                                        data-route="{{ route('setting.localize.langDestroy', $data->id) }}"
-                                                        data-csrf="{{ csrf_token() }}"><i class="fa fa-trash"></i></a>
-                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

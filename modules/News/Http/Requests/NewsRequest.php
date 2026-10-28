@@ -6,12 +6,20 @@ use App\Traits\FormRequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Category\Entities\Category;
-use Modules\Localize\Entities\Language;
 use Modules\Reporter\Entities\Reporter;
 
 class NewsRequest extends FormRequest
 {
     use FormRequestTrait;
+
+    protected function prepareForValidation(): void
+    {
+        if (!$this->filled('language_id')) {
+            $this->merge([
+                'language_id' => get_language_id(),
+            ]);
+        }
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -24,7 +32,7 @@ class NewsRequest extends FormRequest
         $homeSliderPositions = generate_positions(1, 7);
 
         $rules = [
-            'language_id'            => ['required', 'integer', Rule::exists(Language::class, 'id')],
+            'language_id'            => ['required', 'integer', Rule::exists('languages', 'id')->where('value', 'bn')],
             'other_page'             => ['required', 'string', Rule::exists(Category::class, 'id')],
             'sub_category_id'        => ['nullable', 'string', Rule::exists(Category::class, 'id')],
             'division_id'            => ['nullable', 'integer', 'exists:divisions,id'],

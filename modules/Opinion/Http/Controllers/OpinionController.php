@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Localize\Entities\Language;
 use Illuminate\Contracts\Support\Renderable;
 use Modules\Opinion\DataTables\OpinionDataTable;
+use App\Helpers\ImageHelper;
 
 
 
@@ -55,8 +56,10 @@ class OpinionController extends Controller
         $person_image_path = '';
         $news_image_path = '';
 
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
+
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'name' => 'required',
             'title' => 'required',
             'details' => 'required',
@@ -64,14 +67,14 @@ class OpinionController extends Controller
 
         if ($request->hasFile('person_image')) {
             $request_file = $request->file('person_image');
-            $filename = time() . rand(10, 1000) . '_person.' . $request_file->extension();
-            $person_image_path = $request_file->storeAs('opinion', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'opinion');
+            $person_image_path = $upload['image_path'] ?? null;
         }
 
         if ($request->hasFile('news_image')) {
             $request_file = $request->file('news_image');
-            $filename = time() . rand(10, 1000) . '_news.' . $request_file->extension();
-            $news_image_path = $request_file->storeAs('opinion', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'opinion');
+            $news_image_path = $upload['image_path'] ?? null;
         }
 
 
@@ -142,8 +145,10 @@ class OpinionController extends Controller
     {
         $opinion = Opinion::findOrFail($id);
 
+        $request->merge(['language_id' => $request->input('language_id') ?: ($opinion->language_id ?? get_language_id())]);
+
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'name'        => 'required',
             'title'       => 'required',
             'details'     => 'required',
@@ -159,8 +164,8 @@ class OpinionController extends Controller
             }
 
             $file = $request->file('person_image');
-            $filename = time() . rand(10, 1000) . '_person.' . $file->extension();
-            $person_image_path = $file->storeAs('opinion', $filename, 'public');
+            $upload = ImageHelper::upload($file, 'opinion');
+            $person_image_path = $upload['image_path'] ?? null;
         }
 
         if ($request->hasFile('news_image')) {
@@ -170,8 +175,8 @@ class OpinionController extends Controller
             }
 
             $file = $request->file('news_image');
-            $filename = time() . rand(10, 1000) . '_news.' . $file->extension();
-            $news_image_path = $file->storeAs('opinion', $filename, 'public');
+            $upload = ImageHelper::upload($file, 'opinion');
+            $news_image_path = $upload['image_path'] ?? null;
         }
 
         $rawTitle = $request->custom_url ?? $request->title ?? null;

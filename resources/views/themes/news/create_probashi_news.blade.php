@@ -42,9 +42,8 @@
                             {{ localize_uc('language') }} <span style="color: #ef4444;">*</span>
                         </label>
                         <select name="language_id" id="language_id" style="margin-top: 4px; width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; color: #111827;" required>
-                            <option value="">{{ localize_uc('select_language') }}</option>
                             @foreach ($languages as $language)
-                            <option value="{{ $language->id }}" @selected(old('language_id') == $language->id)>
+                            <option value="{{ $language->id }}" @selected(old('language_id', get_language_id()) == $language->id)>
                                 {{ $language->langname }}
                             </option>
                             @endforeach

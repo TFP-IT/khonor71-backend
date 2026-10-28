@@ -2,10 +2,10 @@
 
 namespace Modules\Setting\Entities;
 
-use App\Models\Appsetting;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Category\Entities\Category;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +16,13 @@ class Language extends Model
     use LogsActivity;
 
     protected $fillable = ['title' , 'slug' , 'status'];  
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('bangla_portal_language', function (Builder $query) {
+            $query->where($query->getModel()->qualifyColumn('value'), 'bn');
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -28,8 +35,7 @@ class Language extends Model
     public static function getDefault()
     {
         return Cache::remember('defaultLanguage', 60, function () {
-            $defaultLanguageId = Appsetting::first()->language_id ?? 1; // Default to 1 if not set
-            return self::find($defaultLanguageId);
+            return self::where('value', 'bn')->first();
         });
     }
 

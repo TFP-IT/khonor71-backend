@@ -19,7 +19,7 @@ class ApplicationRequest extends FormRequest
             'phone' => 'required',
             'address' => 'required',
             'footer_text' => 'required',
-            'default_language' => 'required|exists:languages,id',
+            'default_language' => 'required|exists:languages,id,value,bn',
         ];
     }
 

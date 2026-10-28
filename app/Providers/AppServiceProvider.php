@@ -33,6 +33,50 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // The news portal is Bangla-only. Keep the existing language_id
+        // columns and rows so stored English content remains intact, while
+        // excluding it from every Eloquent read and forcing new model records
+        // to use the Bangla language row.
+        $localizedModels = [
+            \App\Models\NewsMst::class => ['language_id', true],
+            \Modules\Archive\Entities\NewsArchive::class => ['language_id', false],
+            \App\Models\BreakingNews::class => ['language_id', true],
+            \App\Models\HomePagePosition::class => ['language_id', true],
+            \App\Models\PhotoPost::class => ['language_id', true],
+            \Modules\Advertisement\Entities\Advertisement::class => ['language_id', true],
+            \Modules\Category\Entities\Category::class => ['language_id', true],
+            \Modules\Menu\Entities\MenuContent::class => ['language_id', true],
+            \Modules\News\Entities\AiNewsCandidate::class => ['language_id', true],
+            \Modules\News\Entities\AiNewsSource::class => ['language_id', true],
+            \Modules\Opinion\Entities\Opinion::class => ['language_id', true],
+            \Modules\Page\Entities\Page::class => ['language_id', true],
+            \Modules\Poll\Entities\Poll::class => ['language_id', true],
+            \Modules\ProbashiJanala\Entities\ProbashiNews::class => ['language_id', true],
+            \Modules\RssFeeds\Entities\RssFeed::class => ['paper_language', true],
+            \Modules\Setting\Entities\FontSetup::class => ['language_id', true],
+            \Modules\Story\Entities\Story::class => ['language_id', true],
+            \Modules\VideoNews\Entities\VideoNews::class => ['language_id', true],
+        ];
+
+        foreach ($localizedModels as $modelClass => [$languageColumn, $forceBanglaOnCreate]) {
+            $modelClass::addGlobalScope('bangla_portal_only', function ($query) use ($languageColumn) {
+                $languageId = bangla_language_id();
+                $qualifiedColumn = $query->getModel()->qualifyColumn($languageColumn);
+
+                if ($languageId) {
+                    $query->where($qualifiedColumn, $languageId);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            });
+
+            if ($forceBanglaOnCreate) {
+                $modelClass::creating(function ($model) use ($languageColumn) {
+                    $model->{$languageColumn} = bangla_language_id();
+                });
+            }
+        }
+
         Blueprint::macro('updateCreatedBy', function () {
             $this->foreignId('created_by')->nullable();
             $this->foreignId('updated_by')->nullable();

@@ -30,7 +30,7 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
         
         $auth_user = auth()->user();
 
-        $languageId = $row['language_id'] ?? null;
+        $languageId = $row['language_id'] ?? bangla_language_id();
         $categoryId = $row['category_id'] ?? null;
         $subCategoryId = $row['sub_category_id'] ?? null;
         $categoryPosition = $row['category_position'] ?? null;
@@ -60,8 +60,13 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
         $schemaSetup = $row['schema_setup'] ?? 0;
 
         // Skip this row if any required field is missing
-        if (!$languageId || !$categoryId || !$publishDate || !$headLine || !$detailsPost || !$reporterId) {
+        $banglaLanguageId = bangla_language_id();
+        $category = $categoryId ? Category::whereKey($categoryId)->first() : null;
+        $unsupportedLanguage = (int) $languageId !== (int) $banglaLanguageId;
+
+        if (!$languageId || !$categoryId || !$publishDate || !$headLine || !$detailsPost || !$reporterId || $unsupportedLanguage || !$category) {
             self::$skippedRows[] = $row;
+            $missingFields = [];
 
             if (!$languageId)   $missingFields[] = 'languageId';
             if (!$categoryId)   $missingFields[] = 'categoryId';
@@ -69,6 +74,8 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
             if (!$headLine)     $missingFields[] = 'headLine';
             if (!$detailsPost)  $missingFields[] = 'detailsPost';
             if (!$reporterId)   $missingFields[] = 'reporterId';
+            if ($unsupportedLanguage) $missingFields[] = 'languageId must be Bangla';
+            if ($categoryId && !$category) $missingFields[] = 'categoryId must be a Bangla category';
 
             Log::warning('Row skipped due to missing fields', [
                 'missing_fields' => $missingFields,
@@ -97,7 +104,7 @@ class BulkPostCsvImport implements ToModel, WithChunkReading, WithHeadingRow
             $generate_id = NewsMst::max('id') + 1;
             $other_page  = $categoryId;
             $title       = $headLine;
-            $categoryData = Category::where('id', $other_page)->first();
+            $categoryData = $category;
 
             $rawTitle = $customUrl ? $customUrl : $headLine;
             $encode_title = generateSlug($rawTitle);

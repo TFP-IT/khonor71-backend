@@ -41,9 +41,9 @@ class StoryController extends Controller
     public function store(Request $request)
     {
         try {
-
+            $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
             $validated = $request->validate([
-                'language_id' => 'required|exists:languages,id',
+                'language_id' => 'required|exists:languages,id,value,bn',
                 'stories' => 'required|array|min:1',
                 'stories.*.title' => 'required|string|max:255',
                 'stories.*.text' => 'nullable|string|max:255',
@@ -159,8 +159,10 @@ class StoryController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $story = Story::findOrFail($id);
+            $request->merge(['language_id' => $request->input('language_id') ?: ($story->language_id ?? get_language_id())]);
             $validated = $request->validate([
-                'language_id' => 'required|exists:languages,id',
+                'language_id' => 'required|exists:languages,id,value,bn',
                 'deleteStory' => 'array',
                 'stories' => 'array|min:1',
                 'stories.*.title' => 'string|max:255',

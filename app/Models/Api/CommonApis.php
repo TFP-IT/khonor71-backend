@@ -32,7 +32,11 @@ class CommonApis extends Model
 
         $result = DB::table('news_msts')->select('news_msts.news_id', 'news_msts.encode_title', 'news_msts.title', 'news_msts.stitle', 'news_msts.image', 'news_msts.videos', 'news_msts.page', 'news_msts.time_stamp', 'news_msts.post_date', 'news_msts.news', 'news_msts.post_by', 'news_msts.image_alt', 'news_msts.image_base_url', 'news_msts.podcust_id', 'users.id', 'users.profile_image as photo', 'users.full_name as name', 'users.id as user_id', 'categories.category_name')
             ->Join('users', 'users.id', '=', 'news_msts.post_by')
-            ->Join('categories', 'categories.slug', '=', 'news_msts.page')
+            ->Join('categories', function ($join) {
+                $join->on('categories.slug', '=', 'news_msts.page')
+                    ->where('categories.language_id', get_language_id());
+            })
+            ->where('news_msts.language_id', get_language_id())
             ->where('news_msts.publish_date', '<=', now())
             ->where('news_msts.is_latest', 1)
             ->where('news_msts.status', 0)
@@ -85,8 +89,11 @@ class CommonApis extends Model
         $result = DB::table('news_msts as t1')
             ->select('t1.news_id', 't1.encode_title', 't1.stitle', 't1.title', 't1.page', 't1.image', 't1.videos', 't1.reader_hit', 't1.time_stamp', 't1.image_title', 't1.image_alt', 't1.post_date', 't1.news', 't1.image_base_url', 't1.podcust_id', 't2.id', 't2.full_name as name', 't2.profile_image as photo', 't4.category_name', 't6.disk', 't6.thumb_image', 't6.large_image')
             ->Join('users as t2', 't2.id', '=', 't1.post_by')
-            ->Join('categories as t4', 't4.slug', '=', 't1.page')
+            ->Join('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
             ->leftJoin('photo_libraries as t6', 't6.actual_image_name', '=', 't1.image')
+            ->where('t1.language_id', get_language_id())
             ->orderBy('t1.reader_hit', 'DESC')
             ->limit(20)
             ->get();
@@ -131,6 +138,7 @@ class CommonApis extends Model
     {
         $topics = DB::table('category_topics')->select('category_topics.*', 'categories.category_name')
             ->join('categories', 'categories.slug', '=', 'category_topics.topic')
+            ->where('categories.language_id', get_language_id())
             ->where('cat_slug', $topic)->get();
         $PP = [];
 
@@ -152,6 +160,7 @@ class CommonApis extends Model
         $topicProfile = DB::table('category_topics')
             ->select('category_topics.cat_slug', 'categories.category_name', 'categories.slug', 'categories.category_imgae', 'categories.description')
             ->join('categories', 'categories.slug', '=', 'category_topics.topic')
+            ->where('categories.language_id', get_language_id())
             ->where('slug', $topic)->first();
 
         $data = '';
@@ -166,6 +175,7 @@ class CommonApis extends Model
             $related['related_topic'] = DB::table('category_topics')
                 ->select('category_topics.id', 'categories.category_name', 'categories.slug')
                 ->join('categories', 'categories.slug', '=', 'category_topics.topic')
+                ->where('categories.language_id', get_language_id())
                 ->where('cat_slug', $topicProfile->cat_slug)->get();
 
             $data = array_merge($topics, $related);

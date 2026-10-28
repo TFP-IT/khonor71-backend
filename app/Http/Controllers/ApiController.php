@@ -55,7 +55,11 @@ class ApiController extends Controller
         $main = DB::table('menu_contents')
             ->select('menu_contents.menu_level', 'menu_contents.slug', 'menu_contents.id')
             ->join('menus', 'menus.id', '=', 'menu_contents.menu_id')
-            ->leftJoin('categories', 'categories.slug', '=', 'menu_contents.slug')
+            ->leftJoin('categories', function ($join) {
+                $join->on('categories.slug', '=', 'menu_contents.slug')
+                    ->where('categories.language_id', get_language_id());
+            })
+            ->where('menu_contents.language_id', get_language_id())
             ->where('menus.position', 1)
             ->orderBy('menu_contents.menu_position', 'ASC')
             ->get();
@@ -69,6 +73,7 @@ class ApiController extends Controller
             $id        = $row["id"];
             $num_rows1 = DB::table('menu_contents')->select('menu_level', 'slug', 'id')
                 ->where('parent_id', $id)
+                ->where('language_id', get_language_id())
                 ->orderBy('menu_contents.menu_position', 'ASC')
                 ->get();
             $sub_cat1 = [];
@@ -109,7 +114,11 @@ class ApiController extends Controller
         $main = DB::table('menu_contents')
             ->select('menu_contents.menu_level', 'menu_contents.slug', 'menu_contents.id')
             ->join('menus', 'menus.id', '=', 'menu_contents.menu_id')
-            ->leftJoin('categories', 'categories.slug', '=', 'menu_contents.slug')
+            ->leftJoin('categories', function ($join) {
+                $join->on('categories.slug', '=', 'menu_contents.slug')
+                    ->where('categories.language_id', get_language_id());
+            })
+            ->where('menu_contents.language_id', get_language_id())
             ->where('menus.position', 2)
             ->orderBy('menu_contents.menu_position', 'ASC')
             ->get();
@@ -123,6 +132,7 @@ class ApiController extends Controller
             $id        = $row["id"];
             $num_rows1 = DB::table('menu_contents')->select('menu_level', 'slug', 'id')
                 ->where('parent_id', $id)
+                ->where('language_id', get_language_id())
                 ->orderBy('menu_contents.menu_position', 'ASC')
                 ->get();
             $sub_cat1 = [];
@@ -395,6 +405,7 @@ class ApiController extends Controller
 
         $page = DB::table('menu_contents')->select('menu_contents.menu_level as menu_lavel', 'menu_contents.slug', 'menu_contents.link_url')
             ->where('content_type', 'pages')
+            ->where('language_id', get_language_id())
             ->where('status', 1)
             ->orderBy('menu_contents.menu_position', 'ASC')
             ->get();
@@ -405,7 +416,7 @@ class ApiController extends Controller
     public function pageData($slug)
     {
 
-        $page_result = DB::table('pages')->where('page_slug', $slug)->first();
+        $page_result = DB::table('pages')->where('page_slug', $slug)->where('language_id', get_language_id())->first();
 
         $PAGE_DATA = '';
 
@@ -547,7 +558,7 @@ class ApiController extends Controller
      */
     public static function sitemapXmlCategory()
     {
-        @$categories = DB::table('categories')->select('category_name', 'slug')->get();
+        @$categories = DB::table('categories')->select('category_name', 'slug')->where('language_id', get_language_id())->get();
 
         if ($categories) {
             return sendSuccessResponse('photo post', $categories, 200);
@@ -572,6 +583,7 @@ class ApiController extends Controller
             @$news = DB::table('news_msts')
                 ->select('encode_title', 'page as slug', 'time_stamp', 'last_update')
                 ->where('page', $request->category)
+                ->where('language_id', get_language_id())
                 ->orderBy('id', 'DESC')->limit(100)->get();
         }
 
@@ -579,6 +591,7 @@ class ApiController extends Controller
             @$news = DB::table('news_msts')
                 ->select('encode_title', 'page as slug', 'time_stamp', 'last_update')
                 ->where('page', $request->category)
+                ->where('language_id', get_language_id())
                 ->orderBy('id', 'DESC')->limit(100)->get();
         }
 
@@ -606,9 +619,13 @@ class ApiController extends Controller
                 )
                 ->leftJoin('users', 'users.id', '=', 'news_msts.post_by')
                 ->leftJoin('users as r', 'r.id', '=', 'news_msts.reporter_id')
-                ->leftJoin('categories', 'categories.slug', '=', 'news_msts.page')
+                ->leftJoin('categories', function ($join) {
+                    $join->on('categories.slug', '=', 'news_msts.page')
+                        ->where('categories.language_id', get_language_id());
+                })
                 ->leftJoin('post_seo_onpages', 'post_seo_onpages.news_id', '=', 'news_msts.news_id')
                 ->where('news_msts.encode_title', $request->encode_title)
+                ->where('news_msts.language_id', get_language_id())
                 ->first();
 
             $json = (object) [];

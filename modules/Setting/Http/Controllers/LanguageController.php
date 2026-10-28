@@ -35,24 +35,9 @@ class LanguageController extends Controller
 
     public function store(LanguageRequest $request)
     {
-
-        $url = base_path() . '/lang/english.json';
-        $result = file_get_contents($url);
-        $result = json_decode($result);
-        $result = json_encode($result, true);
-
-        $lang = new Language();
-        $lang->fill($request->all());
-        $lang->slug = Str::slug($request->title, '-');
-        $file = $lang->slug . '.json';
-        $destination = base_path() . "/lang/";
-        if (!is_dir($destination)) {
-            mkdir($destination, 0777, true);
-        }
-        File::put($destination . $file, $result);
-        $lang->save();
-        return response()->json(['success' => 'Data Added Successfully']);
-
+        return response()->json([
+            'error' => 'The portal is fixed to Bangla and cannot add another language.',
+        ], 422);
     }
 
     public function edit(Request $request, $slug)
@@ -90,10 +75,9 @@ class LanguageController extends Controller
 
     public function status($id)
     {
-        $lang = Language::findOrFail($id);
-        $lang->status = $lang->status == 1 ? 0 : 1;
-        $lang->save();
-        return redirect()->back()->with('success', 'Status Changed successfully');
+        Language::whereKey($id)->update(['status' => 1]);
+
+        return redirect()->back()->with('success', 'Bangla remains the active portal language.');
     }
 
     private function deleteFile($path)

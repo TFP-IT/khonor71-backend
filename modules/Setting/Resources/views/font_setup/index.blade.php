@@ -26,11 +26,11 @@
                                 <select name="language_id" id="language_id_" class="form-control select-basic-single"
                                     required>
                                     @php
-                                        $language_id = session('language_id') ?? 1;
+                                        $language_id = get_language_id();
                                     @endphp
                                     @foreach ($languages as $language)
                                         <option value="{{ $language->id }}"
-                                            {{ $language_id == $language->id ? 'selected' : '' }}>
+                                            @selected(old('language_id', $language_id) == $language->id)>
                                             {{ $language->langname }}
                                         </option>
                                     @endforeach

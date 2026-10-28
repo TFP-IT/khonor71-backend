@@ -8,6 +8,7 @@ use Modules\Setting\Entities\Setting;
 use Illuminate\Support\Facades\Storage;
 use Modules\Localize\Entities\Language;
 use Illuminate\Contracts\Support\Renderable;
+use App\Helpers\ImageHelper;
 
 class SeoController extends Controller
 {
@@ -74,8 +75,8 @@ class SeoController extends Controller
              Storage::delete('public/' . $existing_meta->default_image);
 
             $request_file = $request->file('default_image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('meta_setting', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'meta_setting');
+            $path = $upload['image_path'] ?? null;
         }
 
         try {

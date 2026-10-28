@@ -1,6 +1,5 @@
 @php
-    $footerLocale = str_starts_with(app()->getLocale(), 'bn') ? 'bn' : 'en';
-    $footerInfo = $footerContent[$footerLocale] ?? ($footerContent['en'] ?? []);
+    $footerInfo = $footerContent['bn'] ?? [];
     $footerLogo = app_setting()->footer_logo ?: app_setting()->logo;
     $footerSiteName = app_setting()->title ?: 'News Portal';
     $footerCopyright = trim((string) app_setting()->copy_right);
@@ -19,31 +18,18 @@
     $footerSocialLinks = array_filter($footerSocialLinks, fn ($link) => filled($link['url']));
     $editorialFields = ['editor_in_chief', 'editor', 'publisher'];
     $contactFields = ['address', 'mobile', 'email'];
-    $footerLabels = $footerLocale === 'bn'
-        ? [
-            'about' => $footerInfo['editorial_heading'] ?? 'সম্পাদকীয় বিভাগ',
-            'contact' => $footerInfo['contact_heading'] ?? 'যোগাযোগ',
-            'newsletter' => $footerInfo['newsletter_heading'] ?? 'নিউজলেটার',
-            'newsletter_text' => $footerInfo['newsletter_text'] ?? 'নতুন খবর ও গুরুত্বপূর্ণ আপডেট পেতে আমাদের সঙ্গে থাকুন।',
-            'quick_links' => $footerInfo['quick_links_heading'] ?? 'গুরুত্বপূর্ণ লিংক',
-            'legal' => $footerInfo['legal_heading'] ?? 'তথ্য ও নীতিমালা',
-            'email_placeholder' => $footerInfo['email_placeholder'] ?? 'আপনার ইমেইল ঠিকানা',
-            'subscribe' => $footerInfo['subscribe_label'] ?? 'সাবস্ক্রাইব',
-            'subscribing' => $footerInfo['subscribing_label'] ?? 'সাবস্ক্রাইব হচ্ছে…',
-            'follow' => $footerInfo['follow_heading'] ?? 'সামাজিক মাধ্যমে অনুসরণ করুন',
-        ]
-        : [
-            'about' => $footerInfo['editorial_heading'] ?? 'Editorial Team',
-            'contact' => $footerInfo['contact_heading'] ?? 'Contact',
-            'newsletter' => $footerInfo['newsletter_heading'] ?? 'Newsletter',
-            'newsletter_text' => $footerInfo['newsletter_text'] ?? 'Get the latest headlines and important updates from our newsroom.',
-            'quick_links' => $footerInfo['quick_links_heading'] ?? 'Useful Links',
-            'legal' => $footerInfo['legal_heading'] ?? 'Information & Policies',
-            'email_placeholder' => $footerInfo['email_placeholder'] ?? 'Your email address',
-            'subscribe' => $footerInfo['subscribe_label'] ?? 'Subscribe',
-            'subscribing' => $footerInfo['subscribing_label'] ?? 'Subscribing…',
-            'follow' => $footerInfo['follow_heading'] ?? 'Follow us',
-        ];
+    $footerLabels = [
+        'about' => $footerInfo['editorial_heading'] ?? 'সম্পাদকীয় বিভাগ',
+        'contact' => $footerInfo['contact_heading'] ?? 'যোগাযোগ',
+        'newsletter' => $footerInfo['newsletter_heading'] ?? 'নিউজলেটার',
+        'newsletter_text' => $footerInfo['newsletter_text'] ?? 'নতুন খবর ও গুরুত্বপূর্ণ আপডেট পেতে আমাদের সঙ্গে থাকুন।',
+        'quick_links' => $footerInfo['quick_links_heading'] ?? 'গুরুত্বপূর্ণ লিংক',
+        'legal' => $footerInfo['legal_heading'] ?? 'তথ্য ও নীতিমালা',
+        'email_placeholder' => $footerInfo['email_placeholder'] ?? 'আপনার ইমেইল ঠিকানা',
+        'subscribe' => $footerInfo['subscribe_label'] ?? 'সাবস্ক্রাইব',
+        'subscribing' => $footerInfo['subscribing_label'] ?? 'সাবস্ক্রাইব হচ্ছে…',
+        'follow' => $footerInfo['follow_heading'] ?? 'সামাজিক মাধ্যমে অনুসরণ করুন',
+    ];
 @endphp
 
 <footer class="relative isolate overflow-hidden bg-slate-950 text-white" aria-label="{{ $footerSiteName }} footer">

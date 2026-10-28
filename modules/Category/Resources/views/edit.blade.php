@@ -10,7 +10,7 @@
 
                 <select name="language_id" id="language_id" class="form-control select-basic-single" required>
                     @foreach ($languages as $language)
-                        <option value="{{ $language->id }}" {{ $category->language_id == $language->id ? 'selected' : '' }}>
+                        <option value="{{ $language->id }}" @selected(old('language_id', $category->language_id ?? get_language_id()) == $language->id)>
                             {{ $language->langname }}
                         </option>
                     @endforeach

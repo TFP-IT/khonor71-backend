@@ -294,6 +294,7 @@ return [
             ],
 
             'exceptions' => [
+                'https://khobor71.com',
                 'https://www.khobor71.com',
                 ...array_map(
                     static fn ($host) => 'https://' . strtolower(trim($host)),

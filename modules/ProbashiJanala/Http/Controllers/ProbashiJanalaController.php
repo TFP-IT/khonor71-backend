@@ -13,6 +13,7 @@ use Modules\Localize\Entities\Language;
 use Illuminate\Contracts\Support\Renderable;
 use Modules\ProbashiJanala\Entities\ProbashiNews;
 use Modules\ProbashiJanala\DataTables\ProbashiNewsDataTable;
+use App\Helpers\ImageHelper;
 
 class ProbashiJanalaController extends Controller
 {
@@ -52,8 +53,9 @@ class ProbashiJanalaController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'web_user_id' => 'required|exists:web_users,id',
             'publish_date' => 'required|date',
             'title' => 'required|string|max:255',
@@ -82,8 +84,8 @@ class ProbashiJanalaController extends Controller
         $imagePath = '';
         if ($request->hasFile('image')) {
             $request_file = $request->file('image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $imagePath = $request_file->storeAs('probashijanala/thumb', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'probashijanala/thumb');
+            $imagePath = $upload['image_path'] ?? '';
         }
 
         // Handle video upload
@@ -176,8 +178,10 @@ class ProbashiJanalaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $news = ProbashiNews::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($news->language_id ?? get_language_id())]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'web_user_id' => 'required|exists:web_users,id',
             'publish_date' => 'required|date',
             'title' => 'required|string|max:255',
@@ -214,8 +218,8 @@ class ProbashiJanalaController extends Controller
                 }
 
                 $imageFile = $request->file('image');
-                $imageName = time() . rand(10, 1000) . '.' . $imageFile->extension();
-                $imagePath = $imageFile->storeAs('probashijanala/thumb', $imageName, 'public');
+                $upload = ImageHelper::upload($imageFile, 'probashijanala/thumb');
+                $imagePath = $upload['image_path'] ?? '';
                 $probashiNews->thumbnail_image = $imagePath;
             }
 

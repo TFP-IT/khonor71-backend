@@ -26,7 +26,10 @@ class NewsMst extends Model
 
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
-            ->Join('categories as t4', 't4.slug', '=', 't1.page')
+            ->Join('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
+            ->where('t1.language_id', get_language_id())
             ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t1.status', 0)
@@ -79,7 +82,7 @@ class NewsMst extends Model
     public static function ads($page)
     {
 
-        $ads = DB::table('ad_s')->select()->where('page', $page)->whereNull('deleted_at')->get();
+        $ads = DB::table('ad_s')->select()->where('language_id', get_language_id())->where('page', $page)->whereNull('deleted_at')->get();
 
         $adv = [];
 
@@ -142,7 +145,7 @@ class NewsMst extends Model
 
     public static function add_home_category_position_data()
     {
-        $homePagePositions = DB::table('home_page_positions')->get();
+        $homePagePositions = DB::table('home_page_positions')->where('language_id', get_language_id())->get();
 
         if ($homePagePositions != false) {
             return $homePagePositions;
@@ -166,7 +169,10 @@ class NewsMst extends Model
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
             ->leftJoin('reporters', 'reporters.id', '=', 't1.reporter_id')
-            ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
+            ->leftJoin('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
+            ->where('t1.language_id', get_language_id())
             ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
@@ -216,7 +222,10 @@ class NewsMst extends Model
         return DB::table('news_positions as t2')
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
-            ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
+            ->leftJoin('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
+            ->where('t1.language_id', get_language_id())
             ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
@@ -241,9 +250,13 @@ class NewsMst extends Model
             )
             ->leftJoin('users', 'users.id', '=', 'news_msts.post_by')
             ->leftJoin('reporters as r', 'r.id', '=', 'news_msts.reporter_id')
-            ->leftJoin('categories', 'categories.slug', '=', 'news_msts.page')
+            ->leftJoin('categories', function ($join) {
+                $join->on('categories.slug', '=', 'news_msts.page')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->leftJoin('post_seo_onpages', 'post_seo_onpages.news_id', '=', 'news_msts.news_id')
             ->where('news_msts.encode_title', $encode_title)
+            ->where('news_msts.language_id', get_language_id())
             ->first();
 
         $data = [];
@@ -305,7 +318,10 @@ class NewsMst extends Model
                 't1.videos', 't1.podcust_id', 't1.image_alt',
                 't1.image_base_url', 't4.category_name')
             ->leftJoin('news_msts as t1', 't1.news_id', '=', 't2.news_id')
-            ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
+            ->leftJoin('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
+            ->where('t1.language_id', get_language_id())
             ->where('t1.publish_date', '<=', now())
             ->where('t2.page', $page)
             ->where('t2.status', '1')
@@ -360,8 +376,11 @@ class NewsMst extends Model
                 't3.id', 't3.full_name as name', 't3.profile_image as photo',
                 't4.category_name')
             ->leftJoin('users as t3', 't3.id', '=', 't1.post_by')
-            ->leftJoin('categories as t4', 't4.slug', '=', 't1.page')
+            ->leftJoin('categories as t4', function ($join) {
+                $join->on('t4.slug', '=', 't1.page')->where('t4.language_id', get_language_id());
+            })
             ->whereIn('t1.news_id', $news_ids)
+            ->where('t1.language_id', get_language_id())
             ->where('t1.publish_date', '<=', now())
             ->offset($offset)
             ->limit($limit)
@@ -440,6 +459,7 @@ class NewsMst extends Model
                 ->leftJoin('users', 'users.id', '=', 'news_msts.post_by')
                 ->leftJoin('photo_libraries', 'photo_libraries.actual_image_name', '=', 'news_msts.image')
                 ->where('news_msts.post_by', $request->id)
+                ->where('news_msts.language_id', get_language_id())
                 ->offset($request->offset)->limit($request->limit)
                 ->get();
             $PP = [];
@@ -493,6 +513,7 @@ class NewsMst extends Model
 
         $query = DB::table('news_msts');
         $query->select('news_msts.*');
+        $query->where('news_msts.language_id', get_language_id());
         $query->where('publish_date', '<=', now());
         $query->where('status', '0');
         $query->orderBy('news_id', 'DESC');
@@ -560,8 +581,12 @@ class NewsMst extends Model
 
         $query = DB::table('photo_posts');
         $query->select('photo_posts.*', 'users.full_name as name', 'categories.category_name');
+        $query->where('photo_posts.language_id', get_language_id());
         $query->leftJoin('users', 'users.id', '=', 'photo_posts.post_by');
-        $query->leftJoin('categories', 'categories.slug', '=', 'photo_posts.category');
+        $query->leftJoin('categories', function ($join) {
+            $join->on('categories.slug', '=', 'photo_posts.category')
+                ->where('categories.language_id', get_language_id());
+        });
 
         $query->offset(0)->limit(6);
         $query->orderBy('photo_posts.id', 'DESC');
@@ -618,7 +643,11 @@ class NewsMst extends Model
 
         $categories = DB::table('photo_posts')
             ->select('photo_posts.id', 'categories.category_name', 'categories.slug')
-            ->leftJoin('categories', 'categories.slug', '=', 'photo_posts.category')
+            ->where('photo_posts.language_id', get_language_id())
+            ->leftJoin('categories', function ($join) {
+                $join->on('categories.slug', '=', 'photo_posts.category')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->groupBy('photo_posts.category')
             ->orderBy('photo_posts.id', 'DESC')
             ->limit(5)->get();
@@ -647,7 +676,11 @@ class NewsMst extends Model
 
         $categories = DB::table('photo_posts')
             ->select('photo_posts.id', 'categories.category_name', 'categories.slug')
-            ->leftJoin('categories', 'categories.slug', '=', 'photo_posts.category')
+            ->where('photo_posts.language_id', get_language_id())
+            ->leftJoin('categories', function ($join) {
+                $join->on('categories.slug', '=', 'photo_posts.category')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->groupBy('photo_posts.category')
             ->orderBy('photo_posts.id', 'DESC')
             ->limit(5)->get();
@@ -671,9 +704,13 @@ class NewsMst extends Model
 
         $query = DB::table('photo_posts');
         $query->select('photo_posts.*', 'users.full_name as name', 'categories.category_name');
+        $query->where('photo_posts.language_id', get_language_id());
         $query->leftJoin('users', 'users.id', '=', 'photo_posts.post_by');
 
-        $query->leftJoin('categories', 'categories.slug', '=', 'photo_posts.category');
+        $query->leftJoin('categories', function ($join) {
+            $join->on('categories.slug', '=', 'photo_posts.category')
+                ->where('categories.language_id', get_language_id());
+        });
 
         if ($request->category != '') {
             $query->where('photo_posts.category', $request->category);
@@ -738,8 +775,12 @@ class NewsMst extends Model
 
         $query = DB::table('photo_posts');
         $query->select('photo_posts.*', 'users.full_name as name', 'categories.category_name');
+        $query->where('photo_posts.language_id', get_language_id());
         $query->leftJoin('users', 'users.id', '=', 'photo_posts.post_by');
-        $query->leftJoin('categories', 'categories.slug', '=', 'photo_posts.category');
+        $query->leftJoin('categories', function ($join) {
+            $join->on('categories.slug', '=', 'photo_posts.category')
+                ->where('categories.language_id', get_language_id());
+        });
 
         if ($request->post_id != '') {
             $query->where('photo_posts.id', $request->post_id);

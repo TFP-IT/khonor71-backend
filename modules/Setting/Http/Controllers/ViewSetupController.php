@@ -255,6 +255,7 @@ class ViewSetupController extends Controller
      */
     public function homePageSettingsSave(Request $request)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $request->validate([
             'language_id'   => 'required',
             'position_no'   => 'required|integer|min:1',

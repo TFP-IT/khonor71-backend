@@ -10,18 +10,6 @@
                             <div>
                                 <h6 class="fs-17 fw-semi-bold mb-0">{{ localize('language_list') }}</h6>
                             </div>
-                            <div class="text-end">
-                                @can('read_add_language')
-                                    <div class="actions">
-                                        @can('create_language_list')
-                                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#addLanguage"><i
-                                                    class="fa-sharp fa-solid fa-circle-plus"></i>&nbsp;{{ localize('Add Language') }}</a>
-                                            @include('localize::lang.languageAdd')
-                                        @endcan
-                                    </div>
-                                @endcan
-                            </div>
                         </div>
                     </div>
                     <div class="card-body">

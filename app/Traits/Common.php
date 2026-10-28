@@ -18,10 +18,12 @@ trait Common
 
         $menu = DB::table('menu_contents')
         ->where('slug',$slug)
+        ->where('language_id', get_language_id())
         ->first();
 
         $result = DB::table('menu_contents')
         ->where('parent_id',$menu->id)
+        ->where('language_id', get_language_id())
         ->orderBy('menu_contents.menu_position','ASC')
         ->get();
 

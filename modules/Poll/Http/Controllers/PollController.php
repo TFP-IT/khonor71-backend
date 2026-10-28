@@ -52,8 +52,9 @@ class PollController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'question' => 'required|string|max:255',
             'options' => 'required|array|min:2',
             'options.*' => 'required|string|max:255',
@@ -133,8 +134,10 @@ class PollController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $poll = Poll::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($poll->language_id ?? get_language_id())]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'question' => 'required|string|max:255',
             'options' => 'required|array|min:2',
             'options.*' => 'required|string|max:255',

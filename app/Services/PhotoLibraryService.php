@@ -60,30 +60,27 @@ class PhotoLibraryService
 
             $imageBaseUrl     = null;
             $thumb_image_path = null;
-            $format           = $attributes['format'] ?? null;
+            $format           = strtolower($attributes['format'] ?? 'webp');
 
             if (!empty($attributes['image'])) {
                 $thumbSize = [
-                    'width'  => $attributes['thumb_width'] ?? 438,
-                    'height' => $attributes['thumb_height'] ?? 240,
+                    'width'  => $attributes['thumb_width'] ?? 400,
+                    'height' => $attributes['thumb_height'] ?? 225,
+                    'format' => $format,
                 ];
 
                 $largeSize = [
-                    'width'  => $attributes['large_width'] ?? 1067,
-                    'height' => $attributes['large_height'] ?? 585,
+                    'width'  => $attributes['large_width'] ?? 1200,
+                    'height' => $attributes['large_height'] ?? 675,
+                    'format' => $format,
                 ];
-
-                if ($format) {
-                    $thumbSize['format'] = $format;
-                    $largeSize['format'] = $format;
-                }
 
                 $thumbImgUpload = ImageHelper::upload($attributes['image'] ?? null, 'images/thumb', $uploadDisk, $thumbSize);
                 $thumbImgPath   = $thumbImgUpload['image_path'] ?? null;
                 $imageUlr       = $thumbImgUpload['image_url'] ?? null;
-                $imageFilename  = $format && $thumbImgPath
+                $imageFilename  = $thumbImgPath
                     ? basename($thumbImgPath)
-                    : $attributes['image']->hashName();
+                    : (is_object($attributes['image']) && method_exists($attributes['image'], 'hashName') ? $attributes['image']->hashName() : null);
 
                 $largeImgUpload = ImageHelper::upload($attributes['image'] ?? null, 'images/large', $uploadDisk, $largeSize);
                 $largeImgPath   = $largeImgUpload['image_path'] ?? null;
@@ -106,8 +103,8 @@ class PhotoLibraryService
                 'picture_name'      => $imageFilename,
                 'thumb_image'       => $thumbImgPath,
                 'large_image'       => $largeImgPath,
-                'title'             => $attributes['caption'],
-                'reference'         => $attributes['reference'],
+                'title'             => $attributes['caption'] ?? null,
+                'reference'         => $attributes['reference'] ?? null,
                 'time_stamp'        => time() + 6 * 60 * 60,
                 'status'            => 1,
             ];

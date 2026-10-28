@@ -14,6 +14,7 @@ use Modules\VideoNews\Entities\VideoNews;
 use Illuminate\Contracts\Support\Renderable;
 use Modules\VideoNews\DataTables\VideoNewsDataTable;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Helpers\ImageHelper;
 
 class VideoNewsController extends Controller
 {
@@ -53,8 +54,9 @@ class VideoNewsController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'reporter_id' => 'required|exists:reporters,id',
             'publish_date' => 'required|date',
             'title' => 'required|string|max:255',
@@ -93,8 +95,8 @@ class VideoNewsController extends Controller
         $imagePath = '';
         if ($request->hasFile('image')) {
             $request_file = $request->file('image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $imagePath = $request_file->storeAs('videonews/thumb', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'videonews/thumb');
+            $imagePath = $upload['image_path'] ?? '';
         }
 
         // Handle video upload
@@ -262,8 +264,10 @@ class VideoNewsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $videonews = VideoNews::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($videonews->language_id ?? get_language_id())]);
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'reporter_id' => 'required|exists:reporters,id',
             'publish_date' => 'required|date',
             'title' => 'required|string|max:255',
@@ -357,8 +361,8 @@ class VideoNewsController extends Controller
                 }
 
                 $imageFile = $request->file('image');
-                $imageName = time() . rand(10, 1000) . '.' . $imageFile->extension();
-                $imagePath = $imageFile->storeAs('videonews/thumb', $imageName, 'public');
+                $upload = ImageHelper::upload($imageFile, 'videonews/thumb');
+                $imagePath = $upload['image_path'] ?? '';
                 \Log::info('Image uploaded to: ' . $imagePath);
             }
 

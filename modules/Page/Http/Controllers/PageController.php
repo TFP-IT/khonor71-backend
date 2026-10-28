@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Localize\Entities\Language;
 use Modules\Page\DataTables\PageDataTable;
 use Illuminate\Contracts\Support\Renderable;
+use App\Helpers\ImageHelper;
 
 class PageController extends Controller
 {
@@ -55,10 +56,10 @@ class PageController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->merge(['language_id' => $request->input('language_id') ?: get_language_id()]);
         $path = '';
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'title' => 'required',
             'image' => 'file|mimes:jpg,jpeg,png|max:1024', // 1024 KB
         ]);
@@ -69,8 +70,8 @@ class PageController extends Controller
 
         if ($request->hasFile('image')) {
             $request_file = $request->file('image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('page', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'page');
+            $path = $upload['image_path'] ?? null;
         }
 
         try {
@@ -141,10 +142,11 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         $pageData = Page::findOrFail($id);
+        $request->merge(['language_id' => $request->input('language_id') ?: ($pageData->language_id ?? get_language_id())]);
 
         $path = $pageData->image_id;
         $request->validate([
-            'language_id' => 'required|exists:languages,id',
+            'language_id' => 'required|exists:languages,id,value,bn',
             'title' => 'required',
             'image' => 'file|mimes:jpg,jpeg,png|max:1024', // 1024 KB
         ]);
@@ -158,8 +160,8 @@ class PageController extends Controller
                 Storage::disk('public')->delete($pageData->image_id);
             }
             $request_file = $request->file('image');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('page', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'page');
+            $path = $upload['image_path'] ?? null;
         }
 
         try {
@@ -241,8 +243,8 @@ class PageController extends Controller
         if ($request->hasFile('upload')) {
 
             $request_file = $request->file('upload');
-            $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-            $path = $request_file->storeAs('ckeditor_media', $filename, 'public');
+            $upload = ImageHelper::upload($request_file, 'ckeditor_media');
+            $path = $upload['image_path'] ?? '';
 
             $CKEditorFuncNum = $request->input('CKEditorFuncNum');
             $url = asset('storage/' . $path);

@@ -19,6 +19,7 @@ use Intervention\Image\Facades\Image;
 use Modules\Setting\Entities\ActivityLog;
 use Modules\Setting\Entities\Application;
 use Modules\VideoNews\Entities\VideoNews;
+use App\Helpers\ImageHelper;
 
 class ReporterController extends Controller
 {
@@ -270,22 +271,12 @@ class ReporterController extends Controller
                     Storage::disk('public')->delete($reporter_info->photo);
                 }
                 $request_file = $request->file('photo');
-                $filename = time() . rand(10, 1000) . '.' . $request_file->extension();
-                $path = $request_file->storeAs('reporter', $filename, 'public');
+                $upload = ImageHelper::upload($request_file, 'reporter');
+                $path = $upload['image_path'] ?? null;
                 $reporter_info->photo = $path;
 
-                //create folder if not exists
-                if (!file_exists(public_path('storage/users'))) {
-                    mkdir(public_path('storage/users'), 0777, true);
-                }
-
-                $destination = public_path('storage/' . $user->profile_image ?? null);
-                if ($user->profile_image != null && file_exists($destination)) {
-                    unlink($destination);
-                }
-                $user_img_path = Storage::disk('public')->putFileAs('users', $request_file, $filename);
-                Image::make($request_file)->save(public_path('storage/' . $user_img_path));
-                $user->profile_image = $user_img_path;
+                $userUpload = ImageHelper::upload($request_file, 'users');
+                $user->profile_image = $userUpload['image_path'] ?? null;
             }
 
             // User Update

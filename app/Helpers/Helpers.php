@@ -847,43 +847,33 @@ if (!function_exists('__url')) {
             }
         }
 
-        $lang = app()->getLocale();
-
-        // Don't prefix default language
-        $defaultLang = Modules\Setting\Entities\Language::getDefault()->value;
-        if ($lang === $defaultLang) {
-            return url($path);
-        }
-
-        return url($lang . '/' . ltrim($path, '/'));
+        return url($path);
     }
 }
 
 if (!function_exists('__url_story')) {
     function __url_story($directory = '', $path = '') {
-        $lang = app()->getLocale();
-
-        // Don't prefix default language
-        $defaultLang = Modules\Setting\Entities\Language::getDefault()->value;
-        if ($lang === $defaultLang) {
-            return url($directory .'/'. $path);
-        }
-
-        return url($directory .'/'. $lang . '/' . ltrim($path, '/'));
+        return url(trim($directory, '/') . '/' . ltrim($path, '/'));
     }
 }
 
 if (!function_exists('get_language_id')) {
     function get_language_id()
     {
-        // Get the current locale
-        $locale = app()->getLocale();
+        return bangla_language_id();
+    }
+}
 
-        // Find the language record based on the locale
-        $language = Language::where('value', $locale)->first();
+if (!function_exists('bangla_language_id')) {
+    function bangla_language_id(): ?int
+    {
+        return cache()->remember('bangla_portal_language_id', 86400, function () {
+            $languageId = \Illuminate\Support\Facades\DB::table('languages')
+                ->where('value', 'bn')
+                ->value('id');
 
-        // Return the language ID or null if not found
-        return $language ? $language->id : null;
+            return $languageId ? (int) $languageId : null;
+        });
     }
 }
 
@@ -1434,7 +1424,14 @@ if (!function_exists('get_probash_category_news')) {
         }
 
         if (empty($categoryId)) {
-            $categoryId = $languageId == 17 ? 92 : 91;
+            $categoryId = Category::query()
+                ->where('language_id', $languageId)
+                ->where('id', 92)
+                ->value('id');
+        }
+
+        if (empty($categoryId)) {
+            return collect();
         }
 
         $featuresNews = NewsMst::with(['postByUser:id,full_name', 'comments'])

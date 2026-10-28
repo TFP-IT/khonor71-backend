@@ -23,8 +23,9 @@ class NewsPostService
     public function formData(): array
     {
         $languages = Language::all();
+        $categories = Category::onlyParents()->where('language_id', get_language_id())->get();
 
-        return compact('languages');
+        return compact('languages', 'categories');
     }
 
     /**

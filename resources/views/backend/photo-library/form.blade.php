@@ -11,7 +11,7 @@
                             <span class="text-danger">*</span> </label>
                         <input type="number" name="thumb_height" id="thumb_height"
                             class="form-control @error('thumb_height') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_thumb_height') }}" value="{{ old('thumb_height', 240) }}"
+                            placeholder="{{ localize_uc('enter_thumb_height') }}" value="{{ old('thumb_height', 225) }}"
                             required>
                         <div class="invalid-feedback error text-danger m-2">
                             @error('thumb_height')
@@ -28,7 +28,7 @@
                             <span class="text-danger">*</span> </label>
                         <input type="number" name="thumb_width" id="thumb_width"
                             class="form-control @error('thumb_width') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_thumb_width') }}" value="{{ old('thumb_width', 438) }}"
+                            placeholder="{{ localize_uc('enter_thumb_width') }}" value="{{ old('thumb_width', 400) }}"
                             required>
                         <div class="invalid-feedback error text-danger m-2">
                             @error('thumb_width')
@@ -49,7 +49,7 @@
                         <input type="number" name="large_height" id="large_height"
                             class="form-control @error('large_height') is-invalid @enderror"
                             placeholder="{{ localize_uc('enter_large_height') }}"
-                            value="{{ old('large_height', 585) }}" required>
+                            value="{{ old('large_height', 675) }}" required>
                         <div class="invalid-feedback error text-danger m-2">
                             @error('large_height')
                                 {{ $message }}
@@ -65,7 +65,7 @@
                             <span class="text-danger">*</span> </label>
                         <input type="number" name="large_width" id="large_width"
                             class="form-control @error('large_width') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_large_width') }}" value="{{ old('large_width', 1067) }}"
+                            placeholder="{{ localize_uc('enter_large_width') }}" value="{{ old('large_width', 1200) }}"
                             required>
                         <div class="invalid-feedback error text-danger m-2">
                             @error('large_width')

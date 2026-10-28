@@ -6,7 +6,6 @@ use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Modules\Localize\Entities\Langstring;
@@ -28,10 +27,9 @@ class LocalizeController extends Controller
      */
     public function languagelist()
     {
-        $langList_DB  = DB::table('lang')->where('id', '<>', 1)->get();
         $languageList = Language::paginate(10);
 
-        return view('localize::language_list', compact('langList_DB', 'languageList'));
+        return view('localize::language_list', compact('languageList'));
     }
 
     /**
@@ -51,6 +49,12 @@ class LocalizeController extends Controller
      */
     public function lanstrvaluestore(Request $request)
     {
+        $request->validate([
+            'lanfolder' => 'required|in:bn',
+            'localizeid' => 'required|array|min:1',
+            'localizeid.*' => 'required|integer|exists:languages,id,value,bn',
+        ]);
+
         $lanstrvalue   = $request->lanstrvalue;
         $lanstrvalueid = $request->lanstrvalueid;
         $localizeid    = $request->localizeid;
@@ -107,6 +111,7 @@ class LocalizeController extends Controller
     {
         $request->validate([
             'langname' => 'unique:languages|required',
+            'value' => 'required|in:bn|unique:languages,value',
         ]);
 
         $data = [
@@ -233,10 +238,9 @@ class LocalizeController extends Controller
      */
     public function languageDestroy($id)
     {
-        Language::where('id', $id)->delete();
-        Toastr::success('Deleted Successfully..!!', 'Success');
-
-        return response()->json(['success' => 'success']);
+        return response()->json([
+            'fail' => 'The Bangla portal language is required and cannot be deleted.',
+        ], 422);
     }
 
     public function writeLangFile($languageId)

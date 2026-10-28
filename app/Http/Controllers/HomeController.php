@@ -38,7 +38,7 @@ class HomeController extends Controller
         $range = $request->input('range', '30d');
         $fromDate = $request->input('from_date');
         $toDate = $request->input('to_date');
-        $languageId = $request->input('language_id');
+        $languageId = get_language_id();
         $categoryId = $request->input('category_id');
         $reporterId = $request->input('reporter_id');
 
@@ -495,7 +495,10 @@ class HomeController extends Controller
             'photo_libraries.thumb_image'
         )
             ->join('users', 'users.id', '=', 'news_msts.post_by')
-            ->join('categories', 'categories.slug', '=', 'news_msts.page')
+            ->join('categories', function ($join) {
+                $join->on('categories.slug', '=', 'news_msts.page')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->leftJoin('photo_libraries', 'photo_libraries.actual_image_name', '=', 'news_msts.image')
             ->where('news_msts.publish_date', $today_date)
             ->orderBy('news_msts.reader_hit', 'desc')
@@ -531,7 +534,10 @@ class HomeController extends Controller
                 'photo_libraries.thumb_image'
             )
                 ->join('users', 'users.id', '=', 'news_msts.post_by')
-                ->join('categories', 'categories.slug', '=', 'news_msts.page')
+                ->join('categories', function ($join) {
+                    $join->on('categories.slug', '=', 'news_msts.page')
+                        ->where('categories.language_id', get_language_id());
+                })
                 ->leftJoin('photo_libraries', 'photo_libraries.actual_image_name', '=', 'news_msts.image')
                 ->orderBy('news_msts.reader_hit', 'desc')
                 ->limit(30)
@@ -566,7 +572,10 @@ class HomeController extends Controller
             'photo_libraries.thumb_image'
         )
             ->join('users', 'users.id', '=', 'news_msts.post_by')
-            ->join('categories', 'categories.slug', '=', 'news_msts.page')
+            ->join('categories', function ($join) {
+                $join->on('categories.slug', '=', 'news_msts.page')
+                    ->where('categories.language_id', get_language_id());
+            })
             ->leftJoin('photo_libraries', 'photo_libraries.actual_image_name', '=', 'news_msts.image')
             ->where('news_msts.is_latest', 1)
             ->where('news_msts.status', 1)

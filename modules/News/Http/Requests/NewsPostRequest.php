@@ -5,12 +5,20 @@ namespace Modules\News\Http\Requests;
 use Illuminate\Validation\Rule;
 use App\Traits\FormRequestTrait;
 use Modules\Category\Entities\Category;
-use Modules\Localize\Entities\Language;
 use Illuminate\Foundation\Http\FormRequest;
 
 class NewsPostRequest extends FormRequest
 {
     use FormRequestTrait;
+
+    protected function prepareForValidation(): void
+    {
+        if (!$this->filled('language_id')) {
+            $this->merge([
+                'language_id' => get_language_id(),
+            ]);
+        }
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -20,7 +28,7 @@ class NewsPostRequest extends FormRequest
     public function rules()
     {
         return [
-            'language_id'         => ['required', 'integer', Rule::exists(Language::class, 'id')],
+            'language_id'         => ['required', 'integer', Rule::exists('languages', 'id')->where('value', 'bn')],
             'other_page'          => ['required', 'integer', Rule::exists(Category::class, 'id')],
             'short_head'          => ['nullable', 'string'],
             'head_line'           => ['required', 'string'],

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use App\Exports\LanguageValueExport;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Pagination\Paginator;
@@ -60,16 +59,16 @@ class LanguageController extends Controller
 
     public function languagelist()
     {
-        $langList_DB = DB::table('lang')->where('id', '<>', 1)->get();
         $languageList = Language::paginate(10);
 
-        return view('localize::lang.language_list', compact('langList_DB', 'languageList'));
+        return view('localize::lang.language_list', compact('languageList'));
     }
 
     public function languageStore(Request $request)
     {
         $request->validate([
             'langname' => 'unique:languages|required',
+            'value' => 'required|in:bn|unique:languages,value',
         ]);
 
         $data = [
@@ -107,10 +106,9 @@ class LanguageController extends Controller
 
     public function languageDestroy($id)
     {
-        Language::where('id', $id)->delete();
-        Toastr::success('Deleted Successfully.!', 'Success');
-
-        return response()->json(['success' => 'success']);
+        return response()->json([
+            'fail' => 'The Bangla portal language is required and cannot be deleted.',
+        ], 422);
     }
 
     public function languageStringValueindex(Request $request, $id)
@@ -126,6 +124,10 @@ class LanguageController extends Controller
 
     public function lanstrvaluestore(Request $request)
     {
+        $request->validate([
+            'lanfolder' => 'required|in:bn',
+        ]);
+
         $lang_key = $request->lanstrvaluekey;
         $lang_value = $request->lanstrvalue;
         $lang_folder = $request->lanfolder;
@@ -174,8 +176,10 @@ class LanguageController extends Controller
         }
     }
 
-    public function export($locale = 'en')
+    public function export($locale = 'bn')
     {
+        abort_unless($locale === 'bn', 404);
+
         $langFile = lang_path("$locale/language.php");
 
         if (!File::exists($langFile)) {
@@ -190,7 +194,7 @@ class LanguageController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'locale' => 'required|string',
+            'locale' => 'required|in:bn',
             'file' => 'required|file|mimes:xlsx,xls',
         ]);
 
@@ -245,17 +249,10 @@ class LanguageController extends Controller
 
     public function languageListUpdate($id)
     {
-        try {
-            $language = Language::findOrFail($id);
+        Language::whereKey($id)->update(['status' => 1]);
 
-            // Toggle the status (1 to 0, or 0 to 1)
-            $language->status = !$language->status;
-
-            $language->save();
-
-            return response()->json(['success' => 'success']);
-        } catch (\Exception $e) {
-            return response()->json(['fail' => 'fail']);
-        }
+        return response()->json([
+            'fail' => 'The Bangla portal language must remain active.',
+        ], 422);
     }
 }

@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(LocalizeDatabaseSeeder::class);
         $this->call(ApplicationsSeeder::class);
         $this->call(CurrencySeeder::class);
         $this->call(UserManagementDatabaseSeeder::class);
-        $this->call(LocalizeDatabaseSeeder::class);
         $this->call(SettingDatabaseSeeder::class);
         $this->call(SeedCountriesTableSeeder::class);
         $this->call(DivisionSeeder::class);
