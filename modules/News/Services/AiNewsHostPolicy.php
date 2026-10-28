@@ -10,20 +10,24 @@ class AiNewsHostPolicy
     {
         $parts = parse_url(trim($url));
         $host = strtolower(rtrim((string) ($parts['host'] ?? ''), '.'));
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
 
         if (
             ! $parts ||
-            strtolower((string) ($parts['scheme'] ?? '')) !== 'https' ||
+            ! in_array($scheme, ['https', 'http'], true) ||
             $host === '' ||
             isset($parts['user']) ||
-            isset($parts['pass']) ||
-            (isset($parts['port']) && (int) $parts['port'] !== 443)
+            isset($parts['pass'])
         ) {
-            throw new InvalidArgumentException('Feed URL must be an HTTPS URL on the default port, without credentials.');
+            throw new InvalidArgumentException('Feed URL must be a valid HTTPS or HTTP URL without credentials.');
         }
 
         $allowedHosts = config('ai_news.allowed_feed_hosts', []);
-        $hostAllowed = in_array($host, $allowedHosts, true);
+        $hostAllowed = in_array('*', $allowedHosts, true)
+            || empty($allowedHosts)
+            || in_array($host, $allowedHosts, true)
+            || in_array(preg_replace('/^www\./', '', $host), $allowedHosts, true)
+            || in_array('www.' . $host, $allowedHosts, true);
 
         if (! $hostAllowed) {
             throw new InvalidArgumentException('Feed host is not allowlisted in AI_NEWS_ALLOWED_FEED_HOSTS.');

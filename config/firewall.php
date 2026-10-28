@@ -281,12 +281,12 @@ return [
 
             'routes' => [
                 'only' => [], // i.e. 'contact'
-                'except' => [], // i.e. 'admin/*'
+                'except' => ['admin/ai-news/*'], // i.e. 'admin/*'
             ],
 
             'inputs' => [
                 'only' => [], // i.e. 'first_name'
-                'except' => [], // i.e. 'password'
+                'except' => ['feed_url'], // i.e. 'password'
             ],
 
             'patterns' => [

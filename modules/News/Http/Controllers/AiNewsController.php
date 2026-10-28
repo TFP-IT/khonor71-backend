@@ -69,7 +69,10 @@ class AiNewsController extends Controller
             return back()->withErrors(['category_id' => 'Choose a category for the selected language.'])->withInput();
         }
 
-        $normalizedUrl = rtrim(trim($data['feed_url']), '/');
+        $normalizedUrl = trim($data['feed_url']);
+        if (preg_match('#/feed$#i', $normalizedUrl)) {
+            $normalizedUrl .= '/';
+        }
         $urlHash = hash('sha256', $normalizedUrl);
         if (AiNewsSource::where('feed_url_hash', $urlHash)->exists()) {
             return back()->withErrors(['feed_url' => 'This feed has already been added.'])->withInput();

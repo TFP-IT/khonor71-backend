@@ -114,11 +114,39 @@ class AiNewsFeedService
     private function readFeed(AiNewsSource $source): array
     {
         $url = $this->hostPolicy->assertAllowed($source->feed_url);
-        $response = Http::withOptions(['allow_redirects' => false])
-            ->connectTimeout(5)
-            ->timeout((int) config('ai_news.feed_timeout', 15))
-            ->withHeaders(['User-Agent' => config('app.name', 'Laravel') . ' RSS collector'])
+        $response = Http::withOptions([
+            'allow_redirects' => [
+                'max' => 5,
+                'protocols' => ['http', 'https'],
+            ],
+        ])
+            ->connectTimeout(10)
+            ->timeout((int) config('ai_news.feed_timeout', 20))
+            ->withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml,application/rss+xml,application/atom+xml;q=0.9,*/*;q=0.8',
+            ])
             ->get($url);
+
+        if (! $response->successful() && ! str_ends_with($url, '/') && preg_match('#/feed$#i', $url)) {
+            $retryResponse = Http::withOptions([
+                'allow_redirects' => [
+                    'max' => 5,
+                    'protocols' => ['http', 'https'],
+                ],
+            ])
+                ->connectTimeout(10)
+                ->timeout((int) config('ai_news.feed_timeout', 20))
+                ->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml,application/rss+xml,application/atom+xml;q=0.9,*/*;q=0.8',
+                ])
+                ->get($url . '/');
+
+            if ($retryResponse->successful()) {
+                $response = $retryResponse;
+            }
+        }
 
         if (! $response->successful()) {
             throw new \RuntimeException('Feed returned HTTP ' . $response->status());
