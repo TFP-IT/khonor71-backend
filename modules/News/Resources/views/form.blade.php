@@ -95,7 +95,23 @@
 
         </div>
 
-        <div class="row">
+        @php
+            $currentCategoryId = old('other_page', $newsMst->category_id ?? null);
+            $isSaradesh = false;
+            if (isset($categories)) {
+                foreach ($categories as $cat) {
+                    if ($cat->id == $currentCategoryId) {
+                        $isSaradesh = (trim($cat->category_name) === 'সারাদেশ');
+                        break;
+                    }
+                }
+            }
+            if (!$isSaradesh && isset($newsMst) && ($newsMst->division_id || $newsMst->district_id)) {
+                $isSaradesh = true;
+            }
+        @endphp
+
+        <div class="row" id="location_fields_row" style="{{ $isSaradesh ? '' : 'display: none;' }}">
 
             <div class="col-lg-6 col-md-6">
                 <div class="row form-group">

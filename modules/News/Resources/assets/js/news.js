@@ -179,10 +179,39 @@ $(document).ready(function () {
     $("#post_tag").tagsinput();
     $("#meta_keyword").tagsinput();
 
+    /** Location Fields (Division & District) Visibility Toggle */
+    function toggleLocationFields(animate = true) {
+        let selectedCategoryText = $("#other_page option:selected").text().trim();
+        let isSaradesh = (selectedCategoryText === "সারাদেশ" || selectedCategoryText.indexOf("সারাদেশ") !== -1);
+        let $locationRow = $("#location_fields_row");
+
+        if (isSaradesh) {
+            if (animate) {
+                $locationRow.slideDown(250);
+            } else {
+                $locationRow.show();
+            }
+        } else {
+            if (animate) {
+                $locationRow.slideUp(250);
+            } else {
+                $locationRow.hide();
+            }
+            if ($locationRow.is(":visible")) {
+                $("#division_id").val("").trigger("change.select2");
+                $("#district_id").val("").trigger("change.select2");
+            }
+        }
+    }
+
+    // Initial check on load
+    toggleLocationFields(false);
+
     /** Sub-category */
     let baseUrl = $('meta[name="base-url"]').attr('content');
 
     $(document).on("change", "#other_page", function () {
+        toggleLocationFields(true);
         let categoryId = $(this).val();
         if (categoryId) {
             axios
@@ -231,12 +260,14 @@ $(document).ready(function () {
                         allowClear: true,
                     });
 
+                    toggleLocationFields(true);
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         } else {
             $("#other_page").html("");
+            toggleLocationFields(true);
         }
     });
 
