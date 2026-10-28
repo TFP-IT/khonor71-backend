@@ -86,12 +86,12 @@
                                 </li>
                             @endcan
 
-                            @can('create_news')
+                            {{-- @can('create_news')
                                 <li class="{{ request()->routeIs('bulk.post.upload*') ? 'mm-active' : '' }}">
                                     <a class="dropdown-item"
                                         href="{{ route('bulk.post.upload.index') }}">{{ localize_uc('bulk_post_upload') }}</a>
                                 </li>
-                            @endcan
+                            @endcan --}}
 
                             @can('read_breaking_news')
                                 <li class="{{ request()->routeIs('news.breaking-news.index') ? 'mm-active' : '' }}">
