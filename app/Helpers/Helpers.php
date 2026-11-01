@@ -1082,146 +1082,534 @@ if (!function_exists('news_time_ago')) {
         // Combine manually
         return convert_digits_to_locale("{$diff} {$agoWord}", $locale);
     }
-    
-    function bengaliToReverseAvro($text)
-    {
-        // independent vowels
-        $vowels = [
-            'অ' => 'a',
-            'আ' => 'aa',
-            'ই' => 'i',
-            'ঈ' => 'ii',
-            'উ' => 'u',
-            'ঊ' => 'uu',
-            'ঋ' => 'ri',
-            'এ' => 'e',
-            'ঐ' => 'ai',
-            'ও' => 'o',
-            'ঔ' => 'ou',
-        ];
+}
 
-        // consonants (basic approximations)
+if (!function_exists('getBengaliDictionary')) {
+    function getBengaliDictionary(): array
+    {
+        return [
+            // Verbs & common conjugations
+            'হয়েছে' => 'hoyeche',
+            'হয়েছেন' => 'hoyechen',
+            'হলো' => 'holo',
+            'হলেন' => 'holen',
+            'হতে' => 'hote',
+            'হবে' => 'hobe',
+            'হয়' => 'hoy',
+            'হয়ে' => 'hoye',
+            'করল' => 'korlo',
+            'করলেন' => 'korlen',
+            'করেছে' => 'koreche',
+            'করেছেন' => 'korechen',
+            'করবে' => 'korbe',
+            'করতে' => 'korte',
+            'করছেন' => 'korchen',
+            'করছে' => 'korche',
+            'করা' => 'kora',
+            'বলল' => 'bollo',
+            'বললেন' => 'bollen',
+            'বলেছে' => 'boleche',
+            'বলেছেন' => 'bolechen',
+            'বলতে' => 'bolte',
+            'বলবে' => 'bolbe',
+            'গেছে' => 'geche',
+            'গেল' => 'gelo',
+            'গেলেন' => 'gelen',
+            'যাবে' => 'jabe',
+            'যান' => 'jan',
+            'পেল' => 'pelo',
+            'পেলেন' => 'pelen',
+            'পেলো' => 'pelo',
+            'পাবে' => 'pabe',
+            'দিল' => 'dilo',
+            'দিলেন' => 'dilen',
+            'দিলো' => 'dilo',
+            'দেবে' => 'debe',
+            'দিয়েছে' => 'diyeche',
+            'দিয়েছেন' => 'diyechen',
+            'দিলনা' => 'dilona',
+            'পারল' => 'parlo',
+            'পারলেন' => 'parlen',
+            'পারবে' => 'parbe',
+            'পারছে' => 'parche',
+            'পারছেন' => 'parchen',
+            'চলল' => 'chollo',
+            'চললেন' => 'chollen',
+            'চলছে' => 'cholche',
+            'চলবে' => 'cholbe',
+            'আসছে' => 'asche',
+            'আসবে' => 'asbe',
+            'এলো' => 'elo',
+            'এলেন' => 'elen',
+            'এসেছে' => 'eseche',
+            'এসেছেন' => 'esechen',
+            'থাকবে' => 'thakbe',
+            'থাকল' => 'thaklo',
+            'থাকলেন' => 'thaklen',
+            'দেখেছে' => 'dekheche',
+            'দেখেছেন' => 'dekhechen',
+            'দেখা' => 'dekha',
+            'জানাল' => 'janalo',
+            'জানালেন' => 'janalen',
+            'জানিয়েছে' => 'janiyeche',
+            'জানিয়েছেন' => 'janiyechen',
+            'জানায়' => 'janay',
+            'উদ্ধার' => 'uddhar',
+
+            // Participles & Adjectives
+            'নিহত' => 'nihoto',
+            'আহত' => 'ahoto',
+            'নিশ্চিত' => 'nishchit',
+            'মৃত' => 'mrito',
+            'বিরত' => 'biroto',
+            'পরিচিত' => 'porichito',
+            'উপস্থিত' => 'uposthito',
+            'অনুপস্থিত' => 'anuposthito',
+            'বিবৃত' => 'bibrito',
+
+            // Common Media & General Nouns
+            'সংবাদমাধ্যম' => 'sangbadmadhyam',
+            'গণমাধ্যম' => 'gono-madhyam',
+            'সংবাদ' => 'sangbad',
+            'মাধ্যম' => 'madhyam',
+            'প্রতিবেদন' => 'protibedon',
+            'প্রতিবেদক' => 'protibedok',
+            'খবর' => 'khobor',
+            'প্রথম' => 'prothom',
+            'বাংলাদেশ' => 'bangladesh',
+            'বাঙালি' => 'bangali',
+            'বাংলা' => 'bangla',
+            'আন্তর্জাতিক' => 'antorjatik',
+            'জাতীয়' => 'jatiyo',
+            'জাতীয়' => 'jatiyo',
+            'সারাদেশ' => 'saradesh',
+            'রাজনীতি' => 'rajniti',
+            'অর্থনীতি' => 'orthoniti',
+            'বাণিজ্য' => 'banijjo',
+            'খেলা' => 'khela',
+            'খেলাধুলা' => 'kheladhula',
+            'বিনোদন' => 'binodon',
+            'তথ্য' => 'tothyo',
+            'প্রযুক্তি' => 'projukti',
+            'মতামত' => 'motamot',
+            'জীবনযাপন' => 'jibonjapon',
+            'শিক্ষা' => 'shikkha',
+            'স্বাস্থ্য' => 'shastho',
+            'প্রবাস' => 'probash',
+            'প্রবাসী' => 'probashi',
+            'চাকরি' => 'chakri',
+            'ধর্ম' => 'dhormo',
+            'ইসলাম' => 'islam',
+            'আদালত' => 'adalat',
+            'আইন' => 'ain',
+            'পুলিশ' => 'police',
+            'র‌্যাব' => 'rab',
+            'র্যাব' => 'rab',
+            'সেনাবাহিনী' => 'senabahini',
+            'সরকার' => 'sorkar',
+            'সরকারের' => 'sorkarer',
+            'প্রধানমন্ত্রী' => 'prodhanmontri',
+            'রাষ্ট্রপতি' => 'rashtropoti',
+            'মন্ত্রী' => 'montri',
+            'সংসদ' => 'songshod',
+            'নির্বাচন' => 'nirbachon',
+            'কমিশন' => 'komishon',
+            'ঘটনা' => 'ghotona',
+            'দুর্ঘটনা' => 'durghotona',
+            'সড়ক' => 'sorok',
+            'মৃত্যু' => 'mrittu',
+            'মামলা' => 'mamla',
+            'গ্রেপ্তার' => 'greftar',
+            'গ্রেফতার' => 'greftar',
+            'আটক' => 'atok',
+            'রিমান্ড' => 'rimand',
+            'জামিন' => 'jamin',
+            'বৈঠক' => 'boithok',
+            'ঘোষণা' => 'ghoshona',
+            'প্রকাশ' => 'prokash',
+            'মন্তব্য' => 'montobbo',
+            'প্রশ্ন' => 'proshno',
+            'উত্তর' => 'uttor',
+            'কারণ' => 'karon',
+            'অভিযোগ' => 'ovijog',
+            'তদন্ত' => 'todonto',
+            'দাবি' => 'dabi',
+            'প্রতিবাদ' => 'protibad',
+            'মিছিল' => 'michil',
+            'সমাবেশ' => 'somabesh',
+            'আন্দোলন' => 'andolon',
+            'ধর্মঘট' => 'dhormoghot',
+            'হরতাল' => 'hortal',
+
+            // People / entities / locations
+            'মানুষ' => 'manush',
+            'নারী' => 'nari',
+            'পুরুষ' => 'purush',
+            'শিশু' => 'shishu',
+            'যুবক' => 'jubok',
+            'শিক্ষার্থী' => 'shikkharthi',
+            'ছাত্র' => 'chatro',
+            'শিক্ষক' => 'shikkhok',
+            'অধ্যাপক' => 'odhyapok',
+            'ডাক্তার' => 'daktar',
+            'নেতা' => 'neta',
+            'কর্মী' => 'kormi',
+            'সদস্য' => 'sodoshyo',
+            'সভাপতি' => 'shovapoti',
+            'সম্পাদক' => 'shompadok',
+            'চেয়ারম্যান' => 'chairman',
+            'মেয়র' => 'mayor',
+            'কাউন্সিলর' => 'councillor',
+            'এমপি' => 'mp',
+
+            // Common locations / countries
+            'ঢাকা' => 'dhaka',
+            'চট্টগ্রাম' => 'chattogram',
+            'সিলেট' => 'sylhet',
+            'রাজশাহী' => 'rajshahi',
+            'খুলনা' => 'khulna',
+            'বরিশাল' => 'barishal',
+            'রংপুর' => 'rangpur',
+            'ময়মনসিংহ' => 'mymensingh',
+            'ভারত' => 'bharat',
+            'ভারতে' => 'bharote',
+            'পাকিস্তান' => 'pakistan',
+            'যুক্তরাষ্ট্র' => 'usa',
+            'যুক্তরাজ্য' => 'uk',
+            'রাশিয়া' => 'russia',
+            'রাশিয়া' => 'russia',
+            'চীন' => 'china',
+            'ইরান' => 'iran',
+            'ইরানি' => 'irani',
+            'ইসরায়েল' => 'israel',
+            'ইসরাইল' => 'israel',
+            'গাজা' => 'gaza',
+            'ফিলিস্তিন' => 'filistin',
+            'ইউক্রেন' => 'ukraine',
+
+            // Numbers & Quantities
+            'এক' => 'ek',
+            'দুই' => 'dui',
+            'তিন' => 'tin',
+            'চার' => 'char',
+            'পাঁচ' => 'pach',
+            'ছয়' => 'choy',
+            'ছয়' => 'choy',
+            'সাত' => 'sat',
+            'আট' => 'at',
+            'নয়' => 'noy',
+            'নয়' => 'noy',
+            'দশ' => 'dosh',
+            'হাজার' => 'hajar',
+            'লাখ' => 'lakh',
+            'কোটি' => 'koti',
+            'শত' => 'shoto',
+            'কত' => 'koto',
+            'যত' => 'joto',
+            'তত' => 'toto',
+            'মত' => 'moto',
+            'মতো' => 'moto',
+
+            // Time
+            'আজ' => 'aj',
+            'আজকে' => 'ajke',
+            'আজকের' => 'ajker',
+            'কাল' => 'kal',
+            'কালকে' => 'kalke',
+            'গতকাল' => 'gotokal',
+            'আগামীকাল' => 'agamikal',
+            'সকাল' => 'sokal',
+            'দুপুর' => 'dupur',
+            'বিকাল' => 'bikal',
+            'বিকেল' => 'bikel',
+            'সন্ধ্যা' => 'sondhya',
+            'রাত' => 'rat',
+            'দিন' => 'din',
+            'মাস' => 'mash',
+            'বছর' => 'bochor',
+            'সময়' => 'somoy',
+        ];
+    }
+}
+
+if (!function_exists('transliterateBengaliWord')) {
+    function transliterateBengaliWord(string $word, array $dict): string
+    {
+        // Check dictionary first (exact match)
+        if (isset($dict[$word])) {
+            return $dict[$word];
+        }
+
         $consonants = [
             'ক' => 'k', 'খ' => 'kh', 'গ' => 'g', 'ঘ' => 'gh', 'ঙ' => 'ng',
-            'চ' => 'ch', 'ছ' => 'chh', 'জ' => 'j', 'ঝ' => 'jh', 'ঞ' => 'ny',
-            'ট' => 'tt', 'ঠ' => 'tth', 'ড' => 'dd', 'ঢ' => 'ddh', 'ণ' => 'nn',
+            'চ' => 'ch', 'ছ' => 'ch', 'জ' => 'j', 'ঝ' => 'jh', 'ঞ' => 'n',
+            'ট' => 't', 'ঠ' => 'th', 'ড' => 'd', 'ঢ' => 'dh', 'ণ' => 'n',
             'ত' => 't', 'থ' => 'th', 'দ' => 'd', 'ধ' => 'dh', 'ন' => 'n',
-            'প' => 'p', 'ফ' => 'ph', 'ব' => 'b', 'ভ' => 'bh', 'ম' => 'm',
-            'য' => 'j', 'র' => 'r', 'ল' => 'l', 'শ' => 'sh', 'ষ' => 'ssh', 'স' => 's', 'হ' => 'h',
-            // additional/nukta-like forms
-            'ড়' => 'rr', 'ড়' => 'rr', 'ঢ়' => 'rrh', 'ঢ়' => 'rrh',
-            // both forms of ya-yaphala / y-variants
-            'য়' => 'y', 'য়' => 'y',
-            // the "nukta" modified consonants may appear as separate chars; keep them if present
+            'প' => 'p', 'ফ' => 'f', 'ব' => 'b', 'ভ' => 'bh', 'ম' => 'm',
+            'য' => 'j', 'র' => 'r', 'ল' => 'l', 'শ' => 'sh', 'ষ' => 'sh', 'স' => 's', 'হ' => 'h',
+            'ড়' => 'r', 'ঢ়' => 'rh', 'য়' => 'y',
         ];
 
-        // matras (vowel signs)
+        $vowels = [
+            'অ' => 'o', 'আ' => 'a', 'ই' => 'i', 'ঈ' => 'i', 'উ' => 'u', 'ঊ' => 'u',
+            'ঋ' => 'ri', 'এ' => 'e', 'ঐ' => 'oi', 'ও' => 'o', 'ঔ' => 'ou',
+        ];
+
         $matras = [
-            'া' => 'a',
-            'ি' => 'i',
-            'ী' => 'ii',
-            'ু' => 'u',
-            'ূ' => 'uu',
-            'ৃ' => 'ri',
-            'ে' => 'e',
-            'ৈ' => 'ai',
-            'ো' => 'o',
-            'ৌ' => 'ou',
+            'া' => 'a', 'ি' => 'i', 'ী' => 'i', 'ু' => 'u', 'ূ' => 'u',
+            'ৃ' => 'ri', 'ে' => 'e', 'ৈ' => 'oi', 'ো' => 'o', 'ৌ' => 'ou',
         ];
 
-        // specials and diacritics
-        $special = [
-            'ৎ' => 't',   // khanda ta
-            'ং' => 'ng',  // anusvara
-            'ঃ' => 'h',   // visarga
-            'ঁ' => 'n',   // chandrabindu (approx)
-            '্' => '__VIRAMA__', // placeholder; handled in logic (no sound)
+        $specials = [
+            'ৎ' => 't', 'ং' => 'ng', 'ঃ' => 'h', 'ঁ' => '',
         ];
 
-        // digits
         $digits = [
             '০' => '0', '১' => '1', '২' => '2', '৩' => '3', '৪' => '4',
             '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
         ];
 
-        // Merge maps for quick lookups where appropriate (we don't include virama in merge,
-        // because virama affects logic rather than producing output)
-        $bengaliMap = array_merge($vowels, $consonants, $matras, $special, $digits);
-
+        $len = mb_strlen($word, 'UTF-8');
         $result = '';
-        $len = mb_strlen($text, 'UTF-8');
 
         for ($i = 0; $i < $len; $i++) {
-            $char = mb_substr($text, $i, 1, 'UTF-8');
+            $char = mb_substr($word, $i, 1, 'UTF-8');
+            $next = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+            $afterNext = ($i + 2 < $len) ? mb_substr($word, $i + 2, 1, 'UTF-8') : null;
 
-            // Direct digit or independent vowel or standalone special (like anusvara) or standalone matra
-            if (isset($vowels[$char]) || isset($special[$char]) || isset($digits[$char])) {
-                // If special is virama placeholder, skip (it should never appear alone here)
-                if ($char === '্') {
-                    continue;
-                }
-                $result .= $bengaliMap[$char];
+            // Digits
+            if (isset($digits[$char])) {
+                $result .= $digits[$char];
                 continue;
             }
 
-            // If char is a consonant
+            // Independent Vowels
+            if (isset($vowels[$char])) {
+                $result .= $vowels[$char];
+                continue;
+            }
+
+            // Specials
+            if (isset($specials[$char])) {
+                $result .= $specials[$char];
+                continue;
+            }
+
+            // Consonants
             if (isset($consonants[$char])) {
                 $cons = $consonants[$char];
 
-                // Lookahead safely
-                $next = ($i + 1 < $len) ? mb_substr($text, $i + 1, 1, 'UTF-8') : null;
+                // Handle conjuncts (virama)
+                if ($next === '্' && $afterNext !== null) {
+                    // Reph (র + ্ + consonant)
+                    if ($char === 'র') {
+                        // Check if initial 'র-য-ফলা' (e.g. র‍্যাব / র‍্যাপিড)
+                        if ($i === 0 && $afterNext === 'য') {
+                            $cluster = 'ry';
+                        } else {
+                            // Standard Reph: r + following consonant (e.g. কর্ম -> rm, ধর্ম -> rhm, সূর্য -> rj)
+                            $cluster = 'r' . ($consonants[$afterNext] ?? '');
+                        }
+                        $i += 2; // skip virama and following consonant
+                        $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                            $result .= $cluster . $matras[$afterCluster];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            // Word-final reph conjunct: retains 'o' (e.g. কর্ম -> kormo, অর্থ -> ortho, সূর্য -> surjo)
+                            $result .= $cluster . 'o';
+                        } else {
+                            $result .= $cluster . 'o';
+                        }
+                        continue;
+                    }
 
-                // If next is virama (hoshonto) -> consonant cluster, no inherent vowel
-                if ($next === '্') {
-                    $result .= $cons;
-                    // skip the virama (increment i to skip it; loop will process the next consonant)
-                    $i++;
-                    // continue to next char (which should be consonant or may be something else)
+                    // ক্ষ (kkh / kh)
+                    if ($char === 'ক' && $afterNext === 'ষ') {
+                        $cluster = ($i === 0) ? 'kh' : 'kkh';
+                        $i += 2;
+                        $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                            $result .= $cluster . $matras[$afterCluster];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            $result .= $cluster;
+                        } else {
+                            $result .= $cluster . 'o';
+                        }
+                        continue;
+                    }
+
+                    // জ্ঞ (gy)
+                    if ($char === 'জ' && $afterNext === 'ঞ') {
+                        $cluster = 'gy';
+                        $i += 2;
+                        $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                            $result .= $cluster . $matras[$afterCluster];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            $result .= $cluster . 'o';
+                        } else {
+                            $result .= $cluster . 'o';
+                        }
+                        continue;
+                    }
+
+                    // ্য (Ja-phala)
+                    if ($afterNext === 'য') {
+                        $i += 2;
+                        $afterJa = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterJa !== null && isset($matras[$afterJa])) {
+                            $result .= $cons . 'y' . $matras[$afterJa];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            // End of word: e.g. সত্য -> sotyo, তথ্য -> tothyo
+                            $result .= $cons . 'yo';
+                        } else {
+                            // Followed by another consonant: e.g. মাধ্যম -> madhyam
+                            $result .= $cons . 'ya';
+                        }
+                        continue;
+                    }
+
+                    // ্র (Ra-phala)
+                    if ($afterNext === 'র') {
+                        $cluster = $cons . 'r';
+                        $i += 2;
+                        $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                            $result .= $cluster . $matras[$afterCluster];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            $result .= $cluster . 'o';
+                        } else {
+                            $result .= $cluster . 'o';
+                        }
+                        continue;
+                    }
+
+                    // ্ব (Ba-phala)
+                    if ($afterNext === 'ব') {
+                        $cluster = ($i === 0) ? $cons : ($cons . 'w');
+                        $i += 2;
+                        $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                        if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                            $result .= $cluster . $matras[$afterCluster];
+                            $i++;
+                        } elseif ($i >= $len - 1) {
+                            $result .= $cluster . 'o';
+                        } else {
+                            $result .= $cluster . 'o';
+                        }
+                        continue;
+                    }
+
+                    // General conjunct (e.g. স্ত, ল্ল, শ্চ, ন্ত, ক্ত)
+                    $nextCons = $consonants[$afterNext] ?? '';
+                    $cluster = $cons . $nextCons;
+                    $i += 2; // skip virama and second consonant
+                    $afterCluster = ($i + 1 < $len) ? mb_substr($word, $i + 1, 1, 'UTF-8') : null;
+                    if ($afterCluster !== null && isset($matras[$afterCluster])) {
+                        $result .= $cluster . $matras[$afterCluster];
+                        $i++;
+                    } elseif ($i >= $len - 1) {
+                        // Final conjuncts in Bengali (e.g. যুক্ত -> jukto, শান্ত -> shanto, অন্ত -> onto)
+                        if (str_ends_with($cluster, 't')) {
+                            $result .= $cluster . 'o';
+                        } else {
+                            $result .= $cluster;
+                        }
+                    } else {
+                        $result .= $cluster . 'o';
+                    }
                     continue;
                 }
 
-                // If next is a matra -> attach mapped vowel and consume matra
+                // Consonant followed by Matra
                 if ($next !== null && isset($matras[$next])) {
                     $result .= $cons . $matras[$next];
-                    $i++; // consume matra
+                    $i++;
                     continue;
                 }
 
-                // If next is a diacritic like chandrabindu / anusvara / visarga -> treat vowel then combine
-                if ($next !== null && isset($special[$next]) && $next !== '্') {
-                    // inherent vowel + diacritic
-                    $result .= $cons . 'a' . $special[$next];
-                    $i++; // consume the diacritic
+                // Consonant followed by ং (Anusvara)
+                if ($next === 'ং') {
+                    $result .= $cons . 'ong';
+                    $i++;
                     continue;
                 }
 
-                // Otherwise, use the inherent vowel 'a'
-                $result .= $cons . 'a';
+                // Consonant followed by ঃ (Visarga)
+                if ($next === 'ঃ') {
+                    $result .= $cons . 'o';
+                    $i++;
+                    continue;
+                }
+
+                // Word-final consonant (no vowel attached)
+                if ($i === $len - 1 && $len > 1) {
+                    $result .= $cons;
+                } else {
+                    // Inherent vowel inside word: 'o'
+                    $result .= $cons . 'o';
+                }
                 continue;
             }
 
-            // If char is a matra appearing standalone (rare/wrong Unicode order) — attach to previous if possible
+            // Standalone matra fallback
             if (isset($matras[$char])) {
-                // If result is not empty and previous transliteration ends with a consonant without vowel,
-                // this is tricky — we will just append the matra letter (best-effort)
                 $result .= $matras[$char];
                 continue;
             }
 
-            // Fallback: if we have a direct mapping in merged map, use that
-            if (isset($bengaliMap[$char])) {
-                $result .= $bengaliMap[$char];
-                continue;
-            }
-
-            // Keep ASCII / punctuation / spaces as-is (you may want to normalize later in slug)
+            // Keep ASCII or other chars as-is
             $result .= $char;
         }
 
         return $result;
     }
+}
 
-    function generateSlug($title)
+if (!function_exists('bengaliToReverseAvro')) {
+    function bengaliToReverseAvro(string $text): string
+    {
+        // Clean invisible Unicode formatting characters (ZWJ, ZWNJ)
+        $text = preg_replace('/[\x{200B}-\x{200D}]/u', '', $text);
+
+        // Normalize decomposed Bengali characters with Nukta into precomposed forms
+        $text = preg_replace('/ড\x{09BC}/u', 'ড়', $text);
+        $text = preg_replace('/ঢ\x{09BC}/u', 'ঢ়', $text);
+        $text = preg_replace('/য\x{09BC}/u', 'য়', $text);
+
+        $dict = getBengaliDictionary();
+
+        // Split text into words and delimiters (spaces, punctuation)
+        $words = preg_split('/([^\x{0980}-\x{09FF}a-zA-Z0-9]+)/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if (!is_array($words)) {
+            return $text;
+        }
+
+        $result = '';
+        foreach ($words as $part) {
+            if ($part === '') {
+                continue;
+            }
+
+            // If part contains Bengali characters
+            if (preg_match('/[\x{0980}-\x{09FF}]/u', $part)) {
+                $result .= transliterateBengaliWord($part, $dict);
+            } else {
+                $result .= $part;
+            }
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('generateSlug')) {
+    function generateSlug(string $title): string
     {
         $hasBengali = preg_match('/[\x{0980}-\x{09FF}]/u', $title);
 
@@ -1232,8 +1620,7 @@ if (!function_exists('news_time_ago')) {
         // Convert to lowercase
         $slug = mb_strtolower($title, 'UTF-8');
 
-        // Replace any non-alphanumeric (keep hyphen) with hyphen
-        // Keep strictly ASCII English letters, numbers, and hyphen
+        // Replace any non-alphanumeric with hyphen
         $slug = preg_replace('/[^a-zA-Z0-9\-]+/u', '-', $slug);
 
         // Trim and replace multiple hyphens with single
@@ -1241,8 +1628,6 @@ if (!function_exists('news_time_ago')) {
 
         return $slug;
     }
-
-
 }
 
 if (!function_exists('manageVideoUrl')) {
