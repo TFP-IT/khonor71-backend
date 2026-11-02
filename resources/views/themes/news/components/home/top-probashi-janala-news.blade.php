@@ -45,7 +45,7 @@ $heroImageSizes = '(max-width: 767px) calc(100vw - 24px), (max-width: 1279px) 66
                     {{ $homePageTopNews[0]->category->category_name }}
                 </div>
                 <a href="{{ __url($homePageTopNews[0]->news->encode_title) }}"
-                    class="text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary text-2xl lg:text-3xl font-bold my-2 transition_3 line-clamp-2">
+                    class="text-neutral-800 dark:text-white hover:text-brand-primary dark:hover:text-brand-primary text-2xl lg:text-3xl font-bold my-2 transition_3 line-clamp-2 leading-snug min-h-[3.5rem]">
                     {{ $homePageTopNews[0]->news->title }}
                 </a>
                 <p class="text-sm text-neutral-600 dark:text-neutral-400 capitalize line-clamp-2">

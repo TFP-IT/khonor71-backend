@@ -26,10 +26,22 @@
         $swiperCssUrl = \App\Helpers\ThemeHelper::asset('plugins/swiper/css/swiper-bundle.min.css');
     @endphp
 
-    {{-- Load Google Fonts with preconnect and preload --}}
+    {{-- Preload critical Bengali web fonts to prevent font swap layout shifts (CLS) --}}
+    @if(str_contains(json_encode($loadedFonts), 'Hind+Siliguri') || str_contains(json_encode($loadedFonts), 'Hind Siliguri'))
+        <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/hindsiliguri/v14/ijwTs5juQtsyLLR5jN4cxBEoTI7ax8s3JimW3w.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/hindsiliguri/v14/ijwOs5juQtsyLLR5jN4cxBEoRCf_0vQVKwOs1tqhwg.woff2" crossorigin>
+    @endif
+
+    {{-- Load Google Fonts asynchronously with display=optional to prevent layout shifts --}}
     @foreach ($loadedFonts as $font)
-        <link rel="preload" as="style" href="{{ $font->source_url }}">
-        <link href="{{ $font->source_url }}" rel="stylesheet">
+        @php
+            $fontSourceUrl = str_replace('display=swap', 'display=optional', $font->source_url);
+        @endphp
+        <link rel="preload" as="style" href="{{ $fontSourceUrl }}">
+        <link rel="stylesheet" href="{{ $fontSourceUrl }}" media="print" onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="{{ $fontSourceUrl }}">
+        </noscript>
     @endforeach
 
     @php
