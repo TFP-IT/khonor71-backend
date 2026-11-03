@@ -103,7 +103,7 @@
                                     {{ $candidate->title ?: $candidate->source_title }}
                                 </a>
                                 <div class="small text-muted d-flex align-items-center gap-2">
-                                    <span><i class="fa fa-rss me-1"></i>{{ $candidate->source?->name ?? 'RSS' }}</span>
+                                    <span><i class="fa fa-rss me-1"></i>{{ $candidate->source?->name ?? ($candidate->origin === 'trends' ? 'Google Trends' : 'RSS') }}</span>
                                     <span>·</span>
                                     <a href="{{ $candidate->source_url }}" target="_blank" rel="noopener noreferrer" class="text-muted text-decoration-none">
                                         <i class="fa fa-external-link"></i>

@@ -198,11 +198,11 @@
 
                     {{-- Article Body --}}
                     <div class="mb-3">
-                        <label class="form-label fw-bold" for="candidate-body">Article Text (Plain text paragraphs) <span class="text-danger">*</span></label>
+                        <label class="form-label fw-bold" for="candidate-body">Article Text (HTML or plain paragraphs) <span class="text-danger">*</span></label>
                         <textarea id="candidate-body" class="form-control font-monospace" name="body" rows="14" maxlength="10000"
-                            placeholder="Type or paste plain text paragraphs here. Use a blank line between paragraphs." required>{{ old('body', $candidate->body) }}</textarea>
+                            placeholder="Type or paste article text. Allowed tags: p, h2, h3, ul, ol, li, table. Plain text uses a blank line between paragraphs." required>{{ old('body', $candidate->body) }}</textarea>
                         <div class="form-text text-muted">
-                            <i class="fa fa-info-circle me-1"></i> Separate paragraphs with a blank line. Paragraphs will be converted to HTML <code>&lt;p&gt;</code> tags when imported to CMS.
+                            <i class="fa fa-info-circle me-1"></i> Plain text paragraphs (blank line separated) become <code>&lt;p&gt;</code> tags on import. HTML is limited to a safe allow-list; other tags and attributes are removed on save.
                         </div>
                         @error('body')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                     </div>
@@ -228,6 +228,29 @@
                                     value="{{ old('keywords', implode(', ', $candidate->keywords ?? [])) }}" maxlength="1000"
                                     placeholder="e.g. বাংলাদেশ, সংবাদ, জাতীয়">
                                 @error('keywords')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="candidate-focus-keyword">Focus Keyword</label>
+                                <input id="candidate-focus-keyword" class="form-control" name="focus_keyword"
+                                    value="{{ old('focus_keyword', $candidate->focus_keyword) }}" maxlength="150">
+                                @error('focus_keyword')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">FAQ (optional, only facts confirmed by the source)</label>
+                                @php($faqRows = old('faq', $candidate->schema_faq ?? []))
+                                @for ($i = 0; $i < max(3, count($faqRows)); $i++)
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-md-5">
+                                            <input class="form-control" name="faq[{{ $i }}][question]" maxlength="300" placeholder="Question"
+                                                value="{{ $faqRows[$i]['question'] ?? '' }}">
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input class="form-control" name="faq[{{ $i }}][answer]" maxlength="800" placeholder="Answer"
+                                                value="{{ $faqRows[$i]['answer'] ?? '' }}">
+                                        </div>
+                                    </div>
+                                @endfor
+                                <div class="form-text">Filled pairs are appended to the article as a visible FAQ section on import.</div>
                             </div>
                         </div>
                     </div>

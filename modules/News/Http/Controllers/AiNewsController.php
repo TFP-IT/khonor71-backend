@@ -14,6 +14,7 @@ use Modules\News\Entities\AiNewsSource;
 use Modules\News\Jobs\GenerateAiNewsCandidateJob;
 use Modules\News\Jobs\CollectAiNewsFeedsJob;
 use Modules\News\Services\AiNewsHostPolicy;
+use Modules\News\Services\AiNewsHtmlSanitizer;
 use Modules\News\Services\GemmaNewsDraftService;
 use Modules\News\Services\NewsService;
 
@@ -215,7 +216,22 @@ class AiNewsController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:255'],
             'keywords' => ['nullable', 'string', 'max:1000'],
+            'focus_keyword' => ['nullable', 'string', 'max:150'],
+            'faq' => ['nullable', 'array', 'max:6'],
+            'faq.*.question' => ['nullable', 'string', 'max:300'],
+            'faq.*.answer' => ['nullable', 'string', 'max:800'],
         ]);
+
+        $faq = collect($data['faq'] ?? [])
+            ->map(static fn ($item) => [
+                'question' => trim(strip_tags((string) ($item['question'] ?? ''))),
+                'answer' => trim(strip_tags((string) ($item['answer'] ?? ''))),
+            ])
+            ->filter(static fn ($item) => $item['question'] !== '' && $item['answer'] !== '')
+            ->values()
+            ->all();
+        unset($data['faq']);
+        $data['body'] = app(AiNewsHtmlSanitizer::class)->toSafeHtml($data['body']);
 
         $keywords = collect(explode(',', $data['keywords'] ?? ''))
             ->map(static fn ($keyword) => trim($keyword))
@@ -228,6 +244,7 @@ class AiNewsController extends Controller
         $candidateModel->forceFill([
             ...$data,
             'keywords' => $keywords,
+            'schema_faq' => $faq ?: null,
             'status' => AiNewsCandidate::STATUS_REVIEWED,
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
@@ -274,14 +291,17 @@ class AiNewsController extends Controller
             ->where('language_id', $candidateModel->language_id)->first();
         abort_unless($category, 422, 'The configured category is no longer available for this language.');
 
-        $paragraphs = preg_split('/\R{2,}/u', trim((string) $candidateModel->body)) ?: [];
-        $bodyHtml = collect($paragraphs)
-            ->map(static fn ($paragraph) => trim($paragraph))
-            ->filter()
-            ->map(static fn ($paragraph) => '<p>' . e($paragraph) . '</p>')
-            ->implode("\n");
+        $bodyHtml = app(AiNewsHtmlSanitizer::class)->toSafeHtml((string) $candidateModel->body);
+        if (! empty($candidateModel->schema_faq)) {
+            $bodyHtml .= "\n<h2>Frequently asked questions</h2>\n" . collect($candidateModel->schema_faq)
+                ->map(static fn ($item) => '<h3>' . e($item['question']) . '</h3><p>' . e($item['answer']) . '</p>')
+                ->implode("\n");
+        }
 
-        $keywords = collect($candidateModel->keywords ?? [])->implode(', ');
+        $keywords = collect(array_merge(
+            $candidateModel->focus_keyword ? [$candidateModel->focus_keyword] : [],
+            $candidateModel->keywords ?? []
+        ))->unique()->implode(', ');
         if (trim($keywords) === '') {
             $keywords = $candidateModel->title;
         }

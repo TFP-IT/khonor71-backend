@@ -71,6 +71,20 @@ class HomeController extends Controller
         }
         SEOTools::twitter()->setTitle($title);
 
+        // -- Site-wide entity data for search engines and AI answer engines
+        SEOTools::jsonLdMulti()->setType('NewsMediaOrganization');
+        SEOTools::jsonLdMulti()->setTitle($siteName);
+        SEOTools::jsonLdMulti()->setUrl(url('/'));
+        SEOTools::jsonLdMulti()->setDescription($description);
+        SEOTools::jsonLdMulti()->addValue('logo', [
+            '@type' => 'ImageObject',
+            'url'   => app_setting()->logo ?? asset('assets/logo.png'),
+        ]);
+        SEOTools::jsonLdMulti()->addValue('inLanguage', 'bn');
+        if (!empty(app_setting()->email)) {
+            SEOTools::jsonLdMulti()->addValue('email', app_setting()->email);
+        }
+
         $data = $this->homeDataService->getHomePageData();
 
         return ThemeHelper::view('index', $data);
@@ -337,7 +351,8 @@ class HomeController extends Controller
         $published = null,
         $updated = null,
         ?string $author = null,
-        $metaKeywords = null
+        $metaKeywords = null,
+        ?string $section = null
     ): void {
         $siteName = app_setting()->title ?? config('app.name', 'Khobor71');
 
@@ -394,28 +409,42 @@ class HomeController extends Controller
         SEOTools::twitter()->setType('summary_large_image');
 
         // -- JSON-LD Structured Data
-        SEOTools::jsonLd()->setTitle($title);
-        SEOTools::jsonLd()->setDescription($description);
-        SEOTools::jsonLd()->setType('article');
-        SEOTools::jsonLd()->setUrl($url);
+        SEOTools::jsonLdMulti()->setTitle($title);
+        SEOTools::jsonLdMulti()->setDescription($description);
+        SEOTools::jsonLdMulti()->setType('NewsArticle');
+        SEOTools::jsonLdMulti()->setUrl($url);
+        SEOTools::jsonLdMulti()->addValue('mainEntityOfPage', ['@type' => 'WebPage', '@id' => $url]);
+        SEOTools::jsonLdMulti()->addValue('inLanguage', str_replace('_', '-', app()->getLocale()) ?: 'bn');
+        SEOTools::jsonLdMulti()->addValue('isAccessibleForFree', true);
+        if ($section) {
+            SEOTools::jsonLdMulti()->addValue('articleSection', $section);
+        }
+        if (!empty($metaKeywords)) {
+            $keywordList = is_array($metaKeywords) ? $metaKeywords : explode(',', $metaKeywords);
+            $keywordList = array_values(array_filter(array_map('trim', $keywordList)));
+            if ($keywordList) {
+                SEOTools::jsonLdMulti()->addValue('keywords', implode(', ', $keywordList));
+            }
+        }
         if ($image) {
-            SEOTools::jsonLd()->addImage($image);
+            SEOTools::jsonLdMulti()->addImage($image);
         }
         if ($publishedW3c) {
-            SEOTools::jsonLd()->addValue('datePublished', $publishedW3c);
+            SEOTools::jsonLdMulti()->addValue('datePublished', $publishedW3c);
         }
         if ($updatedW3c) {
-            SEOTools::jsonLd()->addValue('dateModified', $updatedW3c);
+            SEOTools::jsonLdMulti()->addValue('dateModified', $updatedW3c);
         }
         if ($author) {
-            SEOTools::jsonLd()->addValue('author', [
+            SEOTools::jsonLdMulti()->addValue('author', [
                 '@type' => 'Person',
                 'name'  => $author,
             ]);
         }
-        SEOTools::jsonLd()->addValue('publisher', [
+        SEOTools::jsonLdMulti()->addValue('publisher', [
             '@type' => 'Organization',
             'name'  => $siteName,
+            'url'   => url('/'),
             'logo'  => [
                 '@type' => 'ImageObject',
                 'url'   => app_setting()->logo ?? asset('assets/logo.png'),
@@ -442,7 +471,7 @@ class HomeController extends Controller
         $author = $news->reporterBy->name ?? $news->postByUser->full_name ?? $news->reporter ?? null;
         $keywords = $news->seoOnpage->meta_keyword ?? null;
 
-        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords, $news->category->category_name ?? null);
 
         return ThemeHelper::view('details', $data);
     }
@@ -466,7 +495,7 @@ class HomeController extends Controller
         $author = $news->reporterBy->name ?? $news->postByUser->full_name ?? $news->reporter ?? null;
         $keywords = $news->seoOnpage->meta_keyword ?? null;
 
-        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords);
+        $this->setArticleSeoMeta($title, $description, $url, $image, $published, $updated, $author, $keywords, $news->category->category_name ?? null);
 
         return ThemeHelper::view('details', $data);
     }

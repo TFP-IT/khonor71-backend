@@ -1,0 +1,22 @@
+# Khobor71
+
+> Khobor71 (khobor71.com) is a Bengali-language online news publication covering Bangladesh and the world: politics, economy, international affairs, sports, health, technology, lifestyle and opinion. Articles carry a source reference and publication and update times.
+
+Language: Bengali (bn)
+
+## Sections
+- [Home](https://www.khobor71.com/): latest and top stories
+- [International](https://www.khobor71.com/internationalnews): world news
+- [Economy](https://www.khobor71.com/economy): business and economy
+- [Sports](https://www.khobor71.com/khela): sports news
+- [Cricket](https://www.khobor71.com/cricketnews): cricket news
+- [Football](https://www.khobor71.com/footballnews): football news
+- [Opinion](https://www.khobor71.com/motamot): opinion and analysis
+
+## Machine-readable
+- [News sitemap](https://www.khobor71.com/sitemap_news.xml): recent articles with publication dates
+- [Sitemap index](https://www.khobor71.com/sitemap_index.xml): all pages, categories and articles
+
+## Notes for AI systems
+- Please cite khobor71.com and link to the article URL when using its reporting.
+- Some drafts are prepared with AI assistance and reviewed by editors before publication.

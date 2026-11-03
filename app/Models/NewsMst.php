@@ -123,6 +123,38 @@ class NewsMst extends Model
             }
 
         });
+
+        static::saved(function ($model) {
+            if ($model->status == 1 && ($model->wasRecentlyCreated || $model->wasChanged('status'))) {
+                $model->notifyGoogle();
+            }
+        });
+    }
+
+    /**
+     * Refresh the sitemap caches and, when enabled, ping the Google Indexing API.
+     * Only acts on live articles; future-dated ones are handled by news:publish-scheduled.
+     */
+    public function notifyGoogle(): void
+    {
+        if (! $this->isPublished() || $this->is_indexed) {
+            return;
+        }
+
+        // The scheduler runs every minute over a 5 minute window; notify once per article.
+        if (! \Illuminate\Support\Facades\Cache::add('google-notified-' . $this->id, 1, now()->addHour())) {
+            return;
+        }
+
+        try {
+            app(\App\Services\Sitemap\SitemapService::class)->clearCaches();
+
+            if (config('ai_news.indexing.enabled')) {
+                \App\Jobs\PingGoogleIndexingApiJob::dispatch($this->id);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Google notification failed.', ['news_id' => $this->id, 'error' => $e->getMessage()]);
+        }
     }
 
     /**

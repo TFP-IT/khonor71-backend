@@ -13,8 +13,11 @@ use Throwable;
 
 class AiNewsFeedService
 {
-    public function __construct(private readonly AiNewsHostPolicy $hostPolicy)
-    {
+    public function __construct(
+        private readonly AiNewsHostPolicy $hostPolicy,
+        private readonly GoogleTrendsService $trendsService,
+        private readonly GoogleCustomSearchService $searchService
+    ) {
     }
 
     public function collectEnabledSources(): array
@@ -99,7 +102,79 @@ class AiNewsFeedService
             }
         }
 
+        if (config('ai_news.trends.enabled')) {
+            try {
+                $trends = $this->collectTrends();
+                $created += $trends['created'];
+                $skipped += $trends['skipped'];
+            } catch (Throwable $exception) {
+                report($exception);
+                $errors[] = 'Google Trends: ' . Str::limit($exception->getMessage(), 1000);
+            }
+        }
+
         return compact('created', 'skipped', 'errors');
+    }
+
+    private function collectTrends(): array
+    {
+        $languageId = (int) config('ai_news.trends.language_id');
+        $categoryId = (int) config('ai_news.trends.category_id');
+        if ($languageId <= 0 || $categoryId <= 0) {
+            throw new \RuntimeException('Set AI_NEWS_TRENDS_LANGUAGE_ID and AI_NEWS_TRENDS_CATEGORY_ID to enable trends ingestion.');
+        }
+
+        $created = 0;
+        $skipped = 0;
+        $searchesLeft = (int) config('ai_news.google_search.max_queries_per_run', 5);
+
+        foreach ($this->trendsService->fetch() as $topic) {
+            if ($this->remainingDailyCapacity() <= 0) {
+                break;
+            }
+
+            $sourceHash = hash('sha256', $this->canonicalizeUrl($topic['url']));
+            if (AiNewsCandidate::where('source_hash', $sourceHash)->exists()) {
+                $skipped++;
+                continue;
+            }
+
+            $research = '';
+            if ($searchesLeft > 0 && $this->searchService->isConfigured()) {
+                $searchesLeft--;
+                $research = $this->searchService->contextFor($topic['title']);
+            }
+
+            $candidate = AiNewsCandidate::create([
+                'source_id' => null,
+                'source_hash' => $sourceHash,
+                'source_guid' => Str::limit($topic['url'], 500, ''),
+                'source_url' => $topic['url'],
+                'source_title' => $topic['title'],
+                'source_excerpt' => $topic['snippet'],
+                'source_published_at' => $topic['published_at'],
+                'language_id' => $languageId,
+                'category_id' => $categoryId,
+                'research_context' => $research !== '' ? $research : null,
+                'origin' => 'trends',
+                'status' => AiNewsCandidate::STATUS_PENDING,
+            ]);
+
+            try {
+                GenerateAiNewsCandidateJob::dispatch($candidate->id)
+                    ->onConnection(config('ai_news.queue_connection', 'database'))
+                    ->onQueue('ai-news');
+            } catch (Throwable $exception) {
+                $candidate->forceFill([
+                    'status' => AiNewsCandidate::STATUS_FAILED,
+                    'error_message' => Str::limit('Could not queue draft generation: ' . $exception->getMessage(), 2000),
+                ])->save();
+                throw $exception;
+            }
+            $created++;
+        }
+
+        return compact('created', 'skipped');
     }
 
     private function remainingDailyCapacity(): int

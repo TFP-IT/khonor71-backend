@@ -23,12 +23,13 @@ class AiNewsCandidate extends Model
         'source_excerpt', 'source_published_at', 'language_id', 'category_id',
         'title', 'short_head', 'summary', 'body', 'meta_title', 'meta_description',
         'keywords', 'model_name', 'generation_attempts', 'status', 'error_message', 'reviewed_by',
-        'reviewed_at', 'news_mst_id',
+        'reviewed_at', 'news_mst_id', 'focus_keyword', 'schema_faq', 'research_context', 'origin',
     ];
 
     protected $casts = [
         'source_published_at' => 'datetime',
         'keywords' => 'array',
+        'schema_faq' => 'array',
         'generation_attempts' => 'integer',
         'reviewed_at' => 'datetime',
     ];

@@ -68,6 +68,8 @@ class PublishScheduledNewsCommand extends Command
                 }
             }
 
+            $news->notifyGoogle();
+
             $publishedCount++;
             Log::info("Scheduled article published: {$news->title} (ID: {$news->id}, Publish Date: {$news->publish_date})");
         }
