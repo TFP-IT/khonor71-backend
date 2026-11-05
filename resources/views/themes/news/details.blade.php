@@ -220,9 +220,6 @@
                 @endif
             </figure> -->
 
-            <!-- Article-slider -->
-            @include ('themes.news.components.slider.article-slider')
-
 
             <!-- Single Comment 1 -->
             @if (app_setting()->show_reporter_message == 1)
@@ -260,6 +257,9 @@
             @if (app_setting()->web_user_can_comment == 1)
                 @include ('themes.news.components.details.comment-section')
             @endif
+
+            <!-- Previous / Next article (after comments) -->
+            @include ('themes.news.components.slider.article-slider')
 
         </section>
 
