@@ -841,9 +841,16 @@ if (!function_exists('__url')) {
         // contain Bengali slugs. Keep their stored values for database joins,
         // but always publish the transliterated slug in website links.
         if (is_string($path) && !str_contains($path, '/') && preg_match('/[\x{0980}-\x{09FF}]/u', $path)) {
-            $category = Modules\Category\Entities\Category::where('slug', $path)->first();
-            if ($category) {
-                $path = generateSlug($category->slug ?: $category->category_name);
+            static $resolved = [];
+            if (!array_key_exists($path, $resolved)) {
+                $resolved[$path] = Cache::remember('bn_slug_url:' . md5($path), 3600, function () use ($path) {
+                    $category = Modules\Category\Entities\Category::where('slug', $path)->first();
+
+                    return $category ? generateSlug($category->slug ?: $category->category_name) : '';
+                });
+            }
+            if ($resolved[$path] !== '') {
+                $path = $resolved[$path];
             }
         }
 
@@ -1018,15 +1025,18 @@ if (!function_exists('get_advertisements')) {
     {
         $languageId = get_language_id();
 
-        return Advertisement::select('embed_code')
-            ->with('themeRelation')
-            ->where('language_id', $languageId)
-            ->where('page', $page)
-            ->where('ad_position', $position)
-            ->whereHas('themeRelation', function ($query) {
-                $query->where('is_active', 1);
-            })
-            ->first();
+        // Wrapped in an array so a "no ad" (null) result is cached too.
+        return Cache::remember("advertisement:{$languageId}:{$page}:{$position}", 300, function () use ($languageId, $page, $position) {
+            return ['ad' => Advertisement::select('embed_code')
+                ->with('themeRelation')
+                ->where('language_id', $languageId)
+                ->where('page', $page)
+                ->where('ad_position', $position)
+                ->whereHas('themeRelation', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->first()];
+        })['ad'];
     }
 }
 
@@ -1044,7 +1054,7 @@ if (!function_exists('mode')) {
 function activeTheme()
 {
     // Fetch the active theme from the database
-    $theme = Theme::where('is_active', 1)->value('name');
+    $theme = Cache::remember('active_theme_name', 300, fn () => Theme::where('is_active', 1)->value('name'));
 
     if (!$theme) {
         abort(500, "No active theme found in the database.");
@@ -1695,16 +1705,18 @@ if (!function_exists('get_probashi_news')) {
     {
         $languageId = get_language_id();
 
-        return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date', 'encode_title')
-            ->with(['thumbnails' => function ($query) {
-                $query->select('id', 'probashi_news_id', 'thumbnail_path', 'frame_time')
-                      ->orderBy('frame_time', 'asc');
-            }])
-            ->where('language_id', $languageId)
-            ->where('status', ActivationStatusEnum::ACTIVE->value)
-            ->orderBy('id', 'desc')
-            ->take($limit)
-            ->get();
+        return Cache::remember("probashi_news_widget:{$languageId}:{$limit}", 300, function () use ($languageId, $limit) {
+            return ProbashiNews::select('id', 'title', 'thumbnail_image', 'image_alt', 'publish_date', 'encode_title')
+                ->with(['thumbnails' => function ($query) {
+                    $query->select('id', 'probashi_news_id', 'thumbnail_path', 'frame_time')
+                          ->orderBy('frame_time', 'asc');
+                }])
+                ->where('language_id', $languageId)
+                ->where('status', ActivationStatusEnum::ACTIVE->value)
+                ->orderBy('id', 'desc')
+                ->take($limit)
+                ->get();
+        });
     }
 }
 

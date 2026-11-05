@@ -44,6 +44,7 @@ class NewsRequest extends FormRequest
             'publish_time'           => ['nullable', 'string'],
             'publish_type'           => ['nullable', 'in:immediate,schedule'],
             'short_head'             => ['nullable', 'string'],
+            'post_date'              => ['nullable', 'date'],
             'head_line'              => ['required', 'string'],
             'details_news'           => ['required', 'string'],
             'image_file'             => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:5120'],

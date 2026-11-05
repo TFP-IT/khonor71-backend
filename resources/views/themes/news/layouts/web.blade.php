@@ -136,7 +136,7 @@
 
     {{-- ── Script Manager: Head Scripts ─────────────────────────────────── --}}
     @php
-        $scriptSettings = \Modules\Setting\Entities\Setting::find(121);
+        $scriptSettings = \Illuminate\Support\Facades\Cache::remember('setting_121', 300, fn () => \Modules\Setting\Entities\Setting::find(121));
         $sm = $scriptSettings ? json_decode($scriptSettings->details) : null;
     @endphp
     @if($sm)
@@ -631,7 +631,7 @@
     {{-- ── Script Manager: Body Scripts ────────────────────────────────── --}}
     @php
         if (!isset($sm)) {
-            $scriptSettings2 = \Modules\Setting\Entities\Setting::find(121);
+            $scriptSettings2 = \Illuminate\Support\Facades\Cache::remember('setting_121', 300, fn () => \Modules\Setting\Entities\Setting::find(121));
             $sm = $scriptSettings2 ? json_decode($scriptSettings2->details) : null;
         }
     @endphp

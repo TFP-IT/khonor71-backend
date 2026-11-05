@@ -1,4 +1,10 @@
 <x-web-layout>
+    @if (isset($newsDetail->photoLibrary->large_image))
+        @push('custom-css')
+            <link rel="preload" as="image" href="{{ asset('storage/' . $newsDetail->photoLibrary->large_image) }}" fetchpriority="high">
+        @endpush
+    @endif
+
     <!-- Pagination -->
     <section class="container mt-2">
         <div class="bg-neutral-100 dark:text-white dark:bg-neutral-800 flex items-center p-2 gap-3">
@@ -98,9 +104,11 @@
             <div class="dark:text-white mt-6">
                 @if (isset($newsDetail->photoLibrary->large_image))
                     <figure class="mb-8">
+                        {{-- LCP image: load eagerly with top priority, never lazy --}}
                         <img class="w-full max-h-[550px]"
                             src="{{ isset($newsDetail->photoLibrary->large_image) ? asset('storage/' . $newsDetail->photoLibrary->large_image) : asset('/assets/news-details-view.png') }}"
-                            alt="{{ $newsDetail->image_alt }}" />
+                            alt="{{ $newsDetail->image_alt }}"
+                            loading="eager" fetchpriority="high" decoding="async" />
                         <figcaption class="mt-2 text-sm text-gray-500 dark:text-gray-400 italic text-center">
                             {{ $newsDetail->image_title }}
                         </figcaption>
@@ -108,7 +116,16 @@
                 @endif
 
                 <div id="news-content" class="text-base prose-content">
-                    {!! $newsDetail->news ?? 'null' !!}
+                    @php
+                        // Lazy-load images/iframes embedded in the article body (below the fold).
+                        $articleBody = preg_replace(
+                            '/<(img|iframe)\b(?![^>]*\bloading=)/i',
+                            '<$1 loading="lazy"',
+                            $newsDetail->news ?? 'null'
+                        );
+                        $articleBody = preg_replace('/<img\b(?![^>]*\bdecoding=)/i', '<img decoding="async"', $articleBody);
+                    @endphp
+                    {!! $articleBody !!}
                 </div>
 
                 {{-- News Post Video Url --}}

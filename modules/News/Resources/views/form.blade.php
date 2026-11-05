@@ -161,7 +161,7 @@
 
         <div class="row">
 
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-4 col-md-4">
                 <div class="row form-group">
                     <label for="home_page"
                         class="col-form-label fw-semibold">{{ localize_uc('home_position') }}</label>
@@ -182,7 +182,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-4 col-md-4">
                 <div class="row form-group">
                     <div class="col-sm-12 col-md-12 col-xl-12">
                         <label for="short_head" class="col-form-label fw-semibold">{{ localize_uc('short_head') }}
@@ -193,6 +193,22 @@
                             value="{{ old('short_head', $newsMst->stitle ?? null) }}">
                         <div class="invalid-feedback error text-danger m-2">
                             @error('short_head')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4">
+                <div class="row form-group">
+                    <div class="col-sm-12 col-md-12 col-xl-12">
+                        <label for="post_date" class="col-form-label fw-semibold">Post Date</label>
+                        <input type="date" name="post_date" id="post_date"
+                            class="form-control @error('post_date') is-invalid @enderror"
+                            value="{{ old('post_date', !empty($newsMst) && $newsMst->post_date ? $newsMst->post_date->format('Y-m-d') : date('Y-m-d')) }}">
+                        <div class="invalid-feedback error text-danger m-2">
+                            @error('post_date')
                             {{ $message }}
                             @enderror
                         </div>

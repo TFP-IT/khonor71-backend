@@ -70,8 +70,64 @@ class HomeDataService
                 ];
             }
 
+            // Batch-load photo libraries (one query) instead of one lazy query per news card in the views.
+            self::preloadPhotoLibraries($data);
+
             return $data;
         });
+    }
+
+    /**
+     * Walk arbitrarily nested arrays/collections/models, find every NewsMst that has no
+     * photoLibrary loaded yet and eager-load them all with a single query.
+     */
+    public static function preloadPhotoLibraries(mixed $data): void
+    {
+        $models = [];
+        $seen = [];
+        $walk = function ($node, $depth = 0) use (&$walk, &$models, &$seen) {
+            if ($depth > 8 || $node === null || is_scalar($node)) {
+                return;
+            }
+            if (is_object($node)) {
+                $id = spl_object_id($node);
+                if (isset($seen[$id])) {
+                    return;
+                }
+                $seen[$id] = true;
+            }
+            if ($node instanceof NewsMst) {
+                if (!$node->relationLoaded('photoLibrary')) {
+                    $models[] = $node;
+                }
+                foreach ($node->getRelations() as $relation) {
+                    $walk($relation, $depth + 1);
+                }
+                return;
+            }
+            if ($node instanceof \Illuminate\Database\Eloquent\Model) {
+                foreach ($node->getRelations() as $relation) {
+                    $walk($relation, $depth + 1);
+                }
+                // Dynamic attributes such as $menu->top_news hold collections of news.
+                foreach ($node->getAttributes() as $attribute) {
+                    if (is_object($attribute) || is_array($attribute)) {
+                        $walk($attribute, $depth + 1);
+                    }
+                }
+                return;
+            }
+            if (is_array($node) || $node instanceof \Traversable) {
+                foreach ($node as $child) {
+                    $walk($child, $depth + 1);
+                }
+            }
+        };
+        $walk($data);
+
+        if ($models) {
+            (new \Illuminate\Database\Eloquent\Collection($models))->loadMissing('photoLibrary');
+        }
     }
 
     private function getHomeStory()
@@ -112,25 +168,37 @@ class HomeDataService
         $languageId = get_language_id();
 
         $currentNewsId = $newsDetail->id;
-        $previousNews = NewsMst::where('id', '<', $currentNewsId)
-            ->where('language_id', $languageId)
-            ->where('publish_date', '<=', Carbon::now())
-            ->orderBy('id', 'desc')
-            ->take(2)
-            ->get()
-            ->reverse();
+        // Neighbouring + related articles are shared by every reader of this article,
+        // so cache them briefly instead of re-querying on each page-cache miss.
+        $related = Cache::remember("news_detail_related:{$languageId}:{$currentNewsId}", now()->addMinutes(5), function () use ($currentNewsId, $languageId, $newsDetail) {
+            $previousNews = NewsMst::where('id', '<', $currentNewsId)
+                ->where('language_id', $languageId)
+                ->where('publish_date', '<=', Carbon::now())
+                ->orderBy('id', 'desc')
+                ->take(2)
+                ->get()
+                ->reverse()
+                ->values();
 
-        $nextNews = NewsMst::where('id', '>', $currentNewsId)
-            ->where('language_id', $languageId)
-            ->where('publish_date', '<=', Carbon::now())
-            ->orderBy('id', 'asc')
-            ->take(2)
-            ->get();
+            $nextNews = NewsMst::where('id', '>', $currentNewsId)
+                ->where('language_id', $languageId)
+                ->where('publish_date', '<=', Carbon::now())
+                ->orderBy('id', 'asc')
+                ->take(2)
+                ->get();
 
-        $sectionSixNews = $this->getDetailsRelatedNews($newsDetail->category->id);
+            $sectionSixNews = $this->getDetailsRelatedNews($newsDetail->category->id);
 
-        // Increment reader_hit
-        $newsDetail->increment('reader_hit');
+            self::preloadPhotoLibraries([$previousNews, $nextNews, $sectionSixNews]);
+
+            return compact('previousNews', 'nextNews', 'sectionSixNews');
+        });
+        $previousNews   = $related['previousNews'];
+        $nextNews       = $related['nextNews'];
+        $sectionSixNews = $related['sectionSixNews'];
+
+        // Increment reader_hit with a raw query so updated_at (used for sitemap lastmod) is not touched.
+        NewsMst::whereKey($newsDetail->id)->toBase()->increment('reader_hit');
 
         $approvedCommentsCount = NewsComment::where('news_mst_id', $currentNewsId)->where('is_approved', 1)->count();
         $comments = NewsComment::with([
@@ -214,9 +282,9 @@ class HomeDataService
 
     private function retriveNewsDetail($slug)
     {
-        $news = NewsMst::with(['category', 'subCategory', 'reporterBy', 'seoOnpage'])
+        $news = NewsMst::with(['category', 'subCategory', 'reporterBy', 'seoOnpage', 'photoLibrary', 'postTags'])
                 ->withCount('comments')
-                ->with(['postByUser:id,full_name', 'comments'])
+                ->with(['postByUser:id,full_name'])
                 ->where('encode_title', $slug)
                 ->firstOrFail();
 
@@ -227,7 +295,7 @@ class HomeDataService
     {
         $news = NewsArchive::with(['category', 'subCategory', 'reporterBy', 'seoOnpage'])
                 ->withCount('comments')
-                ->with(['postByUser:id,full_name', 'comments'])
+                ->with(['postByUser:id,full_name'])
                 ->where('encode_title', $slug)
                 ->firstOrFail();
 
@@ -238,7 +306,7 @@ class HomeDataService
     {
         $languageId = get_language_id();
 
-        $archiveNews = NewsMst::with(['category', 'postByUser:id,full_name', 'comments'])
+        $archiveNews = NewsMst::with(['category', 'postByUser:id,full_name', 'photoLibrary'])
             ->withCount('comments')
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
@@ -262,7 +330,7 @@ class HomeDataService
     {
         $languageId = get_language_id();
 
-        $archiveNews = NewsArchive::with(['category', 'postByUser:id,full_name', 'comments'])
+        $archiveNews = NewsArchive::with(['category', 'postByUser:id,full_name'])
             ->withCount('comments')
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
@@ -525,7 +593,7 @@ class HomeDataService
                         ->where('language_id', $languageId)
                         ->where('publish_date', '<=', Carbon::now())
                         ->where('status', 1)
-                        ->with(['postByUser:id,full_name', 'comments']);
+                        ->with(['postByUser:id,full_name']);
                 }])
                 ->whereNotNull('home_position')
                 ->whereBetween('home_position', [1, 7])
@@ -588,7 +656,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments', 'category']);
+                    ->with(['postByUser:id,full_name', 'category']);
             }, 'category'])
             ->where('category_id', 68)
             ->where('status', 1)
@@ -657,7 +725,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $leftCategory)
                 // ->whereNotNull('category_position')
@@ -683,7 +751,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $rightCategory)
                 // ->whereNotNull('category_position')
@@ -720,7 +788,7 @@ class HomeDataService
             // Fetch today's published news, ranked by reader hits.
             $popularNews = NewsMst::select(columns: ['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
                 ->withCount('comments')
-                ->with(['postByUser:id,full_name', 'comments'])
+                ->with(['postByUser:id,full_name'])
                 ->where('language_id', $languageId)
                 ->whereDate('publish_date', $today)
                 ->where('publish_date', '<=', Carbon::now())
@@ -805,7 +873,7 @@ class HomeDataService
         }
 
         // Fetch the latest recommended news with post user and comments count
-        $recommendedPosts = NewsMst::with(['postByUser:id,full_name', 'comments'])
+        $recommendedPosts = NewsMst::with(['postByUser:id,full_name'])
             ->select(['id', 'news_id', 'encode_title', 'category_id', 'title', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
             ->withCount('comments')
             ->where('language_id', $languageId)
@@ -855,7 +923,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $category[0])
                 // ->whereNotNull('category_position')
@@ -911,7 +979,7 @@ class HomeDataService
                             ->where('language_id', $languageId)
                             ->where('publish_date', '<=', Carbon::now())
                             ->where('status', 1)
-                            ->with(['postByUser:id,full_name', 'comments']);
+                            ->with(['postByUser:id,full_name']);
                             }])
                         ->where('sub_category_id', $subcategory->id)
                         // ->whereNotNull('category_position')
@@ -971,7 +1039,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $category[0])
                 // ->whereNotNull('category_position')
@@ -992,6 +1060,17 @@ class HomeDataService
     {
         $languageId = get_language_id();
 
+        return Cache::remember("top_week_news:{$languageId}", now()->addMinutes(5), function () use ($languageId) {
+            $items = $this->queryTopWeekNews($languageId);
+            self::preloadPhotoLibraries($items);
+
+            return $items;
+        });
+    }
+
+    private function queryTopWeekNews($languageId)
+    {
+
         // Step 1: Get the last 7 unique publish dates (latest first)
         $last7Dates = NewsMst::where('language_id', $languageId)
             ->where('status', 1)
@@ -1003,7 +1082,7 @@ class HomeDataService
             ->toArray();
 
         // Step 2: Fetch top 5 news from those dates
-        $topWeekNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
+        $topWeekNews = NewsMst::with(['postByUser:id,full_name'])
             ->select([
                 'id', 'news_id', 'encode_title', 'category_id', 'title', 'image',
                 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'
@@ -1024,7 +1103,7 @@ class HomeDataService
         $languageId = get_language_id();
 
         // Fetch the most read news
-        $topWeekNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
+        $topWeekNews = NewsMst::with(['postByUser:id,full_name'])
             ->select(['id', 'news_id', 'encode_title', 'category_id', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
             ->withCount('comments')
             ->where('language_id', $languageId)
@@ -1071,7 +1150,7 @@ class HomeDataService
         $languageId = get_language_id();
 
         // Fetch the latest featured news with post user and comments count
-        $featuresNews = NewsMst::with(['postByUser:id,full_name', 'comments'])
+        $featuresNews = NewsMst::with(['postByUser:id,full_name'])
             ->select(['id', 'news_id', 'encode_title', 'title', 'image', 'image_base_url', 'image_alt', 'image_title', 'publish_date', 'post_by'])
             ->withCount('comments')
             ->where('language_id', $languageId)
@@ -1153,7 +1232,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $firstCategory)
                 // ->whereNotNull('category_position')
@@ -1178,7 +1257,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $secondCategory)
                 // ->whereNotNull('category_position')
@@ -1203,7 +1282,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $thirdCategory)
                 // ->whereNotNull('category_position')
@@ -1228,7 +1307,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $fourthCategory)
                 // ->whereNotNull('category_position')
@@ -1279,7 +1358,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $category[0])
                 // ->whereNotNull('category_position')
@@ -1331,7 +1410,7 @@ class HomeDataService
                     ->where('language_id', $languageId)
                     ->where('publish_date', '<=', Carbon::now())
                     ->where('status', 1)
-                    ->with(['postByUser:id,full_name', 'comments']);
+                    ->with(['postByUser:id,full_name']);
                 }])
                 ->where('category_id', $category->id)
                 // ->whereNotNull('category_position')
@@ -1403,7 +1482,7 @@ class HomeDataService
                 'status',
             ])
             ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
+            ->with(['postByUser:id,full_name', 'photoLibrary'])
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1)
@@ -1446,7 +1525,7 @@ class HomeDataService
                 'status',
             ])
             ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary'])
+            ->with(['postByUser:id,full_name', 'photoLibrary'])
             ->where('language_id', $languageId)
             ->where('category_id', 68)
             ->where('publish_date', '<=', Carbon::now())
@@ -1496,7 +1575,7 @@ class HomeDataService
 
         $popularNews = NewsMst::select(['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
             ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments'])
+            ->with(['postByUser:id,full_name'])
             ->where('category_id', $categoryId)
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
@@ -1514,7 +1593,7 @@ class HomeDataService
 
         $popularNews = NewsMst::select(['id', 'news_id', 'encode_title', 'title', 'news', 'image', 'image_base_url', 'image_alt', 'image_title', 'post_by', 'publish_date', 'status'])
             ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments'])
+            ->with(['postByUser:id,full_name'])
             ->where('sub_category_id', $categoryId)
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
@@ -1549,7 +1628,7 @@ class HomeDataService
     {
         $languageId = get_language_id();
 
-        $newsResults = NewsMst::with(['postByUser:id,full_name', 'comments', 'category'])
+        $newsResults = NewsMst::with(['postByUser:id,full_name', 'category'])
             ->withCount('comments')
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
@@ -1669,7 +1748,7 @@ class HomeDataService
                             ->where('language_id', $languageId)
                             ->where('publish_date', '<=', Carbon::now())
                             ->where('status', 1)
-                            ->with(['postByUser:id,full_name', 'comments']);
+                            ->with(['postByUser:id,full_name']);
                             }])
                         ->where('sub_category_id', $subcategory->id)
                         // ->whereNotNull('category_position')
@@ -2024,7 +2103,7 @@ class HomeDataService
                 'division_id',
             ])
             ->withCount('comments')
-            ->with(['postByUser:id,full_name', 'comments', 'photoLibrary', 'district', 'division'])
+            ->with(['postByUser:id,full_name', 'photoLibrary', 'district', 'division'])
             ->where('language_id', $languageId)
             ->where('publish_date', '<=', Carbon::now())
             ->where('status', 1);

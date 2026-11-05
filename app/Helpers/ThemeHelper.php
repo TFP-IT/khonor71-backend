@@ -26,13 +26,13 @@ class ThemeHelper
 
     public static function themeSettings()
     {
-        return Theme::where('is_active', 1)->first();
+        return \Illuminate\Support\Facades\Cache::remember('active_theme_model', 300, fn () => Theme::where('is_active', 1)->first());
     }
 
     private static function getActiveTheme()
     {
         // Fetch the active theme from the database
-        $theme = Theme::where('is_active', 1)->value('name');
+        $theme = \Illuminate\Support\Facades\Cache::remember('active_theme_name', 300, fn () => Theme::where('is_active', 1)->value('name'));
 
         if (!$theme) {
             abort(500, "No active theme found in the database.");

@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Closure;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use App\Models\NewsMst;
 use App\Enums\FontSetupEnum;
@@ -39,6 +40,21 @@ class WebLayout extends Component
     public function render(): View|Closure|string
     {
         $languageId = get_language_id();
+        $isMobileClientHint = request()->header('sec-ch-ua-mobile') === '?1';
+
+        // The layout (menus, footer, fonts, RSS, mega-menu news) is identical for every
+        // visitor of a given language/device, so build it once and reuse it for 5 minutes.
+        $layoutData = Cache::remember(
+            sprintf('web_layout_data:%s:%s:%d', $languageId, app()->getLocale(), (int) $isMobileClientHint),
+            now()->addMinutes(5),
+            fn () => $this->buildLayoutData($languageId, $isMobileClientHint)
+        );
+
+        return ThemeHelper::view('layouts.web', $layoutData + ['isMobileClientHint' => $isMobileClientHint]);
+    }
+
+    private function buildLayoutData($languageId, bool $isMobileClientHint): array
+    {
         $social = Setting::select('details')->where('id',111)->first();
         $socialLinks = json_decode($social->details);
         $footerSetting = Setting::where('event', 'footer_setup')->first();
@@ -91,7 +107,6 @@ class WebLayout extends Component
         $languages = Language::where('status', 1)->get();
         $activeLanguage = Language::where('value', app()->getLocale())->first();
 
-        $isMobileClientHint = request()->header('sec-ch-ua-mobile') === '?1';
         $today = Carbon::today();
         $mainMenus = MenuContent::with([
             'submenus' => function ($query) {
@@ -114,7 +129,7 @@ class WebLayout extends Component
                     $newsQuery = NewsMst::where('status', 1)
                         ->where('publish_date', '<=', Carbon::now())
                         ->withCount('comments')
-                        ->with(['postByUser:id,full_name', 'comments']);
+                        ->with(['postByUser:id,full_name']);
 
                     if ($isLatestMenu) {
                         $newsQuery
@@ -134,7 +149,7 @@ class WebLayout extends Component
                         $latestNews = NewsMst::where('status', 1)
                             ->where('publish_date', '<=', Carbon::now())
                             ->withCount('comments')
-                            ->with(['postByUser:id,full_name', 'comments'])
+                            ->with(['postByUser:id,full_name'])
                             ->orderBy('publish_date', 'desc')
                             ->orderBy('id', 'desc')
                             ->take(3)
@@ -156,7 +171,7 @@ class WebLayout extends Component
                         $news = NewsMst::where('sub_category_id', $submenu->content_id)->where('status', 1)
                             ->where('publish_date', '<=', Carbon::now())
                             ->withCount('comments')
-                            ->with(['postByUser:id,full_name', 'comments'])
+                            ->with(['postByUser:id,full_name'])
                             ->orderBy('created_at', 'desc')
                             ->take(3)
                             ->get();
@@ -170,7 +185,7 @@ class WebLayout extends Component
                         ->where('status', 1)
                         ->where('publish_date', '<=', Carbon::now())
                         ->withCount('comments')
-                        ->with(['postByUser:id,full_name', 'comments'])
+                        ->with(['postByUser:id,full_name'])
                         ->orderBy('created_at', 'desc')
                         ->take(3)
                         ->get();
@@ -258,7 +273,7 @@ class WebLayout extends Component
         $cookieData = Setting::select('details')->where('event','cookie_content')->first();
         $cookieInfo = json_decode($cookieData->details);
 
-        return ThemeHelper::view('layouts.web', [
+        $layout = [
             'socialLinks' => $socialLinks,
             'footerCategories' => $footerCategories,
             'footerMenus' => $footerMenus,
@@ -279,8 +294,11 @@ class WebLayout extends Component
             'randomRssFeedsNews' => $randomRssFeedsNews,
             'metaInfo' => $metaInfo,
             'cookieInfo' => $cookieInfo,
-            'isMobileClientHint' => $isMobileClientHint,
-        ]);
+        ];
+
+        HomeDataService::preloadPhotoLibraries($layout);
+
+        return $layout;
     }
 
     private function isLatestNewsMenu($menu): bool

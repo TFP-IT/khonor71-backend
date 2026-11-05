@@ -45,8 +45,11 @@ class NewsDataTable extends DataTable
                 return htmlspecialchars_decode($row->title);
             })
 
-            ->editColumn('language_id', function ($row) {
-                return $row->language->langname;
+            ->addColumn('seo_score', function ($row) {
+                $score = $this->calculateSeoScore($row);
+                $class = $score >= 80 ? 'bg-success' : ($score >= 50 ? 'bg-warning text-dark' : 'bg-danger');
+
+                return '<span class="badge ' . $class . '">' . $score . '/100</span>';
             })
 
             ->editColumn('status', function ($row) {
@@ -141,7 +144,77 @@ class NewsDataTable extends DataTable
                 return $button;
             })
 
-            ->rawColumns(['category_name', 'sub_category', 'news_image_path', 'action', 'status', 'publish_date', 'is_posted_to_social']);
+            ->rawColumns(['category_name', 'sub_category', 'news_image_path', 'action', 'status', 'publish_date', 'is_posted_to_social', 'seo_score']);
+    }
+
+    /**
+     * Calculate a real SEO score (0-100) from the post's actual SEO data.
+     */
+    protected function calculateSeoScore($row): int
+    {
+        $score = 0;
+
+        // SEO title (15): ideal 30-60 chars
+        $seoTitle = trim((string) $row->seo_title);
+        if ($seoTitle !== '') {
+            $len = mb_strlen($seoTitle);
+            $score += ($len >= 30 && $len <= 60) ? 15 : 8;
+        }
+
+        // Meta description (20): ideal 120-160 chars
+        $desc = trim((string) ($row->postSeoOnpage->meta_description ?? ''));
+        if ($desc !== '') {
+            $len = mb_strlen($desc);
+            $score += ($len >= 120 && $len <= 160) ? 20 : 10;
+        }
+
+        // Meta keywords (10)
+        if (trim((string) ($row->postSeoOnpage->meta_keyword ?? '')) !== '') {
+            $score += 10;
+        }
+
+        // Headline length (10): ideal 30-70 chars
+        $title = trim(strip_tags(htmlspecialchars_decode((string) $row->title)));
+        if ($title !== '') {
+            $len = mb_strlen($title);
+            $score += ($len >= 30 && $len <= 70) ? 10 : 5;
+        }
+
+        // Content length (20)
+        $words = preg_split('/\s+/u', trim(strip_tags((string) $row->news)), -1, PREG_SPLIT_NO_EMPTY);
+        $wordCount = is_array($words) ? count($words) : 0;
+        if ($wordCount >= 300) {
+            $score += 20;
+        } elseif ($wordCount >= 150) {
+            $score += 10;
+        } elseif ($wordCount > 0) {
+            $score += 5;
+        }
+
+        // Image (5) + alt text (5)
+        if (!empty($row->image)) {
+            $score += 5;
+        }
+        if (trim((string) $row->image_alt) !== '') {
+            $score += 5;
+        }
+
+        // Tags (5)
+        if ($row->postTags->isNotEmpty()) {
+            $score += 5;
+        }
+
+        // Structured data (5)
+        if ($row->schemaPost) {
+            $score += 5;
+        }
+
+        // Slug (5)
+        if (trim((string) $row->encode_title) !== '') {
+            $score += 5;
+        }
+
+        return min(100, $score);
     }
 
     /**
@@ -153,7 +226,7 @@ class NewsDataTable extends DataTable
     public function query(NewsMst $model)
     {
         return $model->newQuery()
-            ->with('category', 'postByUser', 'photoLibrary', 'reporterBy')
+            ->with('category', 'postByUser', 'photoLibrary', 'reporterBy', 'language', 'postSeoOnpage', 'postTags', 'schemaPost')
             ->where(function ($query) {
 
                 if (auth()->user()->user_type_id == 2) {
@@ -258,8 +331,9 @@ class NewsDataTable extends DataTable
             Column::make('post_by_user_name')->title(localize('post_by')),
             Column::make('publish_date')->title(localize('release_date')),
             Column::make('post_date')->title(localize('post_date')),
-            Column::make('language_id')
-                ->title(localize('language'))
+            Column::make('seo_score')
+                ->title('SEO Score')
+                ->addClass('text-center')
                 ->searchable(false)
                 ->orderable(false),
             Column::make('status')->title(localize('status')),
