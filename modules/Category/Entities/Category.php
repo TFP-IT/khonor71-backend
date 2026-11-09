@@ -9,10 +9,33 @@ use Modules\Localize\Entities\Language;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Archive\Entities\MaxArchiveSetting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'category_name',
+                'slug',
+                'menu',
+                'position',
+                'parents_id',
+                'language_id',
+                'category_type',
+                'description',
+                'meta_keyword',
+                'meta_description',
+                'color_code',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('Category');
+    }
 
     protected $fillable = [
         'id',

@@ -6,10 +6,26 @@ use Carbon\Carbon;
 use App\Enums\FontSourceEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class FontSetting extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'font_family',
+                'source',
+                'source_url',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('Setting (Font)');
+    }
 
     protected $fillable = [
         "source_url",

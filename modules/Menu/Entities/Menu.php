@@ -4,10 +4,27 @@ namespace Modules\Menu\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class Menu extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'position',
+                'style',
+                'status',
+                'mobile_status',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('Menu');
+    }
 
     /**
      * The attributes that are mass assignable.

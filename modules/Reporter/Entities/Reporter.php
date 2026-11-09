@@ -8,10 +8,36 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class Reporter extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'nick_name',
+                'pen_name',
+                'email',
+                'mobile',
+                'department_id',
+                'designation',
+                'status',
+                'post_ap_status',
+                'photo',
+                'address_one',
+                'city',
+                'state',
+                'country',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('Reporter');
+    }
     protected $fillable = [
         'uuid',
         'reporter_id',

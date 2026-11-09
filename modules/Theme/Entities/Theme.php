@@ -4,10 +4,32 @@ namespace Modules\Theme\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class Theme extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name', 
+                'image_path', 
+                'background_color',
+                'text_color',
+                'font_family',
+                'font_size',
+                'footer_color',
+                'hover_color',
+                'is_default',
+                'is_active',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('WebSetup (Theme)');
+    }
 
     protected $fillable = [
         'name', 

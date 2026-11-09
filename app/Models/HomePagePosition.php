@@ -6,10 +6,29 @@ use Ramsey\Uuid\Type\Integer;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Localize\Entities\Language;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class HomePagePosition extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'position_no',
+                'cat_name',
+                'slug',
+                'max_news',
+                'category_id',
+                'status',
+                'language_id',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('WebSetup (HomePage)');
+    }
     /**
      * The attributes that are mass assignable.
      *

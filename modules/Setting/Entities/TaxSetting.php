@@ -4,13 +4,12 @@ namespace Modules\Setting\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class TaxSetting extends Model
 {
-    use HasFactory;
-    use LogsActivity;
+    use HasFactory, LogsActivityWithDetails;
 
     protected $fillable = [
         'tax_number',
@@ -25,6 +24,8 @@ class TaxSetting extends Model
         return LogOptions::defaults()
             ->useLogName('Setting (Tax)')
             ->setDescriptionForEvent(fn (string $eventName) => "Tax setting {$eventName}")
-            ->logAll();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

@@ -8,22 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class PasswordSetting extends Model
 {
-    use HasFactory,softDeletes;
-    use LogsActivity;
+    use HasFactory, softDeletes, LogsActivityWithDetails;
 
     protected $fillable = ['min_length','max_lifetime','password_complexcity','password_history','lock_out_duration','session_idle_logout_time','is_active'];
     
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Password Setting')
+            ->useLogName('PasswordSetting')
             ->setDescriptionForEvent(fn(string $eventName) => "Password Setting {$eventName}")
-            ->logAll();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
     protected static function boot()
     {

@@ -7,13 +7,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Category\Entities\Category;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Language extends Model
 {
-    use HasFactory;    
-    use LogsActivity;
+    use HasFactory, LogsActivityWithDetails;
 
     protected $fillable = ['title' , 'slug' , 'status'];  
 
@@ -29,7 +28,9 @@ class Language extends Model
         return LogOptions::defaults()
             ->useLogName('Setting (Language)')
             ->setDescriptionForEvent(fn(string $eventName) => "You have {$eventName} a language")
-            ->logAll();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public static function getDefault()

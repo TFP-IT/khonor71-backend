@@ -87,12 +87,6 @@ class LoginController extends Controller {
                 $request->session()->put('auth.password_confirmed_at', time());
             }
 
-            // Insert data into the ActivityLog
-            activity()
-            ->causedBy($user)
-            ->useLog('Login')
-            ->log('Logged In');
-
             return $this->sendLoginResponse($request);
         }
 
@@ -123,12 +117,6 @@ class LoginController extends Controller {
         if ($response = $this->loggedOut($request)) {
             return $response;
         }
-
-        // Insert data into the ActivityLog
-        activity()
-        ->causedBy($user)
-        ->useLog('Logout')
-        ->log('Logged Out');
 
         return $request->wantsJson()
             ? new JsonResponse([], 204)

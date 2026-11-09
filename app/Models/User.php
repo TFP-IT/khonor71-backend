@@ -12,14 +12,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 use Modules\Reporter\Entities\Reporter;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
-    use LogsActivity;
+    use LogsActivityWithDetails;
 
     /**
      * The attributes that are mass assignable.
@@ -87,8 +87,18 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('User')
-            ->dontLogIfAttributesChangedOnly(['remember_token']);
+            ->logOnly([
+                'full_name',
+                'user_name',
+                'email',
+                'contact_no',
+                'user_type_id',
+                'is_active',
+                'profile_image',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('User');
     }
 
     public function getActivityDescriptionForEvent(string $eventName): string

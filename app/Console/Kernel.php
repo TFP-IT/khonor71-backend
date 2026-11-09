@@ -33,6 +33,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:work database --queue=ai-news,default --stop-when-empty --max-time=50')
             ->everyMinute()
             ->withoutOverlapping();
+
+        // Automatically clean up old activity logs older than retention period (daily)
+        $schedule->command('activitylog:clean')
+            ->daily()
+            ->withoutOverlapping();
     }
 
     /**

@@ -15,10 +15,41 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class NewsMst extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'stitle',
+                'encode_title',
+                'seo_title',
+                'status',
+                'category_id',
+                'sub_category_id',
+                'division_id',
+                'district_id',
+                'upazila_id',
+                'reporter_id',
+                'reporter',
+                'image',
+                'is_featured',
+                'is_latest',
+                'is_recommanded',
+                'publish_date',
+                'post_date',
+                'news',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('News');
+    }
 
     /**
      * The attributes that are mass assignable.

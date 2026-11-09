@@ -4,22 +4,22 @@ namespace Modules\UserManagement\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class Role extends Model
 {
-    use HasFactory;
-    use LogsActivity;
+    use HasFactory, LogsActivityWithDetails;
 
     protected $fillable = [];
 
-    
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->useLogName('Role')
             ->setDescriptionForEvent(fn(string $eventName) => "You have {$eventName} a Role")
-            ->logAll();
+            ->logOnly(['name', 'guard_name'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

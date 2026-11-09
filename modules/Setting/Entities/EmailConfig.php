@@ -4,21 +4,22 @@ namespace Modules\Setting\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class EmailConfig extends Model
 {
-    use HasFactory;    
-    use LogsActivity;
+    use HasFactory, LogsActivityWithDetails;
 
     protected $guarded = [];    
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Setting (Email Config)')
+            ->useLogName('Setting (EmailConfig)')
             ->setDescriptionForEvent(fn(string $eventName) => "Email config {$eventName}")
-            ->logAll();
+            ->logExcept(['password'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

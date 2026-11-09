@@ -5,10 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Localize\Entities\Language;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogsActivityWithDetails;
+use Spatie\Activitylog\LogOptions;
 
 class BreakingNews extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivityWithDetails;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'news_id',
+                'url',
+                'title',
+                'start_time',
+                'end_time',
+                'priority',
+                'status',
+                'language_id',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('BreakingNews');
+    }
 
     /**
      * The attributes that are mass assignable.

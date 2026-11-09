@@ -452,7 +452,7 @@
 
                 @can('read_setting')
                     <li
-                        class="{{ (request()->is('admin/setting*') && !request()->is('admin/setting/subscriber-list')) || request()->is('admin/role*') || request()->is('admin/applications*') || request()->is('admin/currencies*') || request()->is('admin/mails*') || request()->is('admin/sms*') || request()->is('admin/password*') || request()->is('admin/user*') || request()->is('admin/localize*') || request()->is('admin/database-backup-reset*') || request()->is('admin/access-log*') || request()->is('admin/cookie-content*') ? 'mm-active' : '' }}">
+                        class="{{ (request()->is('admin/setting*') && !request()->is('admin/setting/subscriber-list')) || request()->is('admin/role*') || request()->is('admin/applications*') || request()->is('admin/currencies*') || request()->is('admin/mails*') || request()->is('admin/sms*') || request()->is('admin/password*') || request()->is('admin/user*') || request()->is('admin/localize*') || request()->is('admin/database-backup-reset*') || request()->is('admin/access-log*') || request()->is('admin/activity-tracking*') || request()->is('admin/cookie-content*') ? 'mm-active' : '' }}">
                         @can('read_application')
                             <a href="{{ route('applications.application') }}">
                                 <i class="fa fa-cogs"></i>

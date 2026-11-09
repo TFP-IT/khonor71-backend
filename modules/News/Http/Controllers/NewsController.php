@@ -118,6 +118,7 @@ class NewsController extends Controller
         $data['categories'] = Category::onlyParents()->where('language_id', $data['newsMst']->language_id)->get();
         $data['subCategories'] = $this->newsService->getSubCategory($data['newsMst']->category_id);
         $data['districts'] = $data['newsMst']->division_id ? District::where('division_id', $data['newsMst']->division_id)->get() : collect();
+        $data['activities'] = \Spatie\Activitylog\Models\Activity::forSubject($data['newsMst'])->with('causer')->latest('id')->take(50)->get();
 
         return view('news::edit', $data);
     }

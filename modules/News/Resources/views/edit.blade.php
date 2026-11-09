@@ -7,36 +7,53 @@
 @section('content')
     @include('backend.layouts.common.message')
     <div class="card mb-4">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="fs-17 fw-semi-bold mb-0">{{ localize_uc('update_post') }}</h6>
+        <div class="card-header border-bottom-0 pb-0">
+            <ul class="nav nav-tabs card-header-tabs" id="newsEditTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-semibold" id="edit-form-tab" data-bs-toggle="tab" data-bs-target="#edit-form-pane" type="button" role="tab" aria-controls="edit-form-pane" aria-selected="true">
+                        <i class="fas fa-edit me-1"></i> {{ localize_uc('update_post') }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-semibold" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-pane" type="button" role="tab" aria-controls="history-pane" aria-selected="false">
+                        <i class="fas fa-history me-1"></i> History (পরিবর্তন ইতিহাস)
+                        @if(isset($activities) && count($activities) > 0)
+                            <span class="badge bg-secondary rounded-pill ms-1">{{ count($activities) }}</span>
+                        @endif
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="newsEditTabContent">
+                <div class="tab-pane fade show active" id="edit-form-pane" role="tabpanel" aria-labelledby="edit-form-tab">
+                    <div class="table_customize">
+                        <form action="{{ route('news.update', ['news' => $newsMst->id]) }}" class="needs-validation" data="showCallBackUpdateData" id="newsDetailsForm"
+                            novalidate="" method="POST" enctype="multipart/form-data" data-redirect-url="{{ route('news.index') }}">
+                            @csrf
+                            @method('patch')
+
+                            @include('news::form')
+
+                            <div class="row row ps-4 pe-4">
+                                <div class="col-md-12 mt-3 text-start">
+                                    <button type="reset" class="btn btn-danger" title="{{ localize('reset') }}">
+                                        <i class="fa fa-undo-alt"></i>
+                                    </button>
+                                    <button type="submit" class="btn btn-success">
+                                        {{ localize('update') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="history-pane" role="tabpanel" aria-labelledby="history-tab">
+                    @include('news::post.history', ['activities' => $activities ?? collect()])
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table_customize">
-                <form action="{{ route('news.update', ['news' => $newsMst->id]) }}" class="needs-validation" data="showCallBackUpdateData" id="newsDetailsForm"
-                    novalidate="" method="POST" enctype="multipart/form-data" data-redirect-url="{{ route('news.index') }}">
-                    @csrf
-                    @method('patch')
-
-                    @include('news::form')
-
-                    <div class="row row ps-4 pe-4">
-                        <div class="col-md-12 mt-3 text-start">
-                            <button type="reset" class="btn btn-danger" title="{{ localize('reset') }}">
-                                <i class="fa fa-undo-alt"></i>
-                            </button>
-                            <button type="submit" class="btn btn-success">
-                                {{ localize('update') }}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
 
     <input type="hidden" id="image_up" value="{{ route('page.ckeditor_upload', ['_token' => csrf_token()]) }}">

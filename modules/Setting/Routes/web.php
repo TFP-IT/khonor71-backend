@@ -17,6 +17,7 @@ use Modules\Setting\Http\Controllers\SubscriptionController;
 use Modules\Setting\Http\Controllers\SocialLoginApiController;
 use Modules\Setting\Http\Controllers\SpaceCredentialController;
 use Modules\Setting\Http\Controllers\DocExpiredSettingController;
+use Modules\Setting\Http\Controllers\ActivityTrackingController;
 
 
 Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
@@ -144,6 +145,10 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
     Route::get('/access-log', [SettingController::class, 'activityLog'])->name('activity_log');
     Route::delete('/activity-log-destroy/{id:id}', [SettingController::class, 'activityLogDestroy'])->name('activity_log_destroy');
     Route::delete('/multiple-activity-log-destroy', [SettingController::class, 'multipleDeleteActivityLog'])->name('multiple_delete_activity_log');
+
+    // Activity Tracking (Audit Trail - Read Only)
+    Route::get('/activity-tracking', [ActivityTrackingController::class, 'index'])->name('activity.tracking.index');
+    Route::get('/activity-tracking/{id}/details', [ActivityTrackingController::class, 'details'])->name('activity.tracking.details');
     Route::get('/cookie-content', [SettingController::class, 'cookieContent'])->name('cookie.content');
     Route::post('/cookie-content/update', [SettingController::class, 'cookieContentUpdate'])->name('cookie.content.update');
 

@@ -7,13 +7,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class Country extends Model
 {
-    use HasFactory, SoftDeletes;
-    use LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivityWithDetails;
 
     protected $fillable = ['country_name', 'country_code', 'is_active'];
         
@@ -22,7 +21,9 @@ class Country extends Model
         return LogOptions::defaults()
             ->useLogName('Setting (Country)')
             ->setDescriptionForEvent(fn(string $eventName) => "You have {$eventName} a country")
-            ->logAll();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
     protected static function boot()
     {

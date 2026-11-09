@@ -115,6 +115,13 @@
             </li>
         @endcan
 
+        @can('read_activity_tracking')
+            <li class="nav-item">
+                <a class="nav-link px-2 w-100 {{ request()->routeIs('activity.tracking.*') ? 'active' : '' }}"
+                    href="{{ route('activity.tracking.index') }}">{{ localize('activity_log') }}</a>
+            </li>
+        @endcan
+
         @can('read_cookie_content')
             <li class="nav-item">
                 <a class="nav-link px-2 w-100 {{ request()->routeIs('cookie.content') ? 'active' : '' }}"

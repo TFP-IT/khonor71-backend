@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Picture;
 use Modules\Setting\Entities\Currency;
 use Modules\Setting\Entities\Language;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\LogsActivityWithDetails;
 use Spatie\Activitylog\LogOptions;
 
 class Application extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivityWithDetails;
 
     protected $fillable = [
         'currency_id',
@@ -58,9 +58,11 @@ class Application extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('Setting (Application)')
+            ->useLogName('Application')
             ->setDescriptionForEvent(fn(string $eventName) => "Application {$eventName}")
-            ->logAll();
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
     public function picture(){
         return $this->morphOne(Picture::class, 'imageable');
