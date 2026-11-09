@@ -2314,7 +2314,7 @@
     'ai_news_review' => 'AI News Review',
     'ai_rss_sources' => 'AI RSS Sources',
     'script_manager' => 'Script Manager',
-    'story_manage' => 'Story Manage)',
+    'story_manage' => 'Story Manage',
     'probashi_news' => 'Probashi News',
     'web_setup' => 'Web Setup',
     'setup_top_breaking_post' => 'Top Breaking Post)',

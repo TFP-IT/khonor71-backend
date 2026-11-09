@@ -324,7 +324,9 @@ class UserManagementController extends Controller
         }
         $user->password = Hash::make($request->password);
         $user->save();
-        $user->assignRole($request->role_id);
+        if ($request->role_id) {
+            $user->assignRole((int) $request->role_id);
+        }
 
         return response()->json(['status' => 'success', 'message' => 'User Created Successfully']);
     }
@@ -433,7 +435,9 @@ class UserManagementController extends Controller
             foreach ($user->userRole as $role) {
                 $user->removeRole($role->id);
             }
-            $user->assignRole($request->role_id);
+            if ($request->role_id) {
+                $user->assignRole((int) $request->role_id);
+            }
 
             DB::commit();
             return response()->json(['status' => 'success', 'message' => 'User Updated Successfully']);

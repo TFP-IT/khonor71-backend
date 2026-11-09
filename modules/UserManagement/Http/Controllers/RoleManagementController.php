@@ -47,13 +47,16 @@ class RoleManagementController extends Controller
     //role store
     public function roleStore(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required',
             'permission' => 'required',
         ]);
 
-        $role = Role::create($validated);
-        $role->syncPermissions($request->permission);
+        $role = Role::create([
+            'name' => $request->name,
+        ]);
+        $permissions = Permission::whereIn('id', (array) $request->permission)->get();
+        $role->syncPermissions($permissions);
         return redirect()->route('role.list')->with('success', 'Role Created Successfully');
     }
 
@@ -71,14 +74,17 @@ class RoleManagementController extends Controller
     //role update
     public function roleUpdate(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required',
             'permission' => 'required',
         ]);
 
         $role = Role::findOrFail($request->role_id);
-        $role->update($validated);
-        $role->syncPermissions($request->permission);
+        $role->update([
+            'name' => $request->name,
+        ]);
+        $permissions = Permission::whereIn('id', (array) $request->permission)->get();
+        $role->syncPermissions($permissions);
         return redirect()->back()->with('success', 'Role Updated Successfully');
     }
 
