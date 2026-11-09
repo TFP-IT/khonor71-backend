@@ -325,7 +325,11 @@ class UserManagementController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         if ($request->role_id) {
-            $user->assignRole((int) $request->role_id);
+            $roleIds = array_map('intval', (array) $request->role_id);
+            $roles = \Spatie\Permission\Models\Role::whereIn('id', $roleIds)->get();
+            if ($roles->isNotEmpty()) {
+                $user->assignRole($roles);
+            }
         }
 
         return response()->json(['status' => 'success', 'message' => 'User Created Successfully']);
@@ -436,7 +440,11 @@ class UserManagementController extends Controller
                 $user->removeRole($role->id);
             }
             if ($request->role_id) {
-                $user->assignRole((int) $request->role_id);
+                $roleIds = array_map('intval', (array) $request->role_id);
+                $roles = \Spatie\Permission\Models\Role::whereIn('id', $roleIds)->get();
+                if ($roles->isNotEmpty()) {
+                    $user->assignRole($roles);
+                }
             }
 
             DB::commit();
