@@ -227,12 +227,19 @@ return [
 
             'routes' => [
                 'only' => [], // i.e. 'contact'
-                'except' => [], // i.e. 'admin/*'
+                'except' => [
+                    'admin/seo/script-manager-store',
+                    '*/seo/script-manager*',
+                ],
             ],
 
             'inputs' => [
                 'only' => [], // i.e. 'first_name'
-                'except' => [], // i.e. 'password'
+                'except' => [
+                    'search_console_meta',
+                    'custom_head_scripts',
+                    'custom_body_scripts',
+                ],
             ],
 
             'patterns' => [
@@ -281,12 +288,22 @@ return [
 
             'routes' => [
                 'only' => [], // i.e. 'contact'
-                'except' => ['admin/ai-news/*'], // i.e. 'admin/*'
+                'except' => [
+                    'admin/ai-news/*',
+                    'admin/seo/script-manager-store',
+                    '*/seo/script-manager*',
+                ],
             ],
 
             'inputs' => [
                 'only' => [], // i.e. 'first_name'
-                'except' => ['feed_url'], // i.e. 'password'
+                'except' => [
+                    'feed_url',
+                    'search_console_meta',
+                    'custom_head_scripts',
+                    'custom_body_scripts',
+                    'cdn_url',
+                ],
             ],
 
             'patterns' => [
@@ -419,12 +436,19 @@ return [
 
             'routes' => [
                 'only' => [], // i.e. 'contact'
-                'except' => [], // i.e. 'admin/*'
+                'except' => [
+                    'admin/seo/script-manager-store',
+                    '*/seo/script-manager*',
+                ],
             ],
 
             'inputs' => [
                 'only' => [], // i.e. 'first_name'
-                'except' => [], // i.e. 'password'
+                'except' => [
+                    'search_console_meta',
+                    'custom_head_scripts',
+                    'custom_body_scripts',
+                ],
             ],
 
             'patterns' => [

@@ -660,17 +660,37 @@ $(document).ready(function () {
             data        : new FormData(form),
             contentType : false,
             processData : false,
+            headers     : {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function (response) {
+                var message = response.msg || response.message || 'Data updated successfully';
                 if (response.error === false) {
-                    $status.html('<span style="color:#22c55e;"><i class="fa fa-check-circle"></i> ' + response.msg + '</span>');
+                    $status.html('<span style="color:#22c55e;"><i class="fa fa-check-circle"></i> ' + message + '</span>');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(message);
+                    }
                     refreshStatusDots();
                 } else {
-                    $status.html('<span style="color:#ef4444;"><i class="fa fa-times-circle"></i> ' + response.msg + '</span>');
+                    $status.html('<span style="color:#ef4444;"><i class="fa fa-times-circle"></i> ' + message + '</span>');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(message);
+                    }
                 }
             },
             error: function (xhr) {
-                var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'An error occurred.';
+                var msg = 'An error occurred.';
+                if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    msg = xhr.responseJSON.msg;
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                } else if (xhr.responseText && xhr.responseText.length > 0 && xhr.responseText.length < 200) {
+                    msg = xhr.responseText;
+                }
                 $status.html('<span style="color:#ef4444;"><i class="fa fa-times-circle"></i> ' + msg + '</span>');
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(msg);
+                }
             },
             complete: function () {
                 $btn.html('<i class="fa fa-save"></i> Save Changes').prop('disabled', false);

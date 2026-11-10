@@ -27,8 +27,7 @@ class SeoController extends Controller
         $this->middleware('permission:create_social_link')->only('socialLinkStore');
 
         $this->middleware('permission:read_script_manager')->only('scriptManager');
-        $this->middleware('permission:update_script_manager')->only('scriptManagerStore');
-        $this->middleware('permission:create_script_manager')->only('scriptManagerStore');
+        $this->middleware('permission:update_script_manager|create_script_manager')->only('scriptManagerStore');
 
         $this->middleware(['demo'])->only(['store','socialSiteStore','socialLinkStore','scriptManagerStore']);
     }
@@ -325,20 +324,27 @@ class SeoController extends Controller
         );
 
         try {
+            $searchConsoleMeta = trim((string) $request->input('search_console_meta', ''));
+            // If user pasted only the verification token without <meta...>, format it as proper meta tag
+            if (!empty($searchConsoleMeta) && !str_starts_with($searchConsoleMeta, '<')) {
+                $token = preg_replace('/^content=["\']?|["\']?$/', '', $searchConsoleMeta);
+                $searchConsoleMeta = '<meta name="google-site-verification" content="' . e($token) . '" />';
+            }
+
             $details = [
-                'ga4_id'               => $request->input('ga4_id', ''),
-                'ua_id'                => $request->input('ua_id', ''),
-                'gtm_id'               => $request->input('gtm_id', ''),
-                'search_console_meta'  => $request->input('search_console_meta', ''),
-                'meta_pixel_id'        => $request->input('meta_pixel_id', ''),
-                'tawkto_id'            => $request->input('tawkto_id', ''),
-                'hotjar_id'            => $request->input('hotjar_id', ''),
+                'ga4_id'               => trim((string) $request->input('ga4_id', '')),
+                'ua_id'                => trim((string) $request->input('ua_id', '')),
+                'gtm_id'               => trim((string) $request->input('gtm_id', '')),
+                'search_console_meta'  => $searchConsoleMeta,
+                'meta_pixel_id'        => trim((string) $request->input('meta_pixel_id', '')),
+                'tawkto_id'            => trim((string) $request->input('tawkto_id', '')),
+                'hotjar_id'            => trim((string) $request->input('hotjar_id', '')),
                 'custom_head_scripts'  => $request->input('custom_head_scripts', ''),
                 'custom_body_scripts'  => $request->input('custom_body_scripts', ''),
-                'redis_host'           => $request->input('redis_host', ''),
-                'redis_port'           => $request->input('redis_port', ''),
+                'redis_host'           => trim((string) $request->input('redis_host', '')),
+                'redis_port'           => trim((string) $request->input('redis_port', '')),
                 'redis_password'       => $request->input('redis_password', ''),
-                'cdn_url'              => $request->input('cdn_url', ''),
+                'cdn_url'              => trim((string) $request->input('cdn_url', '')),
             ];
 
             $script_data->update([
@@ -346,16 +352,24 @@ class SeoController extends Controller
                 'details' => json_encode($details),
             ]);
 
-            // Update .env with Redis and CDN settings
-            $envData = [
-                'REDIS_HOST' => $request->input('redis_host') ?: '127.0.0.1',
-                'REDIS_PORT' => $request->input('redis_port') ?: '6379',
-                'REDIS_PASSWORD' => empty($request->input('redis_password')) ? 'null' : $request->input('redis_password'),
-                'CACHE_DRIVER' => $request->input('enable_redis') == '1' ? 'redis' : 'file',
-                'ASSET_URL' => empty($request->input('cdn_url')) ? 'null' : $request->input('cdn_url'),
-            ];
-            $this->updateEnv($envData);
-            \Illuminate\Support\Facades\Artisan::call('config:clear');
+            \Illuminate\Support\Facades\Cache::forget('setting_121');
+
+            // Update .env with Redis and CDN settings if provided
+            if ($request->has('redis_host') || $request->has('cdn_url') || $request->has('enable_redis')) {
+                $envData = [
+                    'REDIS_HOST' => $request->input('redis_host') ?: '127.0.0.1',
+                    'REDIS_PORT' => $request->input('redis_port') ?: '6379',
+                    'REDIS_PASSWORD' => empty($request->input('redis_password')) ? 'null' : $request->input('redis_password'),
+                    'CACHE_DRIVER' => $request->input('enable_redis') == '1' ? 'redis' : 'file',
+                    'ASSET_URL' => empty($request->input('cdn_url')) ? 'null' : $request->input('cdn_url'),
+                ];
+                $this->updateEnv($envData);
+                try {
+                    \Illuminate\Support\Facades\Artisan::call('config:clear');
+                } catch (\Throwable $th) {
+                    // Ignore config:clear errors
+                }
+            }
 
             return response()->json(['error' => false, 'msg' => localize('data_updated_successfully')]);
         } catch (\Exception $e) {
@@ -369,7 +383,7 @@ class SeoController extends Controller
     private function updateEnv(array $data)
     {
         $path = base_path('.env');
-        if (file_exists($path)) {
+        if (file_exists($path) && is_writable($path)) {
             $env = file_get_contents($path);
             foreach ($data as $key => $value) {
                 if (preg_match('/^' . $key . '=/m', $env)) {
@@ -378,7 +392,7 @@ class SeoController extends Controller
                     $env .= "\n" . $key . '=' . $value;
                 }
             }
-            file_put_contents($path, $env);
+            @file_put_contents($path, $env);
         }
     }
 
