@@ -35,6 +35,30 @@
             }
         });
 
+        // Real-time clearing of error highlight when user interacts with field
+        $(document).on("input keyup change", ".is-invalid", function () {
+            $(this).removeClass("is-invalid");
+            var $feedback = $(this).siblings(".invalid-feedback");
+            if (!$feedback.length) $feedback = $(this).parent().find(".invalid-feedback");
+            $feedback.removeClass("d-block").hide();
+
+            var $s2 = $(this).siblings(".select2-container");
+            if (!$s2.length) $s2 = $(this).parent().find(".select2-container");
+            if ($s2.length) {
+                $s2.removeClass("is-invalid").find(".select2-selection").css({ "border-color": "", "box-shadow": "" });
+            }
+        });
+
+        $(document).on("select2:select change", "select", function () {
+            $(this).removeClass("is-invalid");
+            var $s2 = $(this).siblings(".select2-container");
+            if (!$s2.length) $s2 = $(this).parent().find(".select2-container");
+            if ($s2.length) {
+                $s2.removeClass("is-invalid").find(".select2-selection").css({ "border-color": "", "box-shadow": "" });
+            }
+            $(this).closest(".form-group, .row").find(".invalid-feedback").removeClass("d-block").hide();
+        });
+
         $(document).on("click", ".photo-library-page", function () {
             let action = $(this).attr("href");
             window.open(
@@ -263,42 +287,130 @@ function ajaxSubmit(e, form) {
         error: function (response) {
             removeFormValidation(form, formData, false, false);
 
-            let data = response.responseJSON;
+            let data = response.responseJSON || {};
+            let hasErrors = false;
+            let firstInvalidElement = null;
 
-            error_alert(data.message, data.title);
+            // Configure Toastr for prominent validation alerts
+            if (typeof toastr !== "undefined") {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    timeOut: 8000,
+                    extendedTimeOut: 3000,
+                    positionClass: "toast-top-right",
+                    preventDuplicates: false,
+                };
+            }
 
-            if (typeof data.errors != "undefined") {
-                // Iterate over the properties of data.errors
+            if (typeof data.errors !== "undefined" && Object.keys(data.errors).length > 0) {
+                hasErrors = true;
+
+                // Show validation errors in toaster alert and highlight fields
                 for (let fieldName in data.errors) {
                     if (data.errors.hasOwnProperty(fieldName)) {
-                        // Get the array of error messages for the current field
                         const errorMessages = data.errors[fieldName];
+                        let currentErrorMessage = errorMessages.join("<br>");
 
-                        if (form.find(`input[name='${fieldName}']`).length) {
-                            form.find(`input[name='${fieldName}']`).addClass(
-                                "is-invalid"
-                            );
-                            let currentErrorMessage = "";
-                            errorMessages.forEach((errorMessage) => {
-                                currentErrorMessage = errorMessage;
-                            });
-                            form.find(`input[name='${fieldName}']`)
-                                .parent()
-                                .find(".invalid-feedback")
-                                .html(currentErrorMessage);
-                        } else if (form.find(`#${fieldName}`).length) {
-                            form.find(`#${fieldName}`).addClass("is-invalid");
-                            let currentErrorMessage = "";
-                            errorMessages.forEach((errorMessage) => {
-                                currentErrorMessage = errorMessage;
-                            });
-                            form.find(`#${fieldName}`)
-                                .parent()
-                                .find(".invalid-feedback")
-                                .html(currentErrorMessage);
+                        // Display toaster alert for each validation error
+                        errorMessages.forEach((msg) => {
+                            if (typeof toastr !== "undefined") {
+                                toastr.error(msg, "Validation Error");
+                            }
+                        });
+
+                        // Locate target element by name, name[], or id
+                        let $target = form.find(`[name='${fieldName}']`);
+                        if (!$target.length) {
+                            $target = form.find(`[name='${fieldName}[]']`);
+                        }
+                        if (!$target.length) {
+                            $target = form.find(`#${fieldName}`);
+                        }
+
+                        if ($target.length) {
+                            $target.addClass("is-invalid");
+
+                            // Find and show invalid-feedback message
+                            let $feedback = $target.siblings(".invalid-feedback");
+                            if (!$feedback.length) {
+                                $feedback = $target.parent().find(".invalid-feedback");
+                            }
+                            if (!$feedback.length) {
+                                $feedback = $target.closest(".form-group, .row").find(".invalid-feedback").first();
+                            }
+                            if ($feedback.length) {
+                                $feedback.html(currentErrorMessage).addClass("d-block").show();
+                            }
+
+                            // Highlight Select2 if applied
+                            let $s2 = $target.siblings(".select2-container");
+                            if (!$s2.length) {
+                                $s2 = $target.parent().find(".select2-container");
+                            }
+                            if ($s2.length) {
+                                $s2.addClass("is-invalid");
+                                $s2.find(".select2-selection").css({
+                                    "border-color": "#dc3545",
+                                    "box-shadow": "0 0 0 0.25rem rgba(220, 53, 69, 0.25)"
+                                });
+                            }
+
+                            // Highlight CKEditor if applied
+                            let targetId = $target.attr("id");
+                            if (targetId && window.CKEDITOR && CKEDITOR.instances && CKEDITOR.instances[targetId]) {
+                                $("#cke_" + targetId).addClass("is-invalid").css({
+                                    "border": "2px solid #dc3545",
+                                    "border-radius": "4px",
+                                    "box-shadow": "0 0 0 0.25rem rgba(220, 53, 69, 0.25)"
+                                });
+                            }
+
+                            // Highlight Bootstrap Tagsinput if applied
+                            let $tagsInput = $target.siblings(".bootstrap-tagsinput");
+                            if ($tagsInput.length) {
+                                $tagsInput.addClass("is-invalid").css({
+                                    "border-color": "#dc3545",
+                                    "box-shadow": "0 0 0 0.25rem rgba(220, 53, 69, 0.25)"
+                                });
+                            }
+
+                            if (!firstInvalidElement) {
+                                if ($s2.length) {
+                                    firstInvalidElement = $s2;
+                                } else if (targetId && $("#cke_" + targetId).length) {
+                                    firstInvalidElement = $("#cke_" + targetId);
+                                } else {
+                                    firstInvalidElement = $target;
+                                }
+                            }
                         }
                     }
                 }
+            }
+
+            // If no specific data.errors array, but a general message or 500 error
+            if (!hasErrors) {
+                if (data.message) {
+                    error_alert(data.message, data.title || "Error");
+                } else if (response.status === 422) {
+                    error_alert("Please check all required fields and correct the highlighted errors.", "Validation Error");
+                } else {
+                    error_alert("An unexpected error occurred. Please try again.", "Error");
+                }
+            }
+
+            // Smoothly scroll to the first invalid element with pulse highlight
+            if (firstInvalidElement && firstInvalidElement.length) {
+                $("html, body").animate({ scrollTop: firstInvalidElement.offset().top - 120 }, 400, function () {
+                    firstInvalidElement.addClass("highlight-error-pulse");
+                    setTimeout(function () {
+                        firstInvalidElement.removeClass("highlight-error-pulse");
+                    }, 1200);
+                    if (firstInvalidElement.is(":visible") && firstInvalidElement.is("input, textarea, select")) {
+                        firstInvalidElement.focus();
+                    }
+                });
             }
 
             setTimeout(() => {
@@ -358,11 +470,14 @@ function removeFormValidation(
 ) {
     form.removeClass("was-validated");
 
-    for (var instance in CKEDITOR.instances) {
-        CKEDITOR.instances[instance].setData("");
+    if (resetValue) {
+        for (var instance in CKEDITOR.instances) {
+            try {
+                CKEDITOR.instances[instance].setData("");
+            } catch (e) {}
+        }
+        form.find(".form-preview-image").remove();
     }
-
-    form.find(".form-preview-image").remove();
 
     if (resetSelectValue) {
         form.find(":checkbox")
@@ -378,6 +493,12 @@ function removeFormValidation(
         form.find(`textarea`).val("");
     }
 
+    form.find(".is-invalid").removeClass("is-invalid");
+    form.find(".invalid-feedback").removeClass("d-block").html("");
+    form.find(".select2-container").removeClass("is-invalid").find(".select2-selection").css({ "border-color": "", "box-shadow": "" });
+    form.find(".cke").removeClass("is-invalid").css({ "border": "", "box-shadow": "" });
+    form.find(".bootstrap-tagsinput").removeClass("is-invalid").css({ "border-color": "", "box-shadow": "" });
+
     form.find(":input, select").each(function () {
         var elementType = this.tagName.toLowerCase();
         if (elementType === "input") {
@@ -386,13 +507,6 @@ function removeFormValidation(
             var inputType = inputObject.attr("type");
 
             if (!["radio", "checkbox"].includes(inputType)) {
-                form.find(`input[name='${inputName}']`).removeClass(
-                    "is-invalid"
-                );
-                form.find(`input[name='${inputName}']`)
-                    .parent()
-                    .find(".invalid-feedback")
-                    .html("");
                 if (resetValue == true && !exceptName.includes(inputName)) {
                     form.find(`input[name='${inputName}']`).val("");
                 }
@@ -401,16 +515,6 @@ function removeFormValidation(
                     inputObject.prop("checked", false);
                 }
             }
-        } else if (elementType === "select") {
-            var inputObject = $(this);
-            var inputId = inputObject.attr("id");
-
-            form.find(`#${inputId}`).removeClass("is-invalid");
-
-            form.find(`#${inputId}`)
-                .parent()
-                .find(".invalid-feedback")
-                .html("");
         }
     });
 }
@@ -608,25 +712,113 @@ function formValidation() {
                 event.preventDefault();
                 event.stopPropagation();
 
-                var inputFields = form.querySelectorAll("input[required]");
+                // Synchronize all CKEditor instances before checking validity
+                if (typeof CKEDITOR !== "undefined" && CKEDITOR.instances) {
+                    for (var instance in CKEDITOR.instances) {
+                        try {
+                            CKEDITOR.instances[instance].updateElement();
+                        } catch (e) {}
+                    }
+                }
 
-                Array.from(inputFields).forEach(function (inputField) {
-                    if (!inputField.checkValidity()) {
-                        inputField.classList.add("is-invalid");
+                var $form = $(form);
+                var hasError = false;
+                var missingFields = [];
+                var firstInvalidEl = null;
+
+                // Validate required inputs, selects, and textareas
+                var requiredFields = form.querySelectorAll("input[required], select[required], textarea[required]");
+
+                Array.from(requiredFields).forEach(function (field) {
+                    var $field = $(field);
+                    var val = $field.val();
+                    var isEmpty = !val || (typeof val === "string" && val.trim() === "");
+
+                    if (field.type === "checkbox" || field.type === "radio") {
+                        isEmpty = !field.checked;
+                    }
+
+                    if (isEmpty) {
+                        hasError = true;
+                        field.classList.add("is-invalid");
+
+                        // Highlight Select2
+                        var $s2 = $field.siblings(".select2-container");
+                        if (!$s2.length) {
+                            $s2 = $field.parent().find(".select2-container");
+                        }
+                        if ($s2.length) {
+                            $s2.addClass("is-invalid");
+                            $s2.find(".select2-selection").css({
+                                "border-color": "#dc3545",
+                                "box-shadow": "0 0 0 0.25rem rgba(220, 53, 69, 0.25)"
+                            });
+                        }
+
+                        // Highlight CKEditor
+                        if (field.id && window.CKEDITOR && CKEDITOR.instances && CKEDITOR.instances[field.id]) {
+                            $("#cke_" + field.id).addClass("is-invalid").css({
+                                "border": "2px solid #dc3545",
+                                "border-radius": "4px",
+                                "box-shadow": "0 0 0 0.25rem rgba(220, 53, 69, 0.25)"
+                            });
+                        }
+
+                        // Label for toaster alert
+                        var fieldLabel = $field.closest(".form-group, .row").find("label").first().text().replace("*", "").trim();
+                        if (!fieldLabel) {
+                            fieldLabel = $field.attr("placeholder") || $field.attr("name") || "Required field";
+                        }
+                        if (fieldLabel && !missingFields.includes(fieldLabel)) {
+                            missingFields.push(fieldLabel);
+                        }
+
+                        if (!firstInvalidEl) {
+                            firstInvalidEl = $s2.length ? $s2 : (field.id && $("#cke_" + field.id).length ? $("#cke_" + field.id) : $field);
+                        }
                     } else {
-                        inputField.classList.remove("is-invalid");
+                        field.classList.remove("is-invalid");
+                        var $s2 = $field.siblings(".select2-container");
+                        if ($s2.length) {
+                            $s2.removeClass("is-invalid");
+                            $s2.find(".select2-selection").css({ "border-color": "", "box-shadow": "" });
+                        }
+                        if (field.id && $("#cke_" + field.id).length) {
+                            $("#cke_" + field.id).removeClass("is-invalid").css({ "border": "", "box-shadow": "" });
+                        }
                     }
                 });
 
                 form.classList.add("was-validated");
 
-                if (form.checkValidity() === false) {
-                    warning_alert("Please fulfill all required fields.");
-                    $(this).find(".actionBtn").prop("disabled", false);
+                if (hasError) {
+                    if (missingFields.length > 0) {
+                        missingFields.forEach(function (lbl) {
+                            if (typeof toastr !== "undefined") {
+                                toastr.error(lbl + " is required.", "Validation Error", {
+                                    timeOut: 7000,
+                                    closeButton: true,
+                                    progressBar: true,
+                                });
+                            }
+                        });
+                    } else {
+                        warning_alert("Please fulfill all required fields.");
+                    }
+
+                    if (firstInvalidEl && firstInvalidEl.length) {
+                        $("html, body").animate({ scrollTop: firstInvalidEl.offset().top - 120 }, 400, function () {
+                            firstInvalidEl.addClass("highlight-error-pulse");
+                            setTimeout(function () {
+                                firstInvalidEl.removeClass("highlight-error-pulse");
+                            }, 1200);
+                        });
+                    }
+                    $form.find(".actionBtn").prop("disabled", false);
                 } else {
-                    $(this).find(".actionBtn").prop("disabled", true);
-                    ajaxSubmit(event, $(this));
-                    $(this).find(".actionBtn").prop("disabled", false);
+                    $form.find(".actionBtn").prop("disabled", true);
+                    ajaxSubmit(event, $form);
+                    $form.find(".actionBtn").prop("disabled", false);
                 }
             },
             false

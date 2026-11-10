@@ -50,6 +50,7 @@ class NewsRequest extends FormRequest
             'image_file'             => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,gif,bmp,webp', 'max:5120'],
             'image_alt'              => ['nullable', 'string'],
             'image_title'            => ['nullable', 'string'],
+            'caption'                => ['nullable', 'string'],
             'custom_url'             => ['nullable', 'string'],
             'seo_title'              => ['nullable', 'string'],
             'videos'                 => ['nullable', 'string'],
@@ -76,6 +77,38 @@ class NewsRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * Custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes(): array
+    {
+        return [
+            'language_id'            => localize('language') ?: 'Language',
+            'other_page'             => localize('category') ?: 'Category',
+            'sub_category_id'        => localize('sub_category') ?: 'Sub category',
+            'division_id'            => localize('division') ?: 'Division',
+            'district_id'            => localize('district') ?: 'District',
+            'head_line'              => localize('head_line') ?: 'Headline',
+            'details_news'           => localize('details') ?: 'News details',
+            'publish_date'           => localize('publication_date') ?: 'Publication date',
+            'publish_time'           => localize('publication_time') ?: 'Publication time',
+            'reporter_id'            => localize('reporter') ?: 'Reporter',
+            'image_file'             => localize('image') ?: 'Image file',
+            'caption'                => localize('caption') ?: 'Caption',
+            'reference'              => localize('reference') ?: 'Reference',
+            'image_alt'              => localize('image_alt') ?: 'Image alt',
+            'image_title'            => localize('image_title') ?: 'Image title',
+            'custom_url'             => localize('custom_url') ?: 'Custom URL',
+            'seo_title'              => localize('seo_title') ?: 'SEO title',
+            'videos'                 => localize('video_url') ?: 'Video URL',
+            'post_tag'               => localize('post_tag') ?: 'Post tag',
+            'meta_keyword'           => localize('meta_keyword') ?: 'Meta keyword',
+            'meta_description'       => localize('meta_description') ?: 'Meta description',
+        ];
     }
 
     /**

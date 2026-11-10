@@ -35,6 +35,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(restoreImagePreview, 0);
     });
 
+    // Mirror caption to image_title if image_title has not been customized independently
+    const captionInput = document.getElementById('caption');
+    const imageTitleInput = document.getElementById('image_title');
+    if (captionInput && imageTitleInput) {
+        captionInput.addEventListener('input', () => {
+            if (!imageTitleInput.dataset.manual) {
+                imageTitleInput.value = captionInput.value;
+            }
+        });
+        imageTitleInput.addEventListener('input', () => {
+            imageTitleInput.dataset.manual = 'true';
+        });
+    }
+
     let aiGeneratedText = '';
     console.log("Tested AI");
     // ✅ 1️⃣ Config div থেকে ডেটা পড়া
@@ -121,6 +135,15 @@ var image_up_route = $("#image_up").val();
 CKEDITOR.replace("details_news", {
     filebrowserUploadUrl: image_up_route,
     filebrowserUploadMethod: "form",
+});
+
+CKEDITOR.on("instanceReady", function (evt) {
+    evt.editor.on("change", function () {
+        var elId = evt.editor.name;
+        $("#cke_" + elId).removeClass("is-invalid").css({ border: "", "box-shadow": "" });
+        $("#" + elId).removeClass("is-invalid");
+        $("#" + elId).closest(".form-group, .row").find(".invalid-feedback").removeClass("d-block").hide();
+    });
 });
 
 /**

@@ -136,7 +136,7 @@ class NewsService
                 'image'            => $newsImage,
                 'image_base_url'   => null,
                 'image_alt'        => $attributes['image_alt'] ?? null,
-                'image_title'      => $attributes['image_title'] ?? null,
+                'image_title'      => $attributes['caption'] ?? $attributes['image_title'] ?? null,
 
                 'videos'           => $attributes['videos'] ?? null,
                 'podcust_id'       => null,
@@ -517,7 +517,7 @@ class NewsService
                 'image'            => $newsImage,
                 'image_base_url'   => null,
                 'image_alt'        => $attributes['image_alt'] ?? null,
-                'image_title'      => $attributes['image_title'] ?? null,
+                'image_title'      => $attributes['caption'] ?? $attributes['image_title'] ?? null,
 
                 'videos'           => $attributes['videos'] ?? null,
                 'podcust_id'       => null,
@@ -542,6 +542,20 @@ class NewsService
             ];
 
             $newsMst->update($newsMstData);
+
+            if ($newsMst->photoLibrary) {
+                $photoLibUpdates = [];
+                $resolvedCaption = $attributes['caption'] ?? $attributes['image_title'] ?? null;
+                if ($resolvedCaption !== null) {
+                    $photoLibUpdates['title'] = $resolvedCaption;
+                }
+                if (array_key_exists('reference', $attributes)) {
+                    $photoLibUpdates['reference'] = $attributes['reference'];
+                }
+                if (!empty($photoLibUpdates)) {
+                    $newsMst->photoLibrary->update($photoLibUpdates);
+                }
+            }
 
             // Prepare data for news_position_maps table
             $newsPositionMapData = [
@@ -827,6 +841,8 @@ class NewsService
             return null;
         }
 
+        $caption = $attributes['caption'] ?? $attributes['image_title'] ?? $attributes['head_line'] ?? null;
+
         $photoLibrary = app(PhotoLibraryService::class)->create([
             'image'       => $attributes['image_file'],
             'thumb_width' => 400,
@@ -834,7 +850,7 @@ class NewsService
             'large_width' => 1200,
             'large_height'=> 675,
             'format'      => 'webp',
-            'caption'     => $attributes['image_title'] ?? $attributes['head_line'] ?? null,
+            'caption'     => $caption,
             'reference'   => $attributes['reference'] ?? null,
         ]);
 

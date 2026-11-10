@@ -1,3 +1,50 @@
+@push('css')
+<style>
+    /* Professional Highlight for Invalid Elements */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .select2-container.is-invalid .select2-selection,
+    .is-invalid + .select2-container .select2-selection {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .cke.is-invalid,
+    #cke_details_news.is-invalid {
+        border: 2px solid #dc3545 !important;
+        border-radius: 4px;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .bootstrap-tagsinput.is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .invalid-feedback.d-block {
+        display: block !important;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #dc3545;
+        margin-top: 0.25rem;
+    }
+
+    @keyframes errorPulseHighlight {
+        0% { box-shadow: 0 0 0 0.4rem rgba(220, 53, 69, 0.45); }
+        50% { box-shadow: 0 0 0 0.6rem rgba(220, 53, 69, 0.2); }
+        100% { box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25); }
+    }
+
+    .highlight-error-pulse {
+        animation: errorPulseHighlight 0.9s ease-in-out;
+    }
+</style>
+@endpush
+
 <input type="hidden" value="0" name="confirm_dynamic_static" id="confirm_dynamic_static">
 <input type="hidden" class="form-control datepicker1" name="ref_date" id="ref_date" value="<?php echo date('Y-m-d', time() + 6 * 60 * 60); ?>">
 
@@ -264,109 +311,147 @@
             </div>
 
         </div>
+        {{-- ============================================================ --}}
+        {{-- Featured Image & Media Information Card                      --}}
+        {{-- ============================================================ --}}
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card border shadow-none mb-4">
+                    <div class="card-header bg-light py-2 px-3 d-flex align-items-center">
+                        <h6 class="fs-15 fw-bold mb-0 text-dark">
+                            <i class="fas fa-image text-primary me-2"></i>{{ localize_uc('image') }}
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row align-items-start">
+                            {{-- Image File Input & Preview --}}
+                            <div class="col-lg-4 col-md-5">
+                                <div class="form-group mb-3">
+                                    <label class="col-form-label fw-semibold pt-0" for="image_file">
+                                        <i class="fas fa-upload text-muted me-1"></i>{{ localize('image') }}
+                                    </label>
+                                    <div class="btn-select-image">
+                                        <div id="photo-library-preview" class="mb-2">
+                                            @if (isset($newsMst) && $newsMst->photoLibrary)
+                                                <img class="img-responsive img-thumbnail"
+                                                    src="{{ $newsMst->photoLibrary->image_base_url ?? null }}"
+                                                    alt="{{ $newsMst->photoLibrary->title }}"
+                                                    style="max-height: 200px; max-width: 100%; object-fit: contain;" />
+                                            @endif
+                                        </div>
+                                        <input type="file" name="image_file" id="image_file"
+                                            class="form-control @error('image_file') is-invalid @enderror"
+                                            accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" />
+                                        <small class="text-muted d-block mt-1">Image will be resized to 1200 × 675 pixels and saved as WebP without cropping.</small>
+                                        <div class="invalid-feedback error text-danger m-2">
+                                            @error('image_file')
+                                            {{ $message }}
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Image Meta: Caption, Reference, Alt, Title --}}
+                            <div class="col-lg-8 col-md-7">
+                                <div class="row">
+                                    {{-- Caption --}}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label for="caption" class="col-form-label fw-semibold pt-0">
+                                                    <i class="fas fa-quote-left text-muted me-1"></i>{{ localize_uc('caption') }}
+                                                </label>
+                                                <input type="text" id="caption" name="caption"
+                                                    class="form-control @error('caption') is-invalid @enderror"
+                                                    placeholder="{{ localize_uc('enter_caption') }}"
+                                                    value="{{ old('caption', old('image_title', $newsMst->image_title ?? null)) }}">
+                                                <small class="text-muted d-block mt-1">Image caption / ছবির ক্যাপশন</small>
+                                                <div class="invalid-feedback error text-danger m-1">
+                                                    @error('caption')
+                                                    {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Reference --}}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label for="reference" class="col-form-label fw-semibold pt-0">
+                                                    <i class="fas fa-link text-muted me-1"></i>{{ localize_uc('reference') }}
+                                                </label>
+                                                <input type="text" id="reference" name="reference"
+                                                    class="form-control @error('reference') is-invalid @enderror"
+                                                    placeholder="{{ localize_uc('enter_reference') }}"
+                                                    value="{{ old('reference', $newsMst->reference ?? null) }}">
+                                                <small class="text-muted d-block mt-1">Photo credit / source / ছবির সৌজন্য বা রেফারেন্স</small>
+                                                <div class="invalid-feedback error text-danger m-1">
+                                                    @error('reference')
+                                                    {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Image Alt --}}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label for="image_alt" class="col-form-label fw-semibold pt-0">
+                                                    <i class="fas fa-tag text-muted me-1"></i>{{ localize_uc('image_alt') }}
+                                                </label>
+                                                <input type="text" id="image_alt" name="image_alt"
+                                                    class="form-control @error('image_alt') is-invalid @enderror"
+                                                    placeholder="{{ localize_uc('enter_image_alt') }}"
+                                                    value="{{ old('image_alt', $newsMst->image_alt ?? null) }}">
+                                                <small class="text-muted d-block mt-1">Alternative text for SEO & accessibility</small>
+                                                <div class="invalid-feedback error text-danger m-1">
+                                                    @error('image_alt')
+                                                    {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Image Title --}}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label for="image_title" class="col-form-label fw-semibold pt-0">
+                                                    <i class="fas fa-heading text-muted me-1"></i>{{ localize_uc('image_title') }}
+                                                </label>
+                                                <input type="text" id="image_title" name="image_title"
+                                                    class="form-control @error('image_title') is-invalid @enderror"
+                                                    placeholder="{{ localize_uc('enter_image_title') }}"
+                                                    value="{{ old('image_title', old('caption', $newsMst->image_title ?? null)) }}">
+                                                <small class="text-muted d-block mt-1">Image tooltip title / ইমেজ টাইটেল</small>
+                                                <div class="invalid-feedback error text-danger m-1">
+                                                    @error('image_title')
+                                                    {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ============================================================ --}}
+        {{-- Reporter & Media Section                                     --}}
+        {{-- ============================================================ --}}
         <div class="row">
-
-            <div class="col-lg-4 col-md-6 col-md-4">
-                <div class="form-group">
-                    <label class="font-weight-600">{{ localize('image') }}</label>
-                    <div class="btn-select-image">
-                        <div id="photo-library-preview" class="mb-2">
-                            @if (isset($newsMst) && $newsMst->photoLibrary)
-                                <img class="img-responsive img-thumbnail"
-                                    src="{{ $newsMst->photoLibrary->image_base_url ?? null }}"
-                                    alt="{{ $newsMst->photoLibrary->title }}"
-                                    style="max-height: 220px; max-width: 100%; object-fit: contain;" />
-                            @endif
-                        </div>
-                        <input type="file" name="image_file" id="image_file"
-                            class="form-control @error('image_file') is-invalid @enderror"
-                            accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" />
-                        <small class="text-muted">Image will be resized to 1200 × 675 pixels and saved as WebP without cropping.</small>
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('image_file')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="image_alt"
-                            class="col-form-label fw-semibold">{{ localize_uc('image_alt') }}</label>
-                        <input type="text" id="image_alt" name="image_alt"
-                            class="form-control @error('image_alt') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_image_alt') }}"
-                            value="{{ old('image_alt', $newsMst->image_alt ?? null) }}">
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('image_alt')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="image_title"
-                            class="col-form-label fw-semibold">{{ localize_uc('image_title') }}</label>
-                        <input type="text" id="image_title" name="image_title"
-                            class="form-control @error('image_title') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_image_title') }}"
-                            value="{{ old('image_title', $newsMst->image_title ?? null) }}">
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('image_title')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="custom_url"
-                            class="col-form-label fw-semibold">{{ localize_uc('custom_url') }}</label>
-                        <input type="text" id="custom_url" name="custom_url"
-                            class="form-control @error('custom_url') is-invalid @enderror"
-                            placeholder="{{ localize_lower('example') }}-{{ localize_lower('url') }}"
-                            value="{{ old('custom_url', $newsMst->encode_title ?? null) }}">
-                        <span class="text-danger">{{ localize('special_character') }} (e.g .,@$)
-                            {{ localize_lower('not_allowed_in_this_field') }}</span>
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('custom_url')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="seo_title"
-                            class="col-form-label fw-semibold">{{ localize_uc('seo_title') }}</label>
-                        <input type="text" id="seo_title" name="seo_title"
-                            class="form-control @error('seo_title') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_seo_title') }}"
-                            value="{{ old('seo_title', $newsMst->seo_title ?? null) }}">
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('seo_title')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                @if ($auth_user->user_type_id == 1)
+            @if ($auth_user->user_type_id == 1)
+            <div class="col-lg-6 col-md-6">
                 <div class="form-group">
                     <label class="col-form-label fw-semibold" for="reporter_id">{{ localize_uc('reporter') }}
                         <span class="text-danger">*</span>
@@ -395,27 +480,10 @@
                         </div>
                     </div>
                 </div>
-                @endif
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="row form-group">
-                    <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="reporter_message"
-                            class="col-form-label fw-semibold">{{ localize_uc('reporter_message') }}</label>
-                        <textarea class="form-control" name="reporter_message" id="reporter_message" rows="2">{{ old('reporter_message', $newsMst->reporter_message ?? null) }}</textarea>
-                        <div class="invalid-feedback error text-danger m-2">
-                            @error('videos')
-                            {{ $message }}
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            @endif
+
+            <div class="{{ $auth_user->user_type_id == 1 ? 'col-lg-6 col-md-6' : 'col-md-12' }}">
                 <div class="row form-group">
                     <div class="col-sm-12 col-md-12 col-xl-12">
                         <label for="videos"
@@ -433,17 +501,57 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="row form-group">
                     <div class="col-sm-12 col-md-12 col-xl-12">
-                        <label for="reference"
-                            class="col-form-label fw-semibold">{{ localize_uc('reference') }}</label>
-                        <input type="text" id="reference" name="reference"
-                            class="form-control @error('reference') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_reference') }}"
-                            value="{{ old('reference', $newsMst->reference ?? null) }}">
+                        <label for="reporter_message"
+                            class="col-form-label fw-semibold">{{ localize_uc('reporter_message') }}</label>
+                        <textarea class="form-control @error('reporter_message') is-invalid @enderror" name="reporter_message" id="reporter_message" rows="2">{{ old('reporter_message', $newsMst->reporter_message ?? null) }}</textarea>
                         <div class="invalid-feedback error text-danger m-2">
-                            @error('reference')
+                            @error('reporter_message')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ============================================================ --}}
+        {{-- SEO & Metadata Section                                       --}}
+        {{-- ============================================================ --}}
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="row form-group">
+                    <div class="col-sm-12 col-md-12 col-xl-12">
+                        <label for="custom_url"
+                            class="col-form-label fw-semibold">{{ localize_uc('custom_url') }}</label>
+                        <input type="text" id="custom_url" name="custom_url"
+                            class="form-control @error('custom_url') is-invalid @enderror"
+                            placeholder="{{ localize_lower('example') }}-{{ localize_lower('url') }}"
+                            value="{{ old('custom_url', $newsMst->encode_title ?? null) }}">
+                        <span class="text-danger small">{{ localize('special_character') }} (e.g .,@$)
+                            {{ localize_lower('not_allowed_in_this_field') }}</span>
+                        <div class="invalid-feedback error text-danger m-2">
+                            @error('custom_url')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6">
+                <div class="row form-group">
+                    <div class="col-sm-12 col-md-12 col-xl-12">
+                        <label for="seo_title"
+                            class="col-form-label fw-semibold">{{ localize_uc('seo_title') }}</label>
+                        <input type="text" id="seo_title" name="seo_title"
+                            class="form-control @error('seo_title') is-invalid @enderror"
+                            placeholder="{{ localize_uc('enter_seo_title') }}"
+                            value="{{ old('seo_title', $newsMst->seo_title ?? null) }}">
+                        <div class="invalid-feedback error text-danger m-2">
+                            @error('seo_title')
                             {{ $message }}
                             @enderror
                         </div>
@@ -457,7 +565,7 @@
                         <label for="post_tag" class="col-form-label fw-semibold">{{ localize('post_tag') }}</label>
                         <input type="text" id="post_tag" name="post_tag"
                             class="form-control @error('post_tag') is-invalid @enderror"
-                            value="{{ old('reference', isset($newsMst) && $newsMst->postTags ? implode(',', $newsMst->postTags->pluck('tag')->toArray()) : null) }}"
+                            value="{{ old('post_tag', isset($newsMst) && $newsMst->postTags ? implode(',', $newsMst->postTags->pluck('tag')->toArray()) : null) }}"
                             placeholder="{{ localize_uc('tag1') }},{{ localize_uc('tag2') }}" data-role="tagsinput">
                         <div class="invalid-feedback error text-danger m-2">
                             @error('post_tag')
@@ -474,12 +582,12 @@
                         <label for="meta_keyword"
                             class="col-form-label fw-semibold">{{ localize('meta_keyword') }}</label>
                         <input type="text" id="meta_keyword" name="meta_keyword"
-                            class="form-control @error('reference') is-invalid @enderror"
-                            value="{{ old('reference', $newsMst->postSeoOnpage->meta_keyword ?? null) }}"
+                            class="form-control @error('meta_keyword') is-invalid @enderror"
+                            value="{{ old('meta_keyword', $newsMst->postSeoOnpage->meta_keyword ?? null) }}"
                             placeholder="{{ localize_uc('keyword1') }},{{ localize_uc('keyword2') }}"
                             data-role="tagsinput">
                         <div class="invalid-feedback error text-danger m-2">
-                            @error('reference')
+                            @error('meta_keyword')
                             {{ $message }}
                             @enderror
                         </div>
@@ -494,7 +602,7 @@
                             class="col-form-label fw-semibold">{{ localize_uc('meta_description') }}</label>
                         <textarea name="meta_description" id="meta_description"
                             class="form-control @error('meta_description') is-invalid @enderror"
-                            placeholder="{{ localize_uc('enter_meta_description') }}" rows="3">{{ old('reference', $newsMst->postSeoOnpage->meta_description ?? null) }}</textarea>
+                            placeholder="{{ localize_uc('enter_meta_description') }}" rows="3">{{ old('meta_description', $newsMst->postSeoOnpage->meta_description ?? null) }}</textarea>
                         <div class="invalid-feedback error text-danger m-2">
                             @error('meta_description')
                             {{ $message }}
