@@ -125,4 +125,14 @@ class User extends Authenticatable
     public function reporter(){
         return $this->hasOne(Reporter::class);
     }
+
+    /**
+     * Get user designation from reporter profile
+     *
+     * @return string|null
+     */
+    public function getDesignationAttribute(): ?string
+    {
+        return $this->reporter?->designation;
+    }
 }
