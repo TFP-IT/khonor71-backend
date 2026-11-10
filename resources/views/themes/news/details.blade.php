@@ -168,7 +168,7 @@
                 @endif
 
                 {{-- Post Tag --}}
-                @if ($newsDetail->postTags->count() > 0)
+                {{-- @if ($newsDetail->postTags->count() > 0)
                     <div class="bg-white rounded-md shadow-sm p-3 mt-4 border border-gray-200">
                         <h2 class="font-bold text-gray-800 mb-2">{{ localize('tags') }}</h2>
 
@@ -180,7 +180,7 @@
                             @endforeach
                         </div>
                     </div>
-                @endif
+                @endif --}}
 
             </div>
 
