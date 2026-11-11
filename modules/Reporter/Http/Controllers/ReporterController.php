@@ -172,17 +172,33 @@ class ReporterController extends Controller
 
         DB::beginTransaction();
         try {
-            // create new user for this employee
-            $user = new User();
-            $user->user_type_id = 2;
-            $user->user_name = strtolower($request->name);
-            $user->full_name = strtolower($request->name);
-            $user->email = $request->email;
-            $user->contact_no = $request->mobile;
-            $user->password = $password_hash =  Hash::make($request->password);
-            $user->is_active = true;
-            $user->save();
-            $user->assignRole(2);
+            // Check if user with this email already exists
+            $user = User::where('email', $request->email)->first();
+            $password_hash = null;
+
+            if ($user) {
+                // Reuse existing user and update details
+                $user->user_name = strtolower($request->name);
+                $user->full_name = strtolower($request->name);
+                $user->contact_no = $request->mobile;
+                if ($request->password) {
+                    $user->password = $password_hash = Hash::make($request->password);
+                }
+                $user->is_active = true;
+                $user->save();
+            } else {
+                // Create new user
+                $user = new User();
+                $user->user_type_id = 2;
+                $user->user_name = strtolower($request->name);
+                $user->full_name = strtolower($request->name);
+                $user->email = $request->email;
+                $user->contact_no = $request->mobile;
+                $user->password = $password_hash = Hash::make($request->password);
+                $user->is_active = true;
+                $user->save();
+                $user->assignRole(2);
+            }
 
             $reporter = new Reporter();
             $reporter->fill($request->all());
@@ -251,6 +267,19 @@ class ReporterController extends Controller
         try {
 
             $password_hash = null;
+
+            // Check if email is being changed to an existing user's email
+            $existingUser = User::where('email', $request->email)
+                ->where('id', '!=', $reporter_info->user_id)
+                ->first();
+
+            if ($existingUser) {
+                // If email belongs to another user, we can't change to it
+                return response()->json([
+                    'error' => true,
+                    'msg' => localize('email_already_exists_for_another_user')
+                ]);
+            }
 
             // Update user information
             $user = User::where('id', $reporter_info->user_id)->firstOrFail();
