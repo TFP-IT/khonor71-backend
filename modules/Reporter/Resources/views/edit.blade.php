@@ -12,7 +12,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="text" class="form-control" id="name" name="name"
-                        placeholder="{{ localize('name') }}" value="{{ old('name') ?? $reporter->name }}" required>
+                        placeholder="{{ localize('name') }}" value="{{ $reporter->name }}" required>
 
                     </div>
 
@@ -31,7 +31,7 @@
                             class="col-form-label fw-semibold">{{ localize('nick_name') }}</label>
 
                         <input type="text" class="form-control" id="nick_name" name="nick_name"
-                        placeholder="{{ localize('nick_name') }}" value="{{ old('nick_name') ?? $reporter->nick_name }}">
+                        placeholder="{{ localize('nick_name') }}" value="{{ $reporter->nick_name }}">
 
                     </div>
 
@@ -53,7 +53,7 @@
                         class="col-form-label fw-semibold">{{ localize('mobile') }}<span class="text-danger">*</span></label>
 
                         <input type="number" class="form-control" id="mobile" name="mobile"
-                        placeholder="{{ localize('mobile') }}" value="{{ old('mobile') ?? $reporter->mobile }}" required>
+                        placeholder="{{ localize('mobile') }}" value="{{ $reporter->mobile }}" required>
 
                     </div>
 
@@ -73,7 +73,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="email" class="form-control" id="email" name="email"
-                        placeholder="{{ localize('email') }}" value="{{ old('email') ?? $reporter->email }}" required>
+                        placeholder="{{ localize('email') }}" value="{{ $reporter->email }}" required>
 
                     </div>
 
@@ -142,7 +142,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="text" class="form-control" id="designation" name="designation"
-                        placeholder="{{ localize('designation') }}" value="{{ old('designation') ?? $reporter->designation }}" required>
+                        placeholder="{{ localize('designation') }}" value="{{ $reporter->designation }}" required>
 
                     </div>
 
@@ -210,7 +210,7 @@
                             class="col-form-label fw-semibold">{{ localize('blood') }}</label>
 
                         <input type="text" class="form-control" id="blood" name="blood"
-                        placeholder="{{ localize('blood') }}" value="{{ old('blood') ?? $reporter->blood }}">
+                        placeholder="{{ localize('blood') }}" value="{{ $reporter->blood }}">
 
                     </div>
 
@@ -228,7 +228,7 @@
                             class="col-form-label fw-semibold">{{ localize('birth_date') }}</label>
 
                         <input type="text" class="form-control date_picker" id="birth_date" name="birth_date"
-                        placeholder="{{ localize('birth_date') }}" value="{{ old('birth_date') ?? $reporter->birth_date }}">
+                        placeholder="{{ localize('birth_date') }}" value="{{ $reporter->birth_date }}">
 
                     </div>
 
@@ -250,7 +250,7 @@
                         class="col-form-label fw-semibold">{{ localize('address_line_one') }}</label>
 
                         <input type="text" class="form-control" id="address_one" name="address_one"
-                        placeholder="{{ localize('address_line_one') }}" value="{{ old('address_one') ?? $reporter->address_one }}">
+                        placeholder="{{ localize('address_line_one') }}" value="{{ $reporter->address_one }}">
 
                     </div>
 
@@ -269,7 +269,7 @@
                             class="col-form-label fw-semibold">{{ localize('address_line_two') }}</label>
 
                         <input type="text" class="form-control" id="address_two" name="address_two"
-                        placeholder="{{ localize('address_line_two') }}" value="{{ old('address_two') ?? $reporter->address_two }}">
+                        placeholder="{{ localize('address_line_two') }}" value="{{ $reporter->address_two }}">
 
                     </div>
 
@@ -291,7 +291,7 @@
                         class="col-form-label fw-semibold">{{ localize('city') }}</label>
 
                         <input type="text" class="form-control" id="city" name="city"
-                        placeholder="{{ localize('city') }}" value="{{ old('city') ?? $reporter->city }}">
+                        placeholder="{{ localize('city') }}" value="{{ $reporter->city }}">
 
                     </div>
 
@@ -310,7 +310,7 @@
                             class="col-form-label fw-semibold">{{ localize('state') }}</label>
 
                         <input type="text" class="form-control" id="state" name="state"
-                        placeholder="{{ localize('state') }}" value="{{ old('state') ?? $reporter->state }}">
+                        placeholder="{{ localize('state') }}" value="{{ $reporter->state }}">
 
                     </div>
 
@@ -354,7 +354,7 @@
                         class="col-form-label fw-semibold">{{ localize('zip') }}</label>
 
                         <input type="number" class="form-control" id="zip" name="zip"
-                        placeholder="{{ localize('zip') }}" value="{{ old('zip') ?? $reporter->zip }}">
+                        placeholder="{{ localize('zip') }}" value="{{ $reporter->zip }}">
 
                     </div>
 
@@ -373,7 +373,7 @@
                             class="col-form-label fw-semibold">{{ localize('verification_document_id') }}</label>
 
                         <input type="text" class="form-control" id="verification_id_no" name="verification_id_no"
-                        placeholder="{{ localize('verification_document_id') }}" value="{{ old('verification_id_no') ?? $reporter->verification_id_no }}">
+                        placeholder="{{ localize('verification_document_id') }}" value="{{ $reporter->verification_id_no }}">
 
                     </div>
 
@@ -417,7 +417,7 @@
                         class="col-form-label fw-semibold">{{ localize('about') }}</label>
 
                         <textarea  class="form-control" id="about" name="about"
-                        placeholder="{{ localize('about') }}" rows ="5">{{ old('about') ?? $reporter->about }}</textarea>
+                        placeholder="{{ localize('about') }}" rows ="5">{{ $reporter->about }}</textarea>
 
                     </div>
 
