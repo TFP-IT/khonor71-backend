@@ -11,7 +11,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="text" class="form-control" id="name" name="name"
-                        placeholder="{{ localize('name') }}" value="{{ old('name') }}" required>
+                        placeholder="{{ localize('name') }}" value="{{ old('name') }}" required autofocus>
 
                     </div>
 
@@ -373,7 +373,7 @@
                             class="col-form-label fw-semibold">{{ localize('verification_document_id') }}</label>
 
                         <input type="text" class="form-control" id="verification_id_no" name="verification_id_no"
-                        placeholder="{{ localize('verification_document_id') }}" value="{{ old('verification_document_id') }}">
+                        placeholder="{{ localize('verification_document_id') }}" value="{{ old('verification_id_no') }}">
 
                     </div>
 

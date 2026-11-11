@@ -12,7 +12,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="text" class="form-control" id="name" name="name"
-                        placeholder="{{ localize('name') }}" value="{{ old('category_name') ?? $reporter->name }}" required>
+                        placeholder="{{ localize('name') }}" value="{{ old('name') ?? $reporter->name }}" required>
 
                     </div>
 
