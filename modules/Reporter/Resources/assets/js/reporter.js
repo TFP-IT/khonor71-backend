@@ -96,6 +96,7 @@ function editReporterDetails(id) {
         type: 'GET',
         dataType: 'html',
         url: url,
+        cache: false,
         success: function(data) {
             var up_url = $("#reporter_update").val();
             f_up_url = up_url.replace(':reporter', id);

@@ -72,7 +72,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="email" class="form-control" id="email" name="email"
-                        placeholder="{{ localize('email') }}" value="{{ old('email') }}" required>
+                        placeholder="{{ localize('email') }}" value="{{ old('email') }}" autocomplete="off" required>
 
                     </div>
 
@@ -95,7 +95,7 @@
                             class="text-danger">*</span></label>
 
                         <input type="password" class="form-control" id="password" name="password"
-                        placeholder="{{ localize('password') }}" value="{{ old('password') }}" required>
+                        placeholder="{{ localize('password') }}" value="" autocomplete="new-password" required>
 
                     </div>
 

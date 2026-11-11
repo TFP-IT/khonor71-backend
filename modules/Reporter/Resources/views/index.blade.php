@@ -39,7 +39,7 @@
                     <h5 class="modal-title" id="addReporterDetailsModalLabel"></h5>
                     <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 </div>
-                <form id="projectDetailsForm" method="POST" enctype="multipart/form-data">
+                <form id="projectDetailsForm" method="POST" enctype="multipart/form-data" autocomplete="off">
                     @csrf
                     <div class="modal-body">
                         
