@@ -274,10 +274,12 @@ class ReporterController extends Controller
                 ->first();
 
             if ($existingUser) {
-                // If email belongs to another user, we can't change to it
+                DB::rollback();
                 return response()->json([
                     'error' => true,
-                    'msg' => localize('email_already_exists_for_another_user')
+                    'msg' => localize('email_already_exists_for_another_user') . ': ' . $request->email
+                        . ' (user #' . $existingUser->id . '). '
+                        . localize('this_reporter_email_is') . ': ' . ($reporter_info->email ?: '-'),
                 ]);
             }
 
