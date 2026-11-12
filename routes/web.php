@@ -36,9 +36,14 @@ Route::prefix(PanelPrefixEnum::ADMIN->value)->group(function () {
         return redirect()->route('login');
     });
 
+    // Login is NOT behind the route-level throttle: it counted every GET/POST (including
+    // the redirect after a wrong password), so 429 fired before the credential error.
+    // LoginController's ThrottlesLogins already locks out failed attempts per email+IP.
     Route::middleware('throttle:5,1')->group(function () {
-        Auth::routes();
+        Auth::routes(['login' => false]);
     });
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
 
     Route::get('get-localization-strings', [LocalizationController::class, 'index'])->name('get-localization-strings');
     Route::post('get-localization-strings', [LocalizationController::class, 'store']);
