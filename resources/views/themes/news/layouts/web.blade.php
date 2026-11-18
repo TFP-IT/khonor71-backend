@@ -32,16 +32,23 @@
         <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/hindsiliguri/v14/ijwOs5juQtsyLLR5jN4cxBEoRCf_0vQVKwOs1tqhwg.woff2" crossorigin>
     @endif
 
-    {{-- Load Google Fonts asynchronously with display=optional to prevent layout shifts --}}
+    {{-- Google Fonts: inline the @font-face CSS (fetched once, cached) so the fonts are
+         known at first paint. Loading the stylesheet async made text render in the
+         fallback font and then swap, which shifted the whole page (CLS). --}}
     @foreach ($loadedFonts as $font)
         @php
             $fontSourceUrl = str_replace('display=swap', 'display=optional', $font->source_url);
+            $inlineFontCss = google_font_inline_css($fontSourceUrl);
         @endphp
-        <link rel="preload" as="style" href="{{ $fontSourceUrl }}">
-        <link rel="stylesheet" href="{{ $fontSourceUrl }}" media="print" onload="this.media='all'">
-        <noscript>
-            <link rel="stylesheet" href="{{ $fontSourceUrl }}">
-        </noscript>
+        @if ($inlineFontCss)
+            <style>{!! $inlineFontCss !!}</style>
+        @else
+            <link rel="preload" as="style" href="{{ $fontSourceUrl }}">
+            <link rel="stylesheet" href="{{ $fontSourceUrl }}" media="print" onload="this.media='all'">
+            <noscript>
+                <link rel="stylesheet" href="{{ $fontSourceUrl }}">
+            </noscript>
+        @endif
     @endforeach
 
     @php
@@ -141,10 +148,10 @@
             @endphp
             <a class="flex_center" href="{{ __url('/') }}">
                 <img src="{{ $desktopHeaderLogo }}" alt="Khobor71 Logo" class="w-auto"
-                    width="216" height="64"
+                    width="147" height="64"
                     loading="eager"
                     decoding="async"
-                    style="height: 4rem; transform: scale(1.35); transform-origin: left center;" />
+                    style="height: 4rem; width: auto; object-fit: contain; transform: scale(1.35); transform-origin: left center;" />
             </a>
         </div>
         <!-- Ad Banner Section -->

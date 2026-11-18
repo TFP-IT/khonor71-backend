@@ -1,6 +1,6 @@
 <section class="border-r dark:border-r-neutral-700 last:border-r-0 mb-8">
   <a href="{{ __url($newsCards[0]->category->slug) }}" 
-    class="md:px-4 text-brand-primary dark:text-white text-lg font-semibold uppercase mb-4">
+    class="md:px-4 text-theme-two dark:text-white text-lg font-semibold uppercase mb-4">
     {{ $newsCards[0]->category->category_name }}
   </a>
 

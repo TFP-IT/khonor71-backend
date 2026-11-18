@@ -317,7 +317,7 @@ class WebLayout extends Component
             ->all();
 
         return in_array($normalizedMenuLevel, $latestMenuNames, true)
-            || in_array($normalizedMenuSlug, ['latest', 'breaking', 'latest-news'], true);
+            || in_array($normalizedMenuSlug, ['latest', 'breaking', 'latest-news', 'sorboshesh'], true);
     }
 
     private function normalizeMenuText(string $text): string

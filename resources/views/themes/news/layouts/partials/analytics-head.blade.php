@@ -24,9 +24,13 @@
     if (!empty($sm->hotjar_id ?? null)) {
         $deferredScripts[] = 'https://static.hotjar.com/c/hotjar-' . (int) $sm->hotjar_id . '.js?sv=6';
     }
-    if (!empty($sm->tawkto_id ?? null)) {
-        // Tawk IDs have the form "propertyId/widgetId"; the slash must stay literal.
-        $deferredScripts[] = 'https://embed.tawk.to/' . $sm->tawkto_id;
+    // Tawk IDs must be "propertyId/widgetId"; a bare/invalid ID (e.g. "41234") makes
+    // embed.tawk.to fail with a CORS error in the console, so skip it.
+    $tawkId = trim((string) ($sm->tawkto_id ?? ''));
+    $hasValidTawk = (bool) preg_match('#^[A-Za-z0-9]+/[A-Za-z0-9]+$#', $tawkId);
+    if ($hasValidTawk) {
+        // The slash must stay literal.
+        $deferredScripts[] = 'https://embed.tawk.to/' . $tawkId;
     }
 @endphp
 
@@ -71,7 +75,7 @@
     </script>
 @endif
 
-@if (!empty($sm->tawkto_id ?? null))
+@if ($hasValidTawk)
     <script>
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     </script>

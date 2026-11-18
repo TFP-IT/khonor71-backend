@@ -38,7 +38,7 @@
                 loading="lazy"
             />
             @if($news->district)
-                <span class="absolute top-2 left-2 bg-brand-primary text-white text-xs font-semibold px-2 py-0.5 rounded shadow-sm">
+                <span class="absolute top-2 left-2 bg-theme-two text-white text-xs font-semibold px-2 py-0.5 rounded shadow-sm">
                     {{ $news->district->bn_name }}
                 </span>
             @elseif($news->division)

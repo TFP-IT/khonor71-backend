@@ -605,7 +605,8 @@ class HomeController extends Controller
             return Str::slug($localizedBreaking);
         }
 
-        return $localizedBreaking ?: 'সর্বশেষ';
+        // Match the transliterated URL used by menus/categories (e.g. সর্বশেষ -> sorboshesh)
+        return generateSlug($localizedBreaking ?: 'সর্বশেষ');
     }
 
     private function isLatestNewsPageSlug(string $slug): bool
@@ -618,9 +619,13 @@ class HomeController extends Controller
             'breaking',
             'latest',
             'latest-news',
-        ])->map(function ($item) {
-            return Str::of(rawurldecode((string) $item))->squish()->lower()->toString();
-        })->filter()->values()->all();
+            'সর্বশেষ',
+            'sorboshesh',
+        ])->flatMap(function ($item) {
+            $normalized = Str::of(rawurldecode((string) $item))->squish()->lower()->toString();
+
+            return [$normalized, generateSlug($normalized)];
+        })->filter()->unique()->values()->all();
 
         return in_array($normalizedSlug, $aliases, true);
     }

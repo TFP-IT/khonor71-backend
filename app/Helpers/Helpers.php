@@ -1881,3 +1881,44 @@ if (!function_exists('get_tv_news')) {
         return $videoNews;
     }
 }
+
+if (!function_exists('google_font_inline_css')) {
+    /**
+     * Fetch a Google Fonts stylesheet once (woff2 build) and cache it so it can be
+     * inlined in <head>. Returns null on failure so the caller can fall back to <link>.
+     */
+    function google_font_inline_css(?string $url): ?string
+    {
+        if (!$url || !str_starts_with($url, 'https://fonts.googleapis.com/')) {
+            return null;
+        }
+
+        $key = 'google_font_css_' . md5($url);
+        $css = Cache::get($key);
+        if (is_string($css) && $css !== '') {
+            return $css;
+        }
+        if (Cache::has($key . '_fail')) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(3)
+                ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36')
+                ->get(html_entity_decode($url));
+
+            $css = $response->successful() ? trim($response->body()) : '';
+            if ($css === '' || !str_contains($css, '@font-face') || str_contains($css, '</')) {
+                Cache::put($key . '_fail', true, 600);
+                return null;
+            }
+        } catch (\Throwable $e) {
+            Cache::put($key . '_fail', true, 600);
+            return null;
+        }
+
+        Cache::put($key, $css, now()->addDays(7));
+
+        return $css;
+    }
+}
